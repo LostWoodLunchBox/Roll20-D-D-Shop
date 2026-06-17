@@ -693,7 +693,7 @@ const DEFAULT_SHOPS = {
 // ÉTAT
 // ═══════════════════════════════════════════════════════════════
 let SHOPS = {};
-let wallet      = { pp:0, gp:7, sp:0, cp:0 };
+let wallets     = JSON.parse(localStorage.getItem("shopWallets") || "{}"); // portefeuille par magasin
 let history     = JSON.parse(localStorage.getItem("shopHistory3") || "[]");
 let activeShop  = "";
 let pendingItem = null;
@@ -701,10 +701,19 @@ let gmMode      = false;
 let gmEditingShop = null;
 let gmEditingIdx  = null;
 
+function getWallet(shopName) {
+  if (!wallets[shopName]) wallets[shopName] = { pp:0, gp:0, sp:0, cp:0 };
+  return wallets[shopName];
+}
+
+function saveWallets() {
+  localStorage.setItem("shopWallets", JSON.stringify(wallets));
+}
+
 // ═══════════════════════════════════════════════════════════════
 // CONVERSION BASE 20
 // ═══════════════════════════════════════════════════════════════
-function walletInCp() { return wallet.pp*4000 + wallet.gp*400 + wallet.sp*20 + wallet.cp; }
+function walletInCp() { const w = getWallet(activeShop); return w.pp*4000 + w.gp*400 + w.sp*20 + w.cp; }
 function priceInCp(p) { return (p.gp||0)*400 + (p.sp||0)*20 + (p.cp||0); }
 function cpToCoins(total) {
   let r = Math.round(total);
@@ -796,11 +805,12 @@ function fbSaveShopItems(shopName) {
 // WALLET
 // ═══════════════════════════════════════════════════════════════
 function updateWalletDisplay() {
-  document.getElementById("wallet-pp").textContent = wallet.pp;
-  document.getElementById("wallet-gp").textContent = wallet.gp;
-  document.getElementById("wallet-sp").textContent = wallet.sp;
-  document.getElementById("wallet-cp").textContent = wallet.cp;
-  localStorage.setItem("shopWallet3", JSON.stringify(wallet));
+  const w = getWallet(activeShop);
+  document.getElementById("wallet-pp").textContent = w.pp;
+  document.getElementById("wallet-gp").textContent = w.gp;
+  document.getElementById("wallet-sp").textContent = w.sp;
+  document.getElementById("wallet-cp").textContent = w.cp;
+  saveWallets();
 }
 
 function setTheme(shopName) {
@@ -819,7 +829,7 @@ function renderTabs() {
     const btn = document.createElement("button");
     btn.className = "shop-tab" + (name === activeShop ? " active" : "");
     btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + name.replace("Sales | ", "");
-    btn.onclick = () => { activeShop = name; setTheme(name); renderTabs(); renderShop(); };
+    btn.onclick = () => { activeShop = name; setTheme(name); renderTabs(); renderShop(); updateWalletDisplay(); };
     c.appendChild(btn);
   });
 }
@@ -889,7 +899,7 @@ function confirmPurchase() {
   const item  = pendingItem.item;
   const idx   = pendingItem.idx;
   const totalCp = priceInCp(item.price) * qty;
-  wallet = cpToCoins(walletInCp() - totalCp);
+  wallets[activeShop] = cpToCoins(walletInCp() - totalCp);
   updateWalletDisplay();
   SHOPS[activeShop].items[idx].stock -= qty;
   fbUpdateStock(activeShop, idx, SHOPS[activeShop].items[idx].stock);
@@ -907,11 +917,14 @@ function closeModal() { document.getElementById("buy-modal").classList.remove("o
 // WALLET MODAL
 // ═══════════════════════════════════════════════════════════════
 function openWalletModal() {
-  ["pp","gp","sp","cp"].forEach(k => document.getElementById("edit-"+k).value = wallet[k]);
+  const w = getWallet(activeShop);
+  ["pp","gp","sp","cp"].forEach(k => document.getElementById("edit-"+k).value = w[k]);
+  // Affiche le nom du magasin dans le titre de la modale
+  document.querySelector("#wallet-modal h2").textContent = "💰 " + activeShop.replace("Sales | ","");
   document.getElementById("wallet-modal").classList.add("open");
 }
 function saveWallet() {
-  wallet = { pp:parseInt(document.getElementById("edit-pp").value)||0, gp:parseInt(document.getElementById("edit-gp").value)||0, sp:parseInt(document.getElementById("edit-sp").value)||0, cp:parseInt(document.getElementById("edit-cp").value)||0 };
+  wallets[activeShop] = { pp:parseInt(document.getElementById("edit-pp").value)||0, gp:parseInt(document.getElementById("edit-gp").value)||0, sp:parseInt(document.getElementById("edit-sp").value)||0, cp:parseInt(document.getElementById("edit-cp").value)||0 };
   updateWalletDisplay(); closeWalletModal(); renderShop(); showToast("💰 Portefeuille mis à jour!");
 }
 function closeWalletModal() { document.getElementById("wallet-modal").classList.remove("open"); }
@@ -1070,8 +1083,6 @@ function deleteGMItem() {
 // ═══════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════
-const sw = localStorage.getItem("shopWallet3");
-if (sw) wallet = JSON.parse(sw);
 updateWalletDisplay();
 renderHistory();
 
