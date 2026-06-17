@@ -82,6 +82,7 @@
     /* Badge MJ actif */
     .gm-badge { display: none; background: #ffd700; color: #1a1000; font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
     body.gm-active .gm-badge { display: inline-block; }
+    body.gm-active #roll20-export-btn { display: inline-block !important; }
 
     /* Bouton flottant MJ: ajouter un item */
     .gm-fab {
@@ -245,6 +246,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;">
       <span class="gm-badge">⚜ Mode MJ Actif</span>
+      <button class="gm-badge" id="roll20-export-btn" onclick="exportToRoll20()" style="display:none;cursor:pointer;background:#c8a800;border:none;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;padding:2px 10px;border-radius:10px;font-weight:700;color:#1a1000;">⚔ Exporter Roll20</button>
       <span class="firebase-status connecting" id="firebase-status">● Firebase...</span>
       <div class="conversion-note">20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 10 GP = 1 PP</div>
     </div>
@@ -899,7 +901,7 @@ function confirmPurchase() {
   const item  = pendingItem.item;
   const idx   = pendingItem.idx;
   const totalCp = priceInCp(item.price) * qty;
-  wallets[activeShop] = cpToCoins(walletInCp() - totalCp);
+  wallets[activeShop] = cpToCoins(walletInCp() + totalCp);
   updateWalletDisplay();
   SHOPS[activeShop].items[idx].stock -= qty;
   fbUpdateStock(activeShop, idx, SHOPS[activeShop].items[idx].stock);
@@ -1009,6 +1011,44 @@ function signInWithGoogle() {
 // ═══════════════════════════════════════════════════════════════
 // GM : ÉDITEUR D'ITEMS
 // ═══════════════════════════════════════════════════════════════
+// ─── EXPORT VERS ROLL20 ────────────────────────────────────────
+function exportToRoll20() {
+  if (!gmMode || !SHOPS) return;
+
+  // Construit un objet minimal {shopName: {items:[...], sellMultiplier:0.5}}
+  var exportData = {};
+  Object.keys(SHOPS).forEach(function(name) {
+    var shop = SHOPS[name];
+    exportData[name] = {
+      sellMultiplier: shop.sellMultiplier || 0.5,
+      items: (shop.items || []).map(function(item) {
+        return { name: item.name, desc: item.desc || "", price: item.price, stock: item.stock };
+      })
+    };
+  });
+
+  var json = JSON.stringify(exportData);
+  var cmd  = "!shop-import " + json;
+
+  // Copie dans le presse-papier
+  navigator.clipboard.writeText(cmd).then(function() {
+    showToast("⚔ Commande copiée! Colle-la dans le chat Roll20.", "gm");
+  }).catch(function() {
+    // Fallback: affiche dans une boîte de dialogue
+    var box = document.createElement("textarea");
+    box.value = cmd;
+    box.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90vw;max-width:600px;height:120px;z-index:9999;padding:10px;font-size:11px;background:#1a1a1a;color:#ffd700;border:2px solid #ffd700;border-radius:8px;";
+    document.body.appendChild(box);
+    box.focus(); box.select();
+    var close = document.createElement("button");
+    close.textContent = "✕ Fermer";
+    close.style.cssText = "position:fixed;top:calc(50% + 75px);left:50%;transform:translateX(-50%);z-index:9999;padding:6px 20px;background:#ffd700;color:#1a1000;border:none;border-radius:6px;font-weight:bold;cursor:pointer;";
+    close.onclick = function() { document.body.removeChild(box); document.body.removeChild(close); };
+    document.body.appendChild(close);
+    showToast("Copie manuelle: sélectionne tout et copie.", "gm");
+  });
+}
+
 function openAddItemModal() {
   if (!gmMode) return;
   gmEditingShop = activeShop;
