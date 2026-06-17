@@ -892,7 +892,7 @@ function updateModalTotal() {
     (enough ? "Solde restant : <strong>" + fmtCp(myCp-totalCp) + "</strong>" : "<span style='color:#c62828'>Manque : " + fmtCp(totalCp-myCp) + "</span>");
   document.getElementById("modal-warning").style.display = enough ? "none" : "block";
   document.getElementById("btn-confirm").disabled = !enough;
-  document.getElementById("modal-command").textContent = "!shop-buy " + activeShop + "|" + pendingItem.item.name + "|" + qty;
+  document.getElementById("modal-command").textContent = "!shop-buy " + activeShop + "~~" + pendingItem.item.name + "~~" + qty;
 }
 
 function confirmPurchase() {
@@ -905,7 +905,7 @@ function confirmPurchase() {
   updateWalletDisplay();
   SHOPS[activeShop].items[idx].stock -= qty;
   fbUpdateStock(activeShop, idx, SHOPS[activeShop].items[idx].stock);
-  navigator.clipboard.writeText("!shop-buy " + activeShop + "|" + item.name + "|" + qty).catch(()=>{});
+  navigator.clipboard.writeText("!shop-buy " + activeShop + "~~" + item.name + "~~" + qty).catch(()=>{});
   history.unshift({ name:item.name, qty, totalCp, shop:activeShop, time:new Date().toLocaleTimeString("fr-CA",{hour:"2-digit",minute:"2-digit"}) });
   if (history.length > 30) history.pop();
   localStorage.setItem("shopHistory3", JSON.stringify(history));
