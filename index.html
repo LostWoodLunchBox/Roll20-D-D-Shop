@@ -3,219 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roll20 Shop — D&D 5e</title>
+  <title>The Merchant's Guild — D&D 5e</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --ink:       #1a1209;
-      --parchment: #f5ead6;
-      --aged:      #e8d5b0;
-      --leather:   #7a4f2d;
-      --gold:      #c9960c;
-      --gold-light:#f0c040;
-      --crimson:   #8b1a1a;
-      --shadow:    rgba(26,18,9,0.35);
-      --copper:    #b87333;
-    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background-color: #1a1209;
-      background-image: radial-gradient(ellipse at 20% 20%, #2e1a0a 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, #0d0d1a 0%, transparent 60%);
       min-height: 100vh;
       font-family: 'Crimson Text', Georgia, serif;
-      color: var(--ink);
+      transition: background 0.4s, color 0.4s;
     }
+
+    /* ── THEMES PAR MAGASIN ── */
+    body.theme-weapons    { --bg:#1a0a00; --bg2:#2e1005; --accent:#c0392b; --accent2:#e74c3c; --header-from:#2c0a0a; --header-to:#1a0505; --card:#f5e8e8; --card-hover:#edd5d5; --border:#7a1a1a; --text:#2a0a0a; --price:#8b1a1a; --tab-active-from:#5a1010; --tab-active-to:#3a0808; }
+    body.theme-archery    { --bg:#0a1a0a; --bg2:#0d2010; --accent:#2e7d32; --accent2:#66bb6a; --header-from:#0a2010; --header-to:#051005; --card:#e8f5e8; --card-hover:#d5edd5; --border:#1a5c1a; --text:#0a200a; --price:#1b5e20; --tab-active-from:#0d3d0d; --tab-active-to:#082008; }
+    body.theme-potions    { --bg:#0d0a1a; --bg2:#150d28; --accent:#7b1fa2; --accent2:#ba68c8; --header-from:#1a0a28; --header-to:#0d0518; --card:#f3e8f8; --card-hover:#e8d5f0; --border:#5c1a7a; --text:#1a0a28; --price:#4a0072; --tab-active-from:#3d0d5a; --tab-active-to:#280838; }
+    body.theme-tomes      { --bg:#0a0d1a; --bg2:#0d1228; --accent:#1565c0; --accent2:#64b5f6; --header-from:#0a1228; --header-to:#050a18; --card:#e8eef8; --card-hover:#d5e0f0; --border:#1a3a7a; --text:#0a1228; --price:#0d47a1; --tab-active-from:#0d1e5a; --tab-active-to:#081438; }
+    body.theme-wands      { --bg:#1a0a14; --bg2:#280d1e; --accent:#ad1457; --accent2:#f06292; --header-from:#280a1e; --header-to:#180510; --card:#fce8f0; --card-hover:#f0d5e5; --border:#7a1a48; --text:#28081a; --price:#880e4f; --tab-active-from:#5a0d30; --tab-active-to:#380820; }
+    body.theme-heavy      { --bg:#141414; --bg2:#1e1e1e; --accent:#546e7a; --accent2:#90a4ae; --header-from:#1a1a1a; --header-to:#0d0d0d; --card:#eceff1; --card-hover:#dde3e6; --border:#37474f; --text:#1a1a1a; --price:#263238; --tab-active-from:#2d3d45; --tab-active-to:#1a2830; }
+    body.theme-medium     { --bg:#1a1205; --bg2:#2a1e0a; --accent:#e65100; --accent2:#ff8a50; --header-from:#2a1205; --header-to:#180a02; --card:#fff3e0; --card-hover:#ffe5c0; --border:#7a3800; --text:#2a1205; --price:#bf360c; --tab-active-from:#5a2800; --tab-active-to:#381800; }
+    body.theme-light      { --bg:#1a1800; --bg2:#2a2800; --accent:#f9a825; --accent2:#ffd54f; --header-from:#2a2200; --header-to:#181400; --card:#fffde7; --card-hover:#fff9c4; --border:#7a6800; --text:#2a2000; --price:#e65100; --tab-active-from:#5a4800; --tab-active-to:#382e00; }
+    body.theme-tailor     { --bg:#1a0a18; --bg2:#280d25; --accent:#6a1b9a; --accent2:#ce93d8; --header-from:#250a22; --header-to:#150515; --card:#f8e8ff; --card-hover:#efd5f8; --border:#6a1a7a; --text:#25082a; --price:#4a0080; --tab-active-from:#4a0d60; --tab-active-to:#300840; }
+    body.theme-music      { --bg:#001a1a; --bg2:#002828; --accent:#00838f; --accent2:#4dd0e1; --header-from:#002828; --header-to:#001818; --card:#e0f7fa; --card-hover:#c8f0f5; --border:#006064; --text:#00282a; --price:#004d40; --tab-active-from:#003d40; --tab-active-to:#002828; }
+    body.theme-jewels     { --bg:#1a1200; --bg2:#28180a; --accent:#c79a00; --accent2:#ffd700; --header-from:#281800; --header-to:#180e00; --card:#fffde0; --card-hover:#fff8c0; --border:#8a6800; --text:#281800; --price:#8b6914; --tab-active-from:#5a4200; --tab-active-to:#382800; }
+    body.theme-rations    { --bg:#0a1400; --bg2:#0d1e05; --accent:#558b2f; --accent2:#aed581; --header-from:#0d1e05; --header-to:#081002; --card:#f1f8e9; --card-hover:#e0f0d0; --border:#2e5f1a; --text:#0d1e05; --price:#33691e; --tab-active-from:#1e4010; --tab-active-to:#122808; }
+    body.theme-herbs      { --bg:#001a05; --bg2:#002810; --accent:#1b5e20; --accent2:#69f0ae; --header-from:#002810; --header-to:#001808; --card:#e8f5e9; --card-hover:#d0ecd5; --border:#1a5c28; --text:#002810; --price:#1b5e20; --tab-active-from:#0d3d18; --tab-active-to:#082510; }
+    body.theme-bakery     { --bg:#1a0e00; --bg2:#2a1800; --accent:#d84315; --accent2:#ff8a65; --header-from:#2a1200; --header-to:#180a00; --card:#fbe9e7; --card-hover:#f5d5ce; --border:#7a2810; --text:#2a1000; --price:#bf360c; --tab-active-from:#5a1e08; --tab-active-to:#381205; }
+    body.theme-butcher    { --bg:#1a0505; --bg2:#280808; --accent:#b71c1c; --accent2:#ef9a9a; --header-from:#280808; --header-to:#180505; --card:#ffebee; --card-hover:#ffd5da; --border:#7a0a0a; --text:#280808; --price:#b71c1c; --tab-active-from:#5a0808; --tab-active-to:#380505; }
+    body.theme-poisson    { --bg:#001828; --bg2:#002038; --accent:#0277bd; --accent2:#81d4fa; --header-from:#002038; --header-to:#001525; --card:#e1f5fe; --card-hover:#c5ecfc; --border:#01579b; --text:#002038; --price:#01579b; --tab-active-from:#013d60; --tab-active-to:#012840; }
+    body.theme-fruits     { --bg:#001a08; --bg2:#002810; --accent:#2e7d32; --accent2:#a5d6a7; --header-from:#002810; --header-to:#001808; --card:#e8f5e9; --card-hover:#d0ecda; --border:#1b5e20; --text:#002810; --price:#1b5e20; --tab-active-from:#0d3d15; --tab-active-to:#082508; }
+    body.theme-dairy      { --bg:#0a0a1a; --bg2:#101028; --accent:#1565c0; --accent2:#90caf9; --header-from:#101028; --header-to:#080818; --card:#e3f2fd; --card-hover:#cce5fa; --border:#1a3a8a; --text:#101028; --price:#0d47a1; --tab-active-from:#0d1e60; --tab-active-to:#081438; }
+    body.theme-grains     { --bg:#1a1400; --bg2:#282000; --accent:#f57f17; --accent2:#ffd54f; --header-from:#281e00; --header-to:#181200; --card:#fff8e1; --card-hover:#ffeeb0; --border:#7a5800; --text:#281e00; --price:#e65100; --tab-active-from:#5a3e00; --tab-active-to:#382800; }
+    body.theme-honey      { --bg:#1a0e00; --bg2:#281800; --accent:#e65100; --accent2:#ffcc02; --header-from:#281400; --header-to:#180e00; --card:#fff8e1; --card-hover:#fff0c0; --border:#8a5000; --text:#281400; --price:#bf360c; --tab-active-from:#5a3200; --tab-active-to:#382000; }
+    body.theme-pottery    { --bg:#1a1008; --bg2:#281808; --accent:#8d6e63; --accent2:#d7ccc8; --header-from:#281808; --header-to:#181005; --card:#efebe9; --card-hover:#e0d5d0; --border:#6d4c41; --text:#281808; --price:#4e342e; --tab-active-from:#4a2820; --tab-active-to:#301a15; }
+    body.theme-candles    { --bg:#0a0a00; --bg2:#181400; --accent:#f9a825; --accent2:#ffe082; --header-from:#181400; --header-to:#100e00; --card:#fffde7; --card-hover:#fff9c4; --border:#7a6200; --text:#181400; --price:#e65100; --tab-active-from:#504000; --tab-active-to:#382c00; }
+    body.theme-livestock  { --bg:#0a1400; --bg2:#101e05; --accent:#4e7c32; --accent2:#a5c880; --header-from:#101e05; --header-to:#081202; --card:#f1f8e9; --card-hover:#deefd0; --border:#2e5c1a; --text:#101e05; --price:#2e5c1a; --tab-active-from:#1e3e10; --tab-active-to:#122808; }
+
     header {
-      background: linear-gradient(135deg, #1a0a00 0%, #2d1500 50%, #1a0a00 100%);
-      border-bottom: 3px solid var(--gold);
-      padding: 20px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-    }
-    .header-title {
-      font-family: 'Cinzel', serif;
-      color: var(--gold-light);
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-shadow: 0 0 20px rgba(201,150,12,0.5);
-    }
-    .header-title span {
-      color: var(--copper);
-      font-size: 13px;
-      display: block;
-      letter-spacing: 4px;
-      font-weight: 400;
-      margin-top: 2px;
-    }
-    .wallet-display { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .coin {
-      display: flex; flex-direction: column; align-items: center;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(201,150,12,0.3);
-      border-radius: 8px; padding: 6px 12px; min-width: 60px;
-    }
-    .coin-amount { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; line-height: 1; }
-    .coin-label  { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; opacity: 0.8; }
-    .coin.pp { color: #e8e8ff; border-color: #9090cc; }
-    .coin.gp { color: var(--gold-light); border-color: var(--gold); }
-    .coin.sp { color: #d0d0d0; border-color: #a0a0a0; }
-    .coin.cp { color: var(--copper); border-color: #8b5e3c; }
-    .wallet-edit-btn {
-      background: transparent; border: 1px solid var(--gold); color: var(--gold);
-      padding: 6px 14px; border-radius: 6px; font-family: 'Cinzel', serif;
-      font-size: 11px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
-    }
-    .wallet-edit-btn:hover { background: var(--gold); color: var(--ink); }
-    .conversion-note {
-      color: rgba(240,192,64,0.5); font-size: 11px; font-style: italic;
-      text-align: right; margin-top: 4px; letter-spacing: 0.5px;
-    }
-    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
-    .shop-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
-    .shop-tab {
-      font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 1px;
-      padding: 10px 20px; border: 2px solid rgba(201,150,12,0.4); border-radius: 6px;
-      background: rgba(255,255,255,0.04); color: rgba(240,192,64,0.7); cursor: pointer; transition: all 0.2s;
-    }
-    .shop-tab:hover { border-color: var(--gold); color: var(--gold-light); background: rgba(201,150,12,0.1); }
-    .shop-tab.active {
-      background: linear-gradient(135deg, #3d2000, #5a3200);
-      border-color: var(--gold); color: var(--gold-light);
-      box-shadow: 0 0 15px rgba(201,150,12,0.25);
-    }
-    .shop-panel {
-      background: var(--parchment); border-radius: 12px;
-      border: 2px solid var(--leather);
-      box-shadow: 0 8px 40px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.4);
-      overflow: hidden;
-    }
-    .shop-header {
-      background: linear-gradient(135deg, var(--leather), #5a3820);
-      padding: 20px 28px; border-bottom: 2px solid var(--gold);
+      background: linear-gradient(135deg, var(--header-from) 0%, var(--header-to) 100%);
+      border-bottom: 3px solid var(--accent);
+      padding: 18px 28px;
       display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+      transition: all 0.4s;
     }
-    .shop-name { font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold-light); font-weight: 700; }
-    .shop-desc { font-style: italic; color: rgba(240,192,64,0.75); font-size: 14px; margin-top: 3px; }
-    .shop-meta { text-align: right; color: rgba(240,192,64,0.6); font-size: 12px; font-family: 'Cinzel', serif; letter-spacing: 1px; }
-    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1px; background: rgba(122,79,45,0.2); }
-    .item-card { background: var(--parchment); padding: 18px 20px; transition: background 0.15s; }
-    .item-card:hover { background: var(--aged); }
-    .item-card.out-of-stock { opacity: 0.55; }
-    .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-    .item-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: var(--ink); }
-    .item-price { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; color: var(--crimson); white-space: nowrap; margin-left: 12px; }
-    .item-desc { font-size: 13px; color: #5a4020; font-style: italic; margin-bottom: 10px; line-height: 1.4; }
+    .header-title { font-family: 'Cinzel', serif; color: var(--accent2); font-size: 22px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    .header-title span { font-size: 11px; display: block; letter-spacing: 4px; font-weight: 400; margin-top: 2px; opacity: 0.7; color: var(--accent2); }
+    .wallet-display { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .coin { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 5px 10px; min-width: 55px; }
+    .coin-amount { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; line-height: 1; }
+    .coin-label  { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; opacity: 0.75; }
+    .coin.pp { color: #e8e8ff; } .coin.gp { color: #ffd700; } .coin.sp { color: #d0d0d0; } .coin.cp { color: #cd7f32; }
+    .conversion-note { color: rgba(255,255,255,0.35); font-size: 10px; font-style: italic; text-align: right; margin-top: 3px; }
+    .wallet-edit-btn { background: transparent; border: 1px solid var(--accent2); color: var(--accent2); padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 11px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; }
+    .wallet-edit-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
+
+    /* ── SIDEBAR + MAIN LAYOUT ── */
+    .layout { display: flex; gap: 20px; }
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 12px 8px;
+      height: fit-content; position: sticky; top: 90px;
+    }
+    .sidebar-title { font-family: 'Cinzel', serif; color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; padding: 4px 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 8px; }
+    .shop-tab {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 8px 10px; border: none; border-radius: 6px;
+      background: transparent; color: rgba(255,255,255,0.55);
+      font-family: 'Crimson Text', serif; font-size: 14px;
+      cursor: pointer; transition: all 0.15s; text-align: left;
+    }
+    .shop-tab:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+    .shop-tab.active { background: linear-gradient(135deg, var(--tab-active-from), var(--tab-active-to)); color: var(--accent2); border: 1px solid var(--accent); font-weight: 600; }
+    .shop-tab .tab-icon { font-size: 16px; flex-shrink: 0; }
+
+    /* ── SHOP PANEL ── */
+    .main-content { flex: 1; min-width: 0; }
+    .shop-panel { background: var(--card); border-radius: 10px; border: 2px solid var(--border); box-shadow: 0 8px 30px rgba(0,0,0,0.5); overflow: hidden; transition: all 0.3s; }
+    .shop-header { background: linear-gradient(135deg, var(--header-from), var(--header-to)); padding: 18px 24px; border-bottom: 2px solid var(--accent); display: flex; align-items: center; justify-content: space-between; }
+    .shop-name { font-family: 'Cinzel', serif; font-size: 19px; color: var(--accent2); font-weight: 700; }
+    .shop-desc { font-style: italic; color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 3px; }
+    .shop-meta { text-align: right; color: rgba(255,255,255,0.5); font-size: 11px; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+
+    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; background: rgba(0,0,0,0.1); }
+    .item-card { background: var(--card); padding: 16px 18px; transition: background 0.15s; }
+    .item-card:hover { background: var(--card-hover); }
+    .item-card.out-of-stock { opacity: 0.5; }
+    .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+    .item-name { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .item-price { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--price); white-space: nowrap; margin-left: 10px; }
+    .item-desc { font-size: 12px; color: var(--text); opacity: 0.7; font-style: italic; margin-bottom: 10px; line-height: 1.4; }
     .item-bottom { display: flex; align-items: center; justify-content: space-between; }
-    .item-stock { font-size: 12px; color: #7a5530; }
-    .item-stock.low { color: var(--crimson); font-weight: 600; }
-    .item-stock.out { color: #aaa; font-style: italic; }
-    .buy-btn {
-      font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 1px;
-      padding: 6px 16px; background: linear-gradient(135deg, var(--leather), #5a3820);
-      color: var(--gold-light); border: 1px solid var(--gold); border-radius: 4px;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .buy-btn:hover:not(:disabled) {
-      background: linear-gradient(135deg, var(--gold), #e0a800);
-      color: var(--ink); box-shadow: 0 2px 8px rgba(201,150,12,0.4);
-    }
-    .buy-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #aaa; }
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.75); z-index: 200;
-      align-items: center; justify-content: center;
-    }
+    .item-stock { font-size: 11px; color: var(--text); opacity: 0.6; }
+    .item-stock.low { color: var(--price); opacity: 1; font-weight: 600; }
+    .item-stock.out { opacity: 0.4; font-style: italic; }
+    .buy-btn { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1px; padding: 5px 14px; background: linear-gradient(135deg, var(--header-from), var(--header-to)); color: var(--accent2); border: 1px solid var(--accent); border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+    .buy-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
+    .buy-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── MODALS ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--parchment); border: 3px solid var(--leather); border-radius: 12px;
-      padding: 32px; max-width: 440px; width: 90%;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-    }
-    .modal h2 { font-family: 'Cinzel', serif; color: var(--leather); font-size: 18px; margin-bottom: 8px; border-bottom: 1px solid var(--leather); padding-bottom: 10px; }
-    .modal-item-name { font-family: 'Cinzel', serif; font-size: 16px; color: var(--ink); margin: 16px 0 4px; }
-    .modal-price { color: var(--crimson); font-size: 14px; margin-bottom: 16px; }
-    .modal label { display: block; font-size: 13px; color: #5a4020; margin-bottom: 6px; font-weight: 600; }
-    .modal input[type=number] {
-      width: 100%; padding: 10px 14px; border: 2px solid var(--leather); border-radius: 6px;
-      font-family: 'Cinzel', serif; font-size: 16px; background: var(--aged); color: var(--ink); margin-bottom: 6px;
-    }
-    .modal-total {
-      font-family: 'Cinzel', serif; font-size: 13px; color: var(--crimson);
-      margin-bottom: 8px; padding: 10px; background: rgba(139,26,26,0.08);
-      border-radius: 6px; text-align: center; line-height: 1.6;
-    }
-    .modal-warning { color: var(--crimson); font-size: 12px; font-style: italic; margin-bottom: 12px; display: none; }
+    .modal { background: var(--card); border: 2px solid var(--border); border-radius: 10px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
+    .modal h2 { font-family: 'Cinzel', serif; color: var(--price); font-size: 17px; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    .modal-item-name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--text); margin: 14px 0 3px; }
+    .modal-price { color: var(--price); font-size: 13px; margin-bottom: 14px; }
+    .modal label { display: block; font-size: 12px; color: var(--text); margin-bottom: 5px; font-weight: 600; opacity: 0.8; }
+    .modal input[type=number] { width: 100%; padding: 9px 12px; border: 2px solid var(--border); border-radius: 6px; font-family: 'Cinzel', serif; font-size: 16px; background: var(--card-hover); color: var(--text); margin-bottom: 6px; }
+    .modal-total { font-family: 'Cinzel', serif; font-size: 12px; color: var(--price); margin-bottom: 8px; padding: 10px; background: rgba(0,0,0,0.06); border-radius: 6px; text-align: center; line-height: 1.8; }
+    .modal-warning { color: #c62828; font-size: 12px; font-style: italic; margin-bottom: 10px; display: none; }
     .modal-buttons { display: flex; gap: 10px; }
-    .btn-confirm {
-      flex: 1; padding: 12px; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 1px;
-      background: linear-gradient(135deg, var(--leather), #5a3820);
-      color: var(--gold-light); border: 1px solid var(--gold); border-radius: 6px; cursor: pointer; transition: all 0.2s;
-    }
-    .btn-confirm:hover:not(:disabled) { background: linear-gradient(135deg, var(--gold), #e0a800); color: var(--ink); }
+    .btn-confirm { flex: 1; padding: 11px; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px; background: linear-gradient(135deg, var(--header-from), var(--header-to)); color: var(--accent2); border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .btn-confirm:hover:not(:disabled) { background: var(--accent); color: #fff; }
     .btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-cancel {
-      padding: 12px 20px; font-family: 'Cinzel', serif; font-size: 13px;
-      background: transparent; color: #7a5530; border: 1px solid #7a5530; border-radius: 6px; cursor: pointer; transition: all 0.2s;
-    }
-    .btn-cancel:hover { background: rgba(122,79,45,0.1); }
-    .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 8px; }
-    .wallet-field label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-    .wallet-field input {
-      width: 100%; padding: 8px 12px; border: 2px solid var(--leather); border-radius: 6px;
-      font-family: 'Cinzel', serif; font-size: 16px; background: var(--aged); color: var(--ink);
-    }
-    .conversion-info {
-      background: rgba(122,79,45,0.1); border: 1px solid rgba(122,79,45,0.3);
-      border-radius: 6px; padding: 8px 12px; margin-bottom: 16px;
-      font-size: 12px; color: #5a4020; text-align: center; line-height: 1.8;
-    }
-    .command-box {
-      background: #0d0d0d; border: 1px solid #333; border-radius: 6px;
-      padding: 10px 14px; font-family: monospace; font-size: 12px;
-      color: #00ff88; word-break: break-all; margin: 8px 0 16px;
-    }
-    .toast {
-      position: fixed; bottom: 30px; left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #1a2e1a; border: 1px solid #4caf50; color: #a5d6a7;
-      padding: 14px 24px; border-radius: 8px; font-family: 'Cinzel', serif;
-      font-size: 13px; letter-spacing: 1px; z-index: 300;
-      transition: transform 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    }
+    .btn-cancel { padding: 11px 18px; font-family: 'Cinzel', serif; font-size: 12px; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; opacity: 0.7; }
+    .btn-cancel:hover { opacity: 1; }
+    .command-box { background: #0d0d0d; border: 1px solid #333; border-radius: 5px; padding: 9px 12px; font-family: monospace; font-size: 11px; color: #00ff88; word-break: break-all; margin: 7px 0 14px; }
+    .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 8px; }
+    .wallet-field label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+    .wallet-field input { width: 100%; padding: 7px 10px; border: 2px solid var(--border); border-radius: 5px; font-family: 'Cinzel', serif; font-size: 15px; background: var(--card-hover); color: var(--text); }
+    .conversion-info { background: rgba(0,0,0,0.06); border: 1px solid var(--border); border-radius: 5px; padding: 7px 10px; margin-bottom: 14px; font-size: 11px; color: var(--text); text-align: center; line-height: 1.8; opacity: 0.8; }
+    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a2e1a; border: 1px solid #4caf50; color: #a5d6a7; padding: 12px 22px; border-radius: 8px; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px; z-index: 300; transition: transform 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast.error { background: #2e1a1a; border-color: #f44336; color: #ef9a9a; }
-    .history-section { margin-top: 32px; }
-    .history-title { font-family: 'Cinzel', serif; color: var(--gold-light); font-size: 16px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid rgba(201,150,12,0.3); }
-    .history-list { display: flex; flex-direction: column; gap: 8px; }
-    .history-item {
-      background: rgba(245,234,214,0.08); border: 1px solid rgba(201,150,12,0.2);
-      border-radius: 6px; padding: 10px 16px; display: flex;
-      justify-content: space-between; align-items: center; font-size: 13px; color: rgba(240,192,64,0.8);
-    }
-    .history-item .hi-name { font-family: 'Cinzel', serif; font-size: 13px; }
-    .history-item .hi-cost { color: var(--crimson); font-weight: 600; }
-    .clear-history {
-      background: transparent; border: 1px solid rgba(139,26,26,0.5); color: rgba(139,26,26,0.7);
-      padding: 6px 14px; border-radius: 4px; font-family: 'Cinzel', serif;
-      font-size: 11px; cursor: pointer; margin-top: 12px; transition: all 0.2s;
-    }
-    .clear-history:hover { background: rgba(139,26,26,0.1); color: var(--crimson); }
-    .empty-history { color: rgba(240,192,64,0.4); font-style: italic; font-size: 13px; text-align: center; padding: 20px; }
-    @media (max-width: 600px) {
-      header { flex-direction: column; gap: 16px; }
+    .history-section { margin-top: 24px; }
+    .history-title { font-family: 'Cinzel', serif; color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .history-list { display: flex; flex-direction: column; gap: 6px; }
+    .history-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.65); }
+    .hi-name { font-family: 'Cinzel', serif; font-size: 12px; }
+    .hi-cost { color: #ef9a9a; font-weight: 600; }
+    .clear-history { background: transparent; border: 1px solid rgba(200,50,50,0.4); color: rgba(200,50,50,0.6); padding: 5px 12px; border-radius: 4px; font-family: 'Cinzel', serif; font-size: 10px; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
+    .clear-history:hover { background: rgba(200,50,50,0.1); color: #ef5350; }
+    .empty-history { color: rgba(255,255,255,0.25); font-style: italic; font-size: 12px; text-align: center; padding: 16px; }
+
+    @media (max-width: 700px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; position: static; display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; }
+      .sidebar-title { display: none; }
+      .shop-tab { width: auto; flex: 1; min-width: 120px; font-size: 12px; padding: 6px 8px; }
+      header { flex-direction: column; gap: 12px; }
       .wallet-display { justify-content: center; }
-      .items-grid { grid-template-columns: 1fr; }
-      .header-title { text-align: center; }
     }
   </style>
 </head>
-<body>
+<body class="theme-weapons">
 
 <header>
   <div class="header-title">
@@ -235,21 +171,28 @@
 </header>
 
 <div class="container">
-  <div class="shop-tabs" id="shop-tabs"></div>
-  <div class="shop-panel" id="shop-panel">
-    <div class="shop-header">
-      <div>
-        <div class="shop-name" id="shop-name"></div>
-        <div class="shop-desc" id="shop-desc"></div>
-      </div>
-      <div class="shop-meta" id="shop-meta"></div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-title">Marchands</div>
+      <div id="shop-tabs"></div>
     </div>
-    <div class="items-grid" id="items-grid"></div>
-  </div>
-  <div class="history-section">
-    <div class="history-title">📜 Historique des achats</div>
-    <div class="history-list" id="history-list"></div>
-    <button class="clear-history" onclick="clearHistory()">Effacer l'historique</button>
+    <div class="main-content">
+      <div class="shop-panel" id="shop-panel">
+        <div class="shop-header">
+          <div>
+            <div class="shop-name" id="shop-name"></div>
+            <div class="shop-desc" id="shop-desc"></div>
+          </div>
+          <div class="shop-meta" id="shop-meta"></div>
+        </div>
+        <div class="items-grid" id="items-grid"></div>
+      </div>
+      <div class="history-section">
+        <div class="history-title">📜 Historique des achats</div>
+        <div class="history-list" id="history-list"></div>
+        <button class="clear-history" onclick="clearHistory()">Effacer l'historique</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -263,7 +206,7 @@
     <input type="number" id="modal-qty" min="1" value="1" oninput="updateModalTotal()">
     <div class="modal-total" id="modal-total"></div>
     <div class="modal-warning" id="modal-warning">⚠️ Pas assez d'argent!</div>
-    <p style="font-size:12px;color:#7a5530;margin-bottom:6px;">Commande Roll20 à coller dans le chat :</p>
+    <p style="font-size:11px;opacity:0.7;margin-bottom:5px;">Commande Roll20 à coller dans le chat :</p>
     <div class="command-box" id="modal-command"></div>
     <div class="modal-buttons">
       <button class="btn-confirm" id="btn-confirm" onclick="confirmPurchase()">Confirmer & Copier</button>
@@ -276,28 +219,13 @@
 <div class="modal-overlay" id="wallet-modal">
   <div class="modal">
     <h2>💰 Modifier le portefeuille</h2>
-    <p style="font-size:13px;color:#5a4020;margin-top:8px;margin-bottom:12px;">Entre les valeurs de ta fiche de personnage.</p>
-    <div class="conversion-info">
-      📐 Système monétaire base 20<br>
-      <strong>20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 10 GP = 1 PP</strong>
-    </div>
+    <p style="font-size:12px;opacity:0.7;margin-top:8px;margin-bottom:12px;">Entre les valeurs de ta fiche de personnage.</p>
+    <div class="conversion-info">📐 Base 20 &nbsp;|&nbsp; <strong>20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 10 GP = 1 PP</strong></div>
     <div class="wallet-grid">
-      <div class="wallet-field">
-        <label style="color:#e8e8ff;">Platinum (PP)</label>
-        <input type="number" id="edit-pp" min="0" value="0">
-      </div>
-      <div class="wallet-field">
-        <label style="color:var(--gold-light);">Gold (GP)</label>
-        <input type="number" id="edit-gp" min="0" value="0">
-      </div>
-      <div class="wallet-field">
-        <label style="color:#d0d0d0;">Silver (SP)</label>
-        <input type="number" id="edit-sp" min="0" value="0">
-      </div>
-      <div class="wallet-field">
-        <label style="color:var(--copper);">Copper (CP)</label>
-        <input type="number" id="edit-cp" min="0" value="0">
-      </div>
+      <div class="wallet-field"><label style="color:#e8e8ff;">Platinum (PP)</label><input type="number" id="edit-pp" min="0" value="0"></div>
+      <div class="wallet-field"><label style="color:#ffd700;">Gold (GP)</label><input type="number" id="edit-gp" min="0" value="0"></div>
+      <div class="wallet-field"><label style="color:#d0d0d0;">Silver (SP)</label><input type="number" id="edit-sp" min="0" value="0"></div>
+      <div class="wallet-field"><label style="color:#cd7f32;">Copper (CP)</label><input type="number" id="edit-cp" min="0" value="0"></div>
     </div>
     <div class="modal-buttons">
       <button class="btn-confirm" onclick="saveWallet()">Sauvegarder</button>
@@ -309,89 +237,379 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── SYSTÈME MONÉTAIRE BASE 20 ────────────────────────────────
-// 20 CP = 1 SP
-// 20 SP = 1 GP
-// 10 GP = 1 PP
+// ── BASE 20: 20CP=1SP, 20SP=1GP, 10GP=1PP ───────────────────
 
 const SHOPS = {
   "Sales | Martial Weapons": {
-    description: "Armes martiales forgées par des maîtres artisans.",
+    icon: "⚔️", theme: "theme-weapons",
+    description: "Lames et acier forgés pour les guerriers.",
     sellMultiplier: 0.5,
     items: [
-      { name: "Club",         price: { cp: 1,  sp: 0,  gp: 0 }, stock: 5,  desc: "1d4 contondant." },
-      { name: "Dagger",       price: { cp: 0,  sp: 8,  gp: 0 }, stock: 12, desc: "1d4 perforant. Léger, lancer." },
-      { name: "Handaxe",      price: { cp: 0,  sp: 0,  gp: 1 }, stock: 4,  desc: "1d6 tranchant. Léger, lancer." },
-      { name: "Mace",         price: { cp: 0,  sp: 0,  gp: 5 }, stock: 3,  desc: "1d6 contondant." },
-      { name: "Quarterstaff", price: { cp: 2,  sp: 0,  gp: 0 }, stock: 4,  desc: "1d6 contondant. Polyvalent." },
-      { name: "Spear",        price: { cp: 0,  sp: 16, gp: 0 }, stock: 4,  desc: "1d6 perforant. Lancer." },
-      { name: "Longsword",    price: { cp: 0,  sp: 0,  gp: 2 }, stock: 2,  desc: "1d8 tranchant. Polyvalent." },
-      { name: "Battleaxe",    price: { cp: 0,  sp: 0,  gp: 3 }, stock: 2,  desc: "1d8 tranchant. Polyvalent." },
+      { name: "Club",             price:{cp:1,sp:0,gp:0},   stock:5,  desc:"1d4 contondant." },
+      { name: "Dagger",           price:{cp:0,sp:8,gp:0},   stock:12, desc:"1d4 perforant. Léger, lancer." },
+      { name: "Handaxe",          price:{cp:0,sp:0,gp:1},   stock:4,  desc:"1d6 tranchant. Léger, lancer." },
+      { name: "Mace",             price:{cp:0,sp:0,gp:5},   stock:3,  desc:"1d6 contondant." },
+      { name: "Quarterstaff",     price:{cp:2,sp:0,gp:0},   stock:4,  desc:"1d6 contondant. Polyvalent." },
+      { name: "Spear",            price:{cp:0,sp:16,gp:0},  stock:4,  desc:"1d6 perforant. Lancer." },
+      { name: "Longsword",        price:{cp:0,sp:0,gp:2},   stock:2,  desc:"1d8 tranchant. Polyvalent." },
+      { name: "Battleaxe",        price:{cp:0,sp:0,gp:3},   stock:2,  desc:"1d8 tranchant. Polyvalent." },
+      { name: "Greatsword",       price:{cp:0,sp:0,gp:5},   stock:1,  desc:"2d6 tranchant. Lourde, deux mains." },
+      { name: "Shortsword",       price:{cp:0,sp:0,gp:1},   stock:3,  desc:"1d6 perforant. Léger, finesse." },
+      { name: "Warhammer",        price:{cp:0,sp:0,gp:3},   stock:2,  desc:"1d8 contondant. Polyvalent." },
+      { name: "Flail",            price:{cp:0,sp:0,gp:2},   stock:2,  desc:"1d8 contondant." },
     ]
   },
-  "Marchand du Village": {
-    description: "Provisions et équipement pour les aventuriers.",
+  "Sales | Archery & Traps": {
+    icon: "🏹", theme: "theme-archery",
+    description: "Arcs, arbalètes et pièges pour chasseurs.",
     sellMultiplier: 0.5,
     items: [
-      { name: "Torche",           price: { cp: 1,  sp: 0,  gp: 0 },  stock: 20, desc: "Éclaire 6m, dure 1 heure." },
-      { name: "Rations (1 jour)", price: { cp: 0,  sp: 10, gp: 0 },  stock: 30, desc: "Nourriture pour 1 jour." },
-      { name: "Corde (15m)",      price: { cp: 0,  sp: 0,  gp: 1 },  stock: 5,  desc: "Corde en chanvre." },
-      { name: "Sac à dos",        price: { cp: 0,  sp: 0,  gp: 2 },  stock: 3,  desc: "Capacité standard." },
-      { name: "Potion de soin",   price: { cp: 0,  sp: 0,  gp: 50 }, stock: 2,  desc: "Récupère 2d4+2 PV." },
-      { name: "Antitoxine",       price: { cp: 0,  sp: 0,  gp: 50 }, stock: 1,  desc: "Avantage contre le poison." },
+      { name: "Arc court",         price:{cp:0,sp:0,gp:1},   stock:3,  desc:"1d6 perforant. Portée 24/96m." },
+      { name: "Arc long",          price:{cp:0,sp:0,gp:5},   stock:2,  desc:"1d8 perforant. Portée 45/180m." },
+      { name: "Arbalète légère",   price:{cp:0,sp:0,gp:5},   stock:2,  desc:"1d8 perforant. Chargement." },
+      { name: "Arbalète lourde",   price:{cp:0,sp:0,gp:25},  stock:1,  desc:"1d10 perforant. Portée 30/120m." },
+      { name: "Flèches (20)",      price:{cp:0,sp:0,gp:1},   stock:10, desc:"Pour arcs." },
+      { name: "Carreaux (20)",     price:{cp:0,sp:0,gp:1},   stock:10, desc:"Pour arbalètes." },
+      { name: "Carquois",          price:{cp:0,sp:0,gp:1},   stock:5,  desc:"Capacité 20 munitions." },
+      { name: "Piège à ours",      price:{cp:0,sp:0,gp:2},   stock:3,  desc:"Immobilise, 1d4 dégâts." },
+      { name: "Filet de chasse",   price:{cp:0,sp:0,gp:1},   stock:4,  desc:"Entrave une créature." },
+      { name: "Javeline",          price:{cp:0,sp:10,gp:0},  stock:6,  desc:"1d6 perforant. Lancer 9/36m." },
     ]
-  }
+  },
+  "Sales | Potions & Ingredients": {
+    icon: "⚗️", theme: "theme-potions",
+    description: "Élixirs, potions et ingrédients alchimiques.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Potion de soin",       price:{cp:0,sp:0,gp:50},  stock:3,  desc:"Récupère 2d4+2 PV." },
+      { name: "Potion de soin sup.",  price:{cp:0,sp:0,gp:100}, stock:1,  desc:"Récupère 4d4+4 PV." },
+      { name: "Antitoxine",           price:{cp:0,sp:0,gp:50},  stock:2,  desc:"Avantage jets contre poison." },
+      { name: "Huile de feu grégeois",price:{cp:0,sp:0,gp:5},   stock:3,  desc:"Dégâts de feu. Difficile à éteindre." },
+      { name: "Acide (fiole)",        price:{cp:0,sp:0,gp:25},  stock:2,  desc:"2d6 dégâts acide." },
+      { name: "Poison de base",       price:{cp:0,sp:0,gp:100}, stock:1,  desc:"1d4 poison sur contact." },
+      { name: "Herbes médicinales",   price:{cp:0,sp:10,gp:0},  stock:10, desc:"Composant pour soins." },
+      { name: "Poudre de soufre",     price:{cp:0,sp:5,gp:0},   stock:8,  desc:"Composant alchimique." },
+      { name: "Fiole vide",           price:{cp:0,sp:1,gp:0},   stock:20, desc:"Contenant en verre." },
+      { name: "Kit d'alchimiste",     price:{cp:0,sp:0,gp:50},  stock:1,  desc:"Outils pour alchimie." },
+    ]
+  },
+  "Sales | Tomes & Scrolls": {
+    icon: "📚", theme: "theme-tomes",
+    description: "Grimoires, parchemins et savoirs arcanes.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Parchemin vierge",      price:{cp:0,sp:1,gp:0},  stock:20, desc:"Pour notes ou sorts." },
+      { name: "Livre vierge",          price:{cp:0,sp:0,gp:1},  stock:5,  desc:"100 pages, couverture cuir." },
+      { name: "Encre (bouteille)",     price:{cp:0,sp:0,gp:10}, stock:5,  desc:"Encre noire de qualité." },
+      { name: "Plume d'écriture",      price:{cp:2,sp:0,gp:0},  stock:10, desc:"Pour écrire et dessiner." },
+      { name: "Parchemin sort niv.1",  price:{cp:0,sp:0,gp:25}, stock:3,  desc:"Contient un sort de niveau 1." },
+      { name: "Parchemin sort niv.2",  price:{cp:0,sp:0,gp:75}, stock:2,  desc:"Contient un sort de niveau 2." },
+      { name: "Carte de région",       price:{cp:0,sp:0,gp:5},  stock:4,  desc:"Carte détaillée de la région." },
+      { name: "Grimoire vierge",       price:{cp:0,sp:0,gp:50}, stock:1,  desc:"100 pages, pour magicien." },
+      { name: "Composants sorts",      price:{cp:0,sp:0,gp:5},  stock:5,  desc:"Pochette composants variés." },
+    ]
+  },
+  "Sales | Wands & Staff": {
+    icon: "🪄", theme: "theme-wands",
+    description: "Baguettes, bâtons et focaliseurs magiques.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Bâton de marche",      price:{cp:0,sp:2,gp:0},  stock:5,  desc:"1d6 contondant. Polyvalent." },
+      { name: "Focaliseur arcanique", price:{cp:0,sp:0,gp:20}, stock:3,  desc:"Cristal, orbe ou baguette." },
+      { name: "Symbole sacré",        price:{cp:0,sp:0,gp:5},  stock:3,  desc:"Focaliseur divin." },
+      { name: "Bâton de combat",      price:{cp:0,sp:0,gp:10}, stock:2,  desc:"Renforcé en métal." },
+      { name: "Focaliseur druidique", price:{cp:0,sp:0,gp:5},  stock:2,  desc:"Branche de gui, totem." },
+      { name: "Composants rare",      price:{cp:0,sp:0,gp:50}, stock:2,  desc:"Matériaux pour sorts coûteux." },
+    ]
+  },
+  "Sales | Heavy Armors": {
+    icon: "🛡️", theme: "theme-heavy",
+    description: "Armures lourdes pour guerriers aguerris.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Cotte de mailles",   price:{cp:0,sp:0,gp:75},  stock:2,  desc:"CA 16. Désavantage Discrétion." },
+      { name: "Cuirasse",           price:{cp:0,sp:0,gp:400}, stock:1,  desc:"CA 17. Désavantage Discrétion." },
+      { name: "Armure à plaques",   price:{cp:0,sp:0,gp:1500},stock:1,  desc:"CA 18. Désavantage Discrétion." },
+      { name: "Armure en anneaux",  price:{cp:0,sp:0,gp:30},  stock:2,  desc:"CA 14. Désavantage Discrétion." },
+      { name: "Bouclier",           price:{cp:0,sp:0,gp:10},  stock:4,  desc:"+2 CA." },
+      { name: "Casque de plates",   price:{cp:0,sp:0,gp:15},  stock:3,  desc:"Protection tête." },
+      { name: "Gantelets de métal", price:{cp:0,sp:0,gp:10},  stock:3,  desc:"Protection mains." },
+      { name: "Jambières de métal", price:{cp:0,sp:0,gp:15},  stock:2,  desc:"Protection jambes." },
+    ]
+  },
+  "Sales | Medium Armors": {
+    icon: "🔰", theme: "theme-medium",
+    description: "Armures intermédiaires alliant protection et mobilité.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Armure de cuir clouté",price:{cp:0,sp:0,gp:45}, stock:3,  desc:"CA 13+Dex." },
+      { name: "Armure d'écailles",    price:{cp:0,sp:0,gp:50}, stock:2,  desc:"CA 14+Dex(max2). Désavantage Discrétion." },
+      { name: "Demi-plaque",          price:{cp:0,sp:0,gp:750},stock:1,  desc:"CA 15+Dex(max2). Désavantage Discrétion." },
+      { name: "Cuirasse en bronze",   price:{cp:0,sp:0,gp:200},stock:1,  desc:"CA 15+Dex(max2)." },
+      { name: "Bouclier de bois",     price:{cp:0,sp:0,gp:5},  stock:5,  desc:"+2 CA. Plus léger." },
+      { name: "Plastron de cuir",     price:{cp:0,sp:0,gp:25}, stock:3,  desc:"CA 13+Dex. Léger." },
+    ]
+  },
+  "Sales | Light Armors": {
+    icon: "🥋", theme: "theme-light",
+    description: "Protections légères pour roublards et rôdeurs.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Armure matelassée",  price:{cp:0,sp:0,gp:5},  stock:4,  desc:"CA 11+Dex. Désavantage Discrétion." },
+      { name: "Armure de cuir",     price:{cp:0,sp:0,gp:10}, stock:5,  desc:"CA 11+Dex." },
+      { name: "Chemise de mailles", price:{cp:0,sp:0,gp:50}, stock:2,  desc:"CA 13+Dex(max2). Discrète." },
+      { name: "Vêtements communs",  price:{cp:0,sp:10,gp:0}, stock:10, desc:"Tenue ordinaire." },
+      { name: "Tenue de voyage",    price:{cp:0,sp:0,gp:2},  stock:5,  desc:"Pratique pour l'aventure." },
+      { name: "Manteau à capuche",  price:{cp:0,sp:0,gp:1},  stock:6,  desc:"Discrétion facilitée." },
+    ]
+  },
+  "Sales | Tailor": {
+    icon: "🧵", theme: "theme-tailor",
+    description: "Vêtements et tenues sur mesure pour toutes occasions.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Vêtements fins",     price:{cp:0,sp:0,gp:15}, stock:5,  desc:"Tenue élégante pour nobles." },
+      { name: "Costume de cour",    price:{cp:0,sp:0,gp:30}, stock:2,  desc:"Tenue pour événements." },
+      { name: "Robe de mage",       price:{cp:0,sp:0,gp:10}, stock:3,  desc:"Longue robe à capuche." },
+      { name: "Tenue de roublard",  price:{cp:0,sp:0,gp:8},  stock:3,  desc:"Sombre, discrète." },
+      { name: "Habits religieux",   price:{cp:0,sp:0,gp:5},  stock:3,  desc:"Tenue de clerc ou moine." },
+      { name: "Capes et manteaux",  price:{cp:0,sp:0,gp:5},  stock:6,  desc:"Protection contre le froid." },
+      { name: "Bottes de qualité",  price:{cp:0,sp:0,gp:4},  stock:4,  desc:"Solides et confortables." },
+      { name: "Sac de voyage",      price:{cp:0,sp:0,gp:3},  stock:5,  desc:"Sac en cuir robuste." },
+    ]
+  },
+  "Sales | Musical Instruments": {
+    icon: "🎵", theme: "theme-music",
+    description: "Instruments pour bardes et musiciens itinérants.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Luth",               price:{cp:0,sp:0,gp:35}, stock:2,  desc:"Instrument à cordes classique." },
+      { name: "Flûte",              price:{cp:0,sp:0,gp:2},  stock:4,  desc:"Flûte traversière en bois." },
+      { name: "Tambour",            price:{cp:0,sp:0,gp:6},  stock:3,  desc:"Tambour de voyage." },
+      { name: "Cor",                price:{cp:0,sp:0,gp:3},  stock:2,  desc:"Corne pour signaler." },
+      { name: "Viole",              price:{cp:0,sp:0,gp:30}, stock:1,  desc:"Instrument à cordes frottées." },
+      { name: "Cornemuse",          price:{cp:0,sp:0,gp:30}, stock:1,  desc:"Instrument à vent à soufflet." },
+      { name: "Cithare",            price:{cp:0,sp:0,gp:25}, stock:1,  desc:"Instrument à cordes pincées." },
+      { name: "Partitions",         price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Recueil de mélodies." },
+    ]
+  },
+  "Sales | Perfumes & Jewels": {
+    icon: "💎", theme: "theme-jewels",
+    description: "Bijoux précieux et parfums exotiques.",
+    sellMultiplier: 0.6,
+    items: [
+      { name: "Bague en argent",    price:{cp:0,sp:0,gp:5},  stock:5,  desc:"Anneau d'argent simple." },
+      { name: "Collier en or",      price:{cp:0,sp:0,gp:25}, stock:3,  desc:"Chaîne en or pur." },
+      { name: "Bracelet de jade",   price:{cp:0,sp:0,gp:15}, stock:3,  desc:"Pierre verte polie." },
+      { name: "Broche décorative",  price:{cp:0,sp:0,gp:8},  stock:5,  desc:"Métal et pierre fine." },
+      { name: "Parfum rare",        price:{cp:0,sp:0,gp:10}, stock:4,  desc:"Fiole de 30ml, odeur exotique." },
+      { name: "Eau de rose",        price:{cp:0,sp:10,gp:0}, stock:6,  desc:"Parfum léger floral." },
+      { name: "Gemme semi-précieuse",price:{cp:0,sp:0,gp:10},stock:6,  desc:"Améthyste, citrine ou topaze." },
+      { name: "Pendentif en or",    price:{cp:0,sp:0,gp:20}, stock:2,  desc:"Pendentif décoratif." },
+    ]
+  },
+  "Sales | Rations and Outdoors": {
+    icon: "🎒", theme: "theme-rations",
+    description: "Équipement d'aventure et provisions de voyage.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Rations (1 jour)",   price:{cp:0,sp:10,gp:0}, stock:30, desc:"Nourriture sèche pour 1 jour." },
+      { name: "Sac à dos",          price:{cp:0,sp:0,gp:2},  stock:5,  desc:"Capacité standard." },
+      { name: "Corde (15m)",        price:{cp:0,sp:0,gp:1},  stock:8,  desc:"Corde en chanvre." },
+      { name: "Torche",             price:{cp:1,sp:0,gp:0},  stock:30, desc:"Éclaire 6m, 1 heure." },
+      { name: "Lanterne sourde",    price:{cp:0,sp:0,gp:5},  stock:3,  desc:"Éclaire 9m, oriente." },
+      { name: "Huile (flasque)",    price:{cp:0,sp:1,gp:0},  stock:15, desc:"Pour lanterne, 6 heures." },
+      { name: "Silex et amadou",    price:{cp:5,sp:0,gp:0},  stock:10, desc:"Pour allumer un feu." },
+      { name: "Couverture de laine",price:{cp:0,sp:10,gp:0}, stock:8,  desc:"Contre le froid nocturne." },
+      { name: "Grappin",            price:{cp:0,sp:0,gp:2},  stock:3,  desc:"Pour escalader." },
+      { name: "Kit de survie",      price:{cp:0,sp:0,gp:5},  stock:4,  desc:"Outils essentiels d'aventurier." },
+    ]
+  },
+  "Sales | Herbs & Spices": {
+    icon: "🌿", theme: "theme-herbs",
+    description: "Herbes aromatiques, épices et plantes médicinales.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Herbes médicinales", price:{cp:0,sp:5,gp:0},  stock:15, desc:"Pour soigner blessures légères." },
+      { name: "Racine de valériane",price:{cp:0,sp:8,gp:0},  stock:8,  desc:"Aide au sommeil, calme." },
+      { name: "Poivre noir",        price:{cp:0,sp:2,gp:0},  stock:20, desc:"Épice commune." },
+      { name: "Safran",             price:{cp:0,sp:0,gp:3},  stock:5,  desc:"Épice rare, dorée." },
+      { name: "Herbes aromatiques", price:{cp:5,sp:0,gp:0},  stock:20, desc:"Mélange pour cuisine." },
+      { name: "Racine antidote",    price:{cp:0,sp:0,gp:2},  stock:6,  desc:"Composant anti-poison." },
+      { name: "Champignons séchés", price:{cp:0,sp:3,gp:0},  stock:12, desc:"Comestibles ou médicinaux." },
+      { name: "Huile essentielle",  price:{cp:0,sp:0,gp:1},  stock:8,  desc:"Petite fiole concentrée." },
+    ]
+  },
+  "Sales | Bakery": {
+    icon: "🥖", theme: "theme-bakery",
+    description: "Pains frais, pâtisseries et douceurs du four.",
+    sellMultiplier: 0.3,
+    items: [
+      { name: "Miche de pain",      price:{cp:2,sp:0,gp:0},  stock:20, desc:"Pain frais du jour." },
+      { name: "Biscuits (douzaine)",price:{cp:5,sp:0,gp:0},  stock:10, desc:"Biscuits secs de voyage." },
+      { name: "Tarte aux fruits",   price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Garnie de fruits de saison." },
+      { name: "Gâteau de fête",     price:{cp:0,sp:0,gp:1},  stock:3,  desc:"Pour célébrations." },
+      { name: "Pain de seigle",     price:{cp:3,sp:0,gp:0},  stock:15, desc:"Dense et nourrissant." },
+      { name: "Brioches (x4)",      price:{cp:0,sp:3,gp:0},  stock:10, desc:"Moelleuses et beurrées." },
+      { name: "Galettes de voyage", price:{cp:4,sp:0,gp:0},  stock:20, desc:"Se conservent longtemps." },
+    ]
+  },
+  "Sales | Butcher": {
+    icon: "🥩", theme: "theme-butcher",
+    description: "Viandes fraîches, charcuteries et gibiers.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Poulet entier",      price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Volaille fraîche." },
+      { name: "Jambon fumé",        price:{cp:0,sp:0,gp:1},  stock:5,  desc:"Bien conservé, voyage." },
+      { name: "Côtelettes (x4)",    price:{cp:0,sp:8,gp:0},  stock:10, desc:"Viande de porc fraîche." },
+      { name: "Saucisses (x6)",     price:{cp:0,sp:6,gp:0},  stock:12, desc:"Épicées ou nature." },
+      { name: "Viande séchée",      price:{cp:0,sp:0,gp:1},  stock:10, desc:"Se conserve 1 semaine." },
+      { name: "Gibier du jour",     price:{cp:0,sp:10,gp:0}, stock:4,  desc:"Sanglier, cerf ou lièvre." },
+      { name: "Os à moelle",        price:{cp:3,sp:0,gp:0},  stock:8,  desc:"Pour bouillon ou chien." },
+    ]
+  },
+  "Sales | Poissonnerie": {
+    icon: "🐟", theme: "theme-poisson",
+    description: "Poissons frais, fruits de mer et produits aquatiques.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Truite fraîche",     price:{cp:0,sp:4,gp:0},  stock:10, desc:"Poisson d'eau douce." },
+      { name: "Hareng fumé (x3)",   price:{cp:0,sp:6,gp:0},  stock:8,  desc:"Bien conservé." },
+      { name: "Crabe royal",        price:{cp:0,sp:0,gp:1},  stock:4,  desc:"Gros crabe des côtes." },
+      { name: "Huîtres (douzaine)", price:{cp:0,sp:0,gp:1},  stock:5,  desc:"Fraîches de la mer." },
+      { name: "Saumon entier",      price:{cp:0,sp:0,gp:1},  stock:5,  desc:"Poisson de grande taille." },
+      { name: "Poisson séché",      price:{cp:0,sp:5,gp:0},  stock:12, desc:"Se conserve plusieurs semaines." },
+      { name: "Anguille fumée",     price:{cp:0,sp:8,gp:0},  stock:6,  desc:"Délicatesse régionale." },
+    ]
+  },
+  "Sales | Fruits & Veggies": {
+    icon: "🍎", theme: "theme-fruits",
+    description: "Fruits frais et légumes de saison du marché.",
+    sellMultiplier: 0.3,
+    items: [
+      { name: "Pommes (x6)",        price:{cp:3,sp:0,gp:0},  stock:20, desc:"Fruits croquants de saison." },
+      { name: "Carottes (botte)",   price:{cp:2,sp:0,gp:0},  stock:15, desc:"Légumes frais." },
+      { name: "Raisins (grappe)",   price:{cp:5,sp:0,gp:0},  stock:10, desc:"Raisins sucrés." },
+      { name: "Légumes variés",     price:{cp:4,sp:0,gp:0},  stock:20, desc:"Assortiment de saison." },
+      { name: "Baies sauvages",     price:{cp:3,sp:0,gp:0},  stock:12, desc:"Cueillis en forêt." },
+      { name: "Fruits exotiques",   price:{cp:0,sp:5,gp:0},  stock:5,  desc:"Importés de contrées lointaines." },
+      { name: "Herbes fraîches",    price:{cp:2,sp:0,gp:0},  stock:15, desc:"Persil, thym, romarin." },
+    ]
+  },
+  "Sales | Cheese, Eggs & Dairy": {
+    icon: "🧀", theme: "theme-dairy",
+    description: "Fromages affinés, œufs frais et produits laitiers.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Fromage affiné",     price:{cp:0,sp:5,gp:0},  stock:10, desc:"Fromage à pâte dure." },
+      { name: "Fromage frais",      price:{cp:0,sp:3,gp:0},  stock:8,  desc:"Doux et crémeux." },
+      { name: "Œufs (douzaine)",    price:{cp:0,sp:3,gp:0},  stock:15, desc:"Œufs de poule frais." },
+      { name: "Beurre (bloc)",      price:{cp:0,sp:4,gp:0},  stock:8,  desc:"Beurre de ferme salé." },
+      { name: "Lait (cruche)",      price:{cp:2,sp:0,gp:0},  stock:10, desc:"Lait frais de la matinée." },
+      { name: "Crème épaisse",      price:{cp:0,sp:3,gp:0},  stock:6,  desc:"Pour sauces et desserts." },
+      { name: "Fromage de voyage",  price:{cp:0,sp:8,gp:0},  stock:8,  desc:"Enrobé de cire, se conserve." },
+    ]
+  },
+  "Sales | Grains & Flours": {
+    icon: "🌾", theme: "theme-grains",
+    description: "Grains, farines et céréales pour la cuisine.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Farine (sac 5kg)",   price:{cp:0,sp:5,gp:0},  stock:10, desc:"Farine de blé standard." },
+      { name: "Avoine (sac)",       price:{cp:0,sp:3,gp:0},  stock:12, desc:"Pour porridge ou chevaux." },
+      { name: "Riz (sac 5kg)",      price:{cp:0,sp:8,gp:0},  stock:8,  desc:"Riz importé du sud." },
+      { name: "Orge (sac)",         price:{cp:0,sp:4,gp:0},  stock:10, desc:"Pour bière ou soupe." },
+      { name: "Sel (paquet)",       price:{cp:5,sp:0,gp:0},  stock:20, desc:"Sel de mer ou de mine." },
+      { name: "Sucre (sachet)",     price:{cp:0,sp:5,gp:0},  stock:10, desc:"Sucre raffiné rare." },
+      { name: "Levure",             price:{cp:3,sp:0,gp:0},  stock:8,  desc:"Pour pain et bière." },
+    ]
+  },
+  "Sales | Honey & Sweets": {
+    icon: "🍯", theme: "theme-honey",
+    description: "Miels artisanaux, confitures et confiseries.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Miel sauvage (pot)", price:{cp:0,sp:0,gp:1},  stock:8,  desc:"Miel de fleurs sauvages." },
+      { name: "Miel de trèfle",     price:{cp:0,sp:8,gp:0},  stock:6,  desc:"Doux et clair." },
+      { name: "Confiture de baies", price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Baies sauvages sucrées." },
+      { name: "Bonbons au miel",    price:{cp:3,sp:0,gp:0},  stock:20, desc:"Friandises pour enfants." },
+      { name: "Nougat",             price:{cp:0,sp:4,gp:0},  stock:8,  desc:"Miel, sucre et noix." },
+      { name: "Sirop d'érable",     price:{cp:0,sp:0,gp:2},  stock:4,  desc:"Importé du nord." },
+      { name: "Cire d'abeille",     price:{cp:0,sp:3,gp:0},  stock:6,  desc:"Pour bougies ou cire à cacheter." },
+    ]
+  },
+  "Sales | Pottery": {
+    icon: "🏺", theme: "theme-pottery",
+    description: "Céramiques, poteries et ustensiles en argile.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Pot en argile",      price:{cp:0,sp:3,gp:0},  stock:10, desc:"Pour conserver aliments." },
+      { name: "Pichet en céramique",price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Pour eau ou vin." },
+      { name: "Bol en terre cuite", price:{cp:2,sp:0,gp:0},  stock:15, desc:"Vaisselle courante." },
+      { name: "Amphore",            price:{cp:0,sp:0,gp:1},  stock:5,  desc:"Grande jarre de stockage." },
+      { name: "Flacon en terre",    price:{cp:5,sp:0,gp:0},  stock:12, desc:"Petit contenant étanche." },
+      { name: "Carreaux de faïence",price:{cp:0,sp:8,gp:0},  stock:6,  desc:"Décoration murale." },
+      { name: "Vase décoratif",     price:{cp:0,sp:0,gp:2},  stock:4,  desc:"Peint à la main." },
+    ]
+  },
+  "Sales | Candles, Oils & Lanterns": {
+    icon: "🕯️", theme: "theme-candles",
+    description: "Lumières, huiles et équipement pour l'éclairage.",
+    sellMultiplier: 0.4,
+    items: [
+      { name: "Bougie",             price:{cp:1,sp:0,gp:0},  stock:30, desc:"Éclaire 1.5m, 1 heure." },
+      { name: "Bougies (x10)",      price:{cp:8,sp:0,gp:0},  stock:15, desc:"Pack économique." },
+      { name: "Lanterne commune",   price:{cp:0,sp:0,gp:5},  stock:4,  desc:"Éclaire 9m, 6h par huile." },
+      { name: "Lanterne sourde",    price:{cp:0,sp:0,gp:5},  stock:3,  desc:"Dirige la lumière." },
+      { name: "Huile (flasque)",    price:{cp:0,sp:1,gp:0},  stock:20, desc:"Pour lanterne, 6 heures." },
+      { name: "Torche",             price:{cp:1,sp:0,gp:0},  stock:25, desc:"Éclaire 6m, 1 heure." },
+      { name: "Bougie parfumée",    price:{cp:0,sp:5,gp:0},  stock:6,  desc:"Odeur agréable, 4 heures." },
+      { name: "Mèche et cire",      price:{cp:3,sp:0,gp:0},  stock:10, desc:"Pour fabriquer bougies." },
+    ]
+  },
+  "Sales | Livestock": {
+    icon: "🐄", theme: "theme-livestock",
+    description: "Animaux de ferme, montures et bêtes de somme.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Poulet",             price:{cp:0,sp:2,gp:0},  stock:10, desc:"Volaille de ferme." },
+      { name: "Cochon",             price:{cp:0,sp:0,gp:3},  stock:4,  desc:"Bon pour la charcuterie." },
+      { name: "Chèvre",             price:{cp:0,sp:0,gp:1},  stock:3,  desc:"Lait et viande." },
+      { name: "Mouton",             price:{cp:0,sp:0,gp:2},  stock:3,  desc:"Laine et viande." },
+      { name: "Vache laitière",     price:{cp:0,sp:0,gp:10}, stock:2,  desc:"Produit 4L de lait/jour." },
+      { name: "Cheval de trait",    price:{cp:0,sp:0,gp:50}, stock:2,  desc:"Pour chariot et labour." },
+      { name: "Cheval de selle",    price:{cp:0,sp:0,gp:75}, stock:2,  desc:"Monture standard." },
+      { name: "Mule",               price:{cp:0,sp:0,gp:8},  stock:3,  desc:"Bête de somme résistante." },
+      { name: "Nourriture animale", price:{cp:0,sp:5,gp:0},  stock:15, desc:"Sac de foin ou grain." },
+    ]
+  },
 };
 
 // ── CONVERSION BASE 20 ───────────────────────────────────────
-// Tout en CP pour les calculs internes
-// 1 SP = 20 CP
-// 1 GP = 20 SP = 400 CP
-// 1 PP = 10 GP = 4000 CP
-
-function walletInCp() {
-  return wallet.pp * 4000 + wallet.gp * 400 + wallet.sp * 20 + wallet.cp;
+function walletInCp() { return wallet.pp*4000 + wallet.gp*400 + wallet.sp*20 + wallet.cp; }
+function priceInCp(p) { return p.gp*400 + p.sp*20 + p.cp; }
+function cpToCoins(total) {
+  let r = Math.round(total);
+  const pp = Math.floor(r/4000); r%=4000;
+  const gp = Math.floor(r/400);  r%=400;
+  const sp = Math.floor(r/20);   r%=20;
+  return { pp, gp, sp, cp:r };
 }
-
-function priceInCp(price) {
-  return price.gp * 400 + price.sp * 20 + price.cp;
-}
-
-function cpToCoins(totalCp) {
-  let rem = Math.round(totalCp);
-  const pp = Math.floor(rem / 4000); rem %= 4000;
-  const gp = Math.floor(rem / 400);  rem %= 400;
-  const sp = Math.floor(rem / 20);   rem %= 20;
-  const cp = rem;
-  return { pp, gp, sp, cp };
-}
-
-function fmtPrice(price) {
-  const cp = priceInCp(price);
+function fmtPrice(p) {
+  const cp = priceInCp(p);
   if (cp === 0) return "0 CP";
-  const coins = cpToCoins(cp);
-  const parts = [];
-  if (coins.pp > 0) parts.push(coins.pp + " PP");
-  if (coins.gp > 0) parts.push(coins.gp + " GP");
-  if (coins.sp > 0) parts.push(coins.sp + " SP");
-  if (coins.cp > 0) parts.push(coins.cp + " CP");
-  return parts.join(" + ");
+  const c = cpToCoins(cp);
+  return [c.pp?c.pp+" PP":"", c.gp?c.gp+" GP":"", c.sp?c.sp+" SP":"", c.cp?c.cp+" CP":""].filter(Boolean).join(" + ");
 }
-
 function fmtCp(cp) {
   if (cp <= 0) return "0 CP";
-  const coins = cpToCoins(cp);
-  const parts = [];
-  if (coins.pp > 0) parts.push(coins.pp + " PP");
-  if (coins.gp > 0) parts.push(coins.gp + " GP");
-  if (coins.sp > 0) parts.push(coins.sp + " SP");
-  if (coins.cp > 0) parts.push(coins.cp + " CP");
-  return parts.join(" + ");
+  const c = cpToCoins(cp);
+  return [c.pp?c.pp+" PP":"", c.gp?c.gp+" GP":"", c.sp?c.sp+" SP":"", c.cp?c.cp+" CP":""].filter(Boolean).join(" + ");
 }
 
 // ── ÉTAT ────────────────────────────────────────────────────
-let wallet     = { pp: 0, gp: 7, sp: 0, cp: 0 };
-let history    = JSON.parse(localStorage.getItem("shopHistory2") || "[]");
+let wallet     = { pp:0, gp:7, sp:0, cp:0 };
+let history    = JSON.parse(localStorage.getItem("shopHistory3") || "[]");
 let activeShop = Object.keys(SHOPS)[0];
 let pendingItem = null;
 
@@ -400,7 +618,12 @@ function updateWalletDisplay() {
   document.getElementById("wallet-gp").textContent = wallet.gp;
   document.getElementById("wallet-sp").textContent = wallet.sp;
   document.getElementById("wallet-cp").textContent = wallet.cp;
-  localStorage.setItem("shopWallet2", JSON.stringify(wallet));
+  localStorage.setItem("shopWallet3", JSON.stringify(wallet));
+}
+
+function setTheme(shopName) {
+  const t = SHOPS[shopName].theme;
+  document.body.className = t;
 }
 
 // ── TABS ────────────────────────────────────────────────────
@@ -408,10 +631,11 @@ function renderTabs() {
   const c = document.getElementById("shop-tabs");
   c.innerHTML = "";
   Object.keys(SHOPS).forEach(name => {
+    const shop = SHOPS[name];
     const btn = document.createElement("button");
     btn.className = "shop-tab" + (name === activeShop ? " active" : "");
-    btn.textContent = "🏪 " + name;
-    btn.onclick = () => { activeShop = name; renderTabs(); renderShop(); };
+    btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + name.replace("Sales | ", "");
+    btn.onclick = () => { activeShop = name; setTheme(name); renderTabs(); renderShop(); };
     c.appendChild(btn);
   });
 }
@@ -419,48 +643,29 @@ function renderTabs() {
 // ── SHOP ────────────────────────────────────────────────────
 function renderShop() {
   const shop = SHOPS[activeShop];
-  document.getElementById("shop-name").textContent = activeShop;
+  document.getElementById("shop-name").textContent = shop.icon + " " + activeShop;
   document.getElementById("shop-desc").textContent = shop.description;
-  document.getElementById("shop-meta").innerHTML =
-    "Rachat : " + Math.round(shop.sellMultiplier * 100) + "% du prix<br>" +
-    shop.items.length + " articles";
-
+  document.getElementById("shop-meta").innerHTML = "Rachat : " + Math.round(shop.sellMultiplier*100) + "% du prix<br>" + shop.items.length + " articles";
   const grid = document.getElementById("items-grid");
   grid.innerHTML = "";
-  const myWalletCp = walletInCp();
-
+  const myCp = walletInCp();
   shop.items.forEach((item, idx) => {
-    const itemCp   = priceInCp(item.price);
-    const canAfford = myWalletCp >= itemCp;
-    const inStock   = item.stock > 0;
+    const itemCp = priceInCp(item.price);
+    const canAfford = myCp >= itemCp;
+    const inStock = item.stock > 0;
     const card = document.createElement("div");
     card.className = "item-card" + (!inStock ? " out-of-stock" : "");
-
-    let stockClass = "item-stock";
-    let stockTxt   = "En stock : " + item.stock;
-    if (!inStock)            { stockClass += " out"; stockTxt = "Épuisé"; }
-    else if (item.stock <= 2)  stockClass += " low";
-
-    card.innerHTML = `
-      <div class="item-top">
-        <div class="item-name">${item.name}</div>
-        <div class="item-price">${fmtPrice(item.price)}</div>
-      </div>
-      <div class="item-desc">${item.desc}</div>
-      <div class="item-bottom">
-        <span class="${stockClass}">${stockTxt}</span>
-        <button class="buy-btn" ${(!inStock || !canAfford) ? "disabled" : ""} onclick="openBuyModal(${idx})">
-          ${!inStock ? "Épuisé" : !canAfford ? "Insuffisant" : "Acheter"}
-        </button>
-      </div>`;
+    let sc = "item-stock", st = "En stock : " + item.stock;
+    if (!inStock) { sc += " out"; st = "Épuisé"; } else if (item.stock <= 2) sc += " low";
+    card.innerHTML = `<div class="item-top"><div class="item-name">${item.name}</div><div class="item-price">${fmtPrice(item.price)}</div></div><div class="item-desc">${item.desc}</div><div class="item-bottom"><span class="${sc}">${st}</span><button class="buy-btn" ${(!inStock||!canAfford)?"disabled":""} onclick="openBuyModal(${idx})">${!inStock?"Épuisé":!canAfford?"Insuffisant":"Acheter"}</button></div>`;
     grid.appendChild(card);
   });
 }
 
 // ── BUY MODAL ───────────────────────────────────────────────
-function openBuyModal(itemIdx) {
-  const item = SHOPS[activeShop].items[itemIdx];
-  pendingItem = { item, itemIdx };
+function openBuyModal(idx) {
+  const item = SHOPS[activeShop].items[idx];
+  pendingItem = { item, idx };
   document.getElementById("modal-item-name").textContent = item.name;
   document.getElementById("modal-item-price").textContent = fmtPrice(item.price) + " / unité";
   document.getElementById("modal-qty").value = 1;
@@ -471,128 +676,72 @@ function openBuyModal(itemIdx) {
 
 function updateModalTotal() {
   if (!pendingItem) return;
-  const qty      = parseInt(document.getElementById("modal-qty").value) || 1;
-  const itemCp   = priceInCp(pendingItem.item.price);
-  const totalCp  = itemCp * qty;
-  const myWallet = walletInCp();
-  const enough   = myWallet >= totalCp;
-  const remaining = myWallet - totalCp;
-
+  const qty = parseInt(document.getElementById("modal-qty").value) || 1;
+  const totalCp = priceInCp(pendingItem.item.price) * qty;
+  const myCp = walletInCp();
+  const enough = myCp >= totalCp;
   document.getElementById("modal-total").innerHTML =
     "Total : <strong>" + fmtCp(totalCp) + "</strong><br>" +
-    "Solde actuel : " + fmtCp(myWallet) + "<br>" +
-    (enough ? "Solde restant : <strong>" + fmtCp(remaining) + "</strong>" : "<span style='color:var(--crimson)'>Manque : " + fmtCp(totalCp - myWallet) + "</span>");
-
+    "Solde actuel : " + fmtCp(myCp) + "<br>" +
+    (enough ? "Solde restant : <strong>" + fmtCp(myCp-totalCp) + "</strong>" : "<span style='color:#c62828'>Manque : " + fmtCp(totalCp-myCp) + "</span>");
   document.getElementById("modal-warning").style.display = enough ? "none" : "block";
   document.getElementById("btn-confirm").disabled = !enough;
-
-  const cmd = "!shop-buy " + activeShop + "|" + pendingItem.item.name + "|" + qty;
-  document.getElementById("modal-command").textContent = cmd;
+  document.getElementById("modal-command").textContent = "!shop-buy " + activeShop + "|" + pendingItem.item.name + "|" + qty;
 }
 
 function confirmPurchase() {
   if (!pendingItem) return;
-  const qty    = parseInt(document.getElementById("modal-qty").value) || 1;
-  const item   = pendingItem.item;
-  const itemCp = priceInCp(item.price);
-  const totalCp = itemCp * qty;
-
-  const newCoins = cpToCoins(walletInCp() - totalCp);
-  wallet = newCoins;
+  const qty = parseInt(document.getElementById("modal-qty").value) || 1;
+  const item = pendingItem.item;
+  const totalCp = priceInCp(item.price) * qty;
+  wallet = cpToCoins(walletInCp() - totalCp);
   updateWalletDisplay();
   item.stock -= qty;
-
-  const cmd = "!shop-buy " + activeShop + "|" + item.name + "|" + qty;
-  navigator.clipboard.writeText(cmd).catch(() => {});
-
-  history.unshift({
-    name: item.name, qty, totalCp, shop: activeShop,
-    time: new Date().toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit" })
-  });
-  if (history.length > 20) history.pop();
-  localStorage.setItem("shopHistory2", JSON.stringify(history));
-
-  closeModal();
-  renderShop();
-  renderHistory();
-  showToast("✓ " + qty + "× " + item.name + " acheté — commande copiée!");
+  navigator.clipboard.writeText("!shop-buy " + activeShop + "|" + item.name + "|" + qty).catch(()=>{});
+  history.unshift({ name:item.name, qty, totalCp, shop:activeShop, time:new Date().toLocaleTimeString("fr-CA",{hour:"2-digit",minute:"2-digit"}) });
+  if (history.length > 30) history.pop();
+  localStorage.setItem("shopHistory3", JSON.stringify(history));
+  closeModal(); renderShop(); renderHistory();
+  showToast("✓ " + qty + "× " + item.name + " acheté!");
 }
 
-function closeModal() {
-  document.getElementById("buy-modal").classList.remove("open");
-  pendingItem = null;
-}
+function closeModal() { document.getElementById("buy-modal").classList.remove("open"); pendingItem = null; }
 
-// ── WALLET MODAL ────────────────────────────────────────────
+// ── WALLET ──────────────────────────────────────────────────
 function openWalletModal() {
-  document.getElementById("edit-pp").value = wallet.pp;
-  document.getElementById("edit-gp").value = wallet.gp;
-  document.getElementById("edit-sp").value = wallet.sp;
-  document.getElementById("edit-cp").value = wallet.cp;
+  ["pp","gp","sp","cp"].forEach(k => document.getElementById("edit-"+k).value = wallet[k]);
   document.getElementById("wallet-modal").classList.add("open");
 }
-
 function saveWallet() {
-  wallet = {
-    pp: parseInt(document.getElementById("edit-pp").value) || 0,
-    gp: parseInt(document.getElementById("edit-gp").value) || 0,
-    sp: parseInt(document.getElementById("edit-sp").value) || 0,
-    cp: parseInt(document.getElementById("edit-cp").value) || 0,
-  };
-  updateWalletDisplay();
-  closeWalletModal();
-  renderShop();
-  showToast("💰 Portefeuille mis à jour!");
+  wallet = { pp:parseInt(document.getElementById("edit-pp").value)||0, gp:parseInt(document.getElementById("edit-gp").value)||0, sp:parseInt(document.getElementById("edit-sp").value)||0, cp:parseInt(document.getElementById("edit-cp").value)||0 };
+  updateWalletDisplay(); closeWalletModal(); renderShop(); showToast("💰 Portefeuille mis à jour!");
 }
-
-function closeWalletModal() {
-  document.getElementById("wallet-modal").classList.remove("open");
-}
+function closeWalletModal() { document.getElementById("wallet-modal").classList.remove("open"); }
 
 // ── HISTORY ─────────────────────────────────────────────────
 function renderHistory() {
   const list = document.getElementById("history-list");
-  if (history.length === 0) {
-    list.innerHTML = '<div class="empty-history">Aucun achat pour le moment...</div>';
-    return;
-  }
-  list.innerHTML = history.map(h => `
-    <div class="history-item">
-      <span class="hi-name">${h.time} — ${h.qty}× ${h.name} <span style="opacity:0.5;font-size:11px;">(${h.shop})</span></span>
-      <span class="hi-cost">−${fmtCp(h.totalCp)}</span>
-    </div>`).join("");
+  if (!history.length) { list.innerHTML = '<div class="empty-history">Aucun achat pour le moment...</div>'; return; }
+  list.innerHTML = history.map(h => `<div class="history-item"><span class="hi-name">${h.time} — ${h.qty}× ${h.name} <span style="opacity:0.4;font-size:10px;">(${h.shop.replace("Sales | ","")})</span></span><span class="hi-cost">−${fmtCp(h.totalCp)}</span></div>`).join("");
 }
-
-function clearHistory() {
-  history = [];
-  localStorage.removeItem("shopHistory2");
-  renderHistory();
-}
+function clearHistory() { history = []; localStorage.removeItem("shopHistory3"); renderHistory(); }
 
 // ── TOAST ───────────────────────────────────────────────────
-function showToast(msg, isError = false) {
+function showToast(msg, isError=false) {
   const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.className = "toast" + (isError ? " error" : "");
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 3000);
+  t.textContent = msg; t.className = "toast"+(isError?" error":""); t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 3000);
 }
 
 // ── INIT ────────────────────────────────────────────────────
-const savedWallet = localStorage.getItem("shopWallet2");
-if (savedWallet) wallet = JSON.parse(savedWallet);
-
+const sw = localStorage.getItem("shopWallet3");
+if (sw) wallet = JSON.parse(sw);
+setTheme(activeShop);
 updateWalletDisplay();
-renderTabs();
-renderShop();
-renderHistory();
-
-document.getElementById("buy-modal").addEventListener("click", e => {
-  if (e.target === document.getElementById("buy-modal")) closeModal();
-});
-document.getElementById("wallet-modal").addEventListener("click", e => {
-  if (e.target === document.getElementById("wallet-modal")) closeWalletModal();
-});
+renderTabs(); renderShop(); renderHistory();
+document.getElementById("buy-modal").addEventListener("click", e => { if (e.target===document.getElementById("buy-modal")) closeModal(); });
+document.getElementById("wallet-modal").addEventListener("click", e => { if (e.target===document.getElementById("wallet-modal")) closeWalletModal(); });
 </script>
 </body>
+</html>
 </html>
