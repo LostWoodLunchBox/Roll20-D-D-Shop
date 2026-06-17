@@ -695,6 +695,7 @@ const DEFAULT_SHOPS = {
 // ÉTAT
 // ═══════════════════════════════════════════════════════════════
 let SHOPS = {};
+let suppressFirebaseUpdate = false; // empêche le listener d'écraser nos propres saves
 let wallets     = JSON.parse(localStorage.getItem("shopWallets") || "{}"); // portefeuille par magasin
 let history     = JSON.parse(localStorage.getItem("shopHistory3") || "[]");
 let activeShop  = "";
@@ -769,6 +770,7 @@ function snapshotToShops(data) {
 
 // Écoute temps réel
 db.ref("shops").on("value", snapshot => {
+  if (suppressFirebaseUpdate) return;
   const data = snapshot.val();
   if (!data) {
     setFirebaseStatus("connecting", "Initialisation...");
@@ -800,7 +802,10 @@ function fbUpdateStock(shopName, idx, newStock) {
 }
 
 function fbSaveShopItems(shopName) {
-  db.ref("shops/" + shopName + "/items").set(SHOPS[shopName].items).catch(console.error);
+  suppressFirebaseUpdate = true;
+  db.ref("shops/" + shopName + "/items").set(SHOPS[shopName].items)
+    .then(() => { suppressFirebaseUpdate = false; })
+    .catch(err => { suppressFirebaseUpdate = false; console.error(err); });
 }
 
 // ═══════════════════════════════════════════════════════════════
