@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roll20 Shop — D&D 5e</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:       #1a1209;
+      --parchment: #f5ead6;
+      --aged:      #e8d5b0;
+      --leather:   #7a4f2d;
+      --gold:      #c9960c;
+      --gold-light:#f0c040;
+      --crimson:   #8b1a1a;
+      --shadow:    rgba(26,18,9,0.35);
+      --copper:    #b87333;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a1209;
+      background-image:
+        radial-gradient(ellipse at 20% 20%, #2e1a0a 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, #0d0d1a 0%, transparent 60%);
+      min-height: 100vh;
+      font-family: 'Crimson Text', Georgia, serif;
+      color: var(--ink);
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #1a0a00 0%, #2d1500 50%, #1a0a00 100%);
+      border-bottom: 3px solid var(--gold);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+
+    .header-title {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-light);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(201,150,12,0.5);
+    }
+
+    .header-title span {
+      color: var(--copper);
+      font-size: 13px;
+      display: block;
+      letter-spacing: 4px;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    .wallet-display {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .coin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(201,150,12,0.3);
+      border-radius: 8px;
+      padding: 6px 12px;
+      min-width: 60px;
+    }
+
+    .coin-amount {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .coin-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 2px;
+      opacity: 0.8;
+    }
+
+    .coin.pp { color: #e8e8ff; border-color: #9090cc; }
+    .coin.gp { color: var(--gold-light); border-color: var(--gold); }
+    .coin.sp { color: #d0d0d0; border-color: #a0a0a0; }
+    .coin.cp { color: var(--copper); border-color: #8b5e3c; }
+
+    .wallet-edit-btn {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+    .wallet-edit-btn:hover { background: var(--gold); color: var(--ink); }
+
+    /* ── MAIN LAYOUT ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* ── SHOP TABS ── */
+    .shop-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .shop-tab {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      letter-spacing: 1px;
+      padding: 10px 20px;
+      border: 2px solid rgba(201,150,12,0.4);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      color: rgba(240,192,64,0.7);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .shop-tab:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+      background: rgba(201,150,12,0.1);
+    }
+
+    .shop-tab.active {
+      background: linear-gradient(135deg, #3d2000, #5a3200);
+      border-color: var(--gold);
+      color: var(--gold-light);
+      box-shadow: 0 0 15px rgba(201,150,12,0.25);
+    }
+
+    /* ── SHOP PANEL ── */
+    .shop-panel {
+      background: var(--parchment);
+      background-image:
+        url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      border-radius: 12px;
+      border: 2px solid var(--leather);
+      box-shadow: 0 8px 40px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.4);
+      overflow: hidden;
+    }
+
+    .shop-header {
+      background: linear-gradient(135deg, var(--leather), #5a3820);
+      padding: 20px 28px;
+      border-bottom: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .shop-name {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      color: var(--gold-light);
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .shop-desc {
+      font-style: italic;
+      color: rgba(240,192,64,0.75);
+      font-size: 14px;
+      margin-top: 3px;
+    }
+
+    .shop-meta {
+      text-align: right;
+      color: rgba(240,192,64,0.6);
+      font-size: 12px;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 1px;
+    }
+
+    /* ── ITEMS GRID ── */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: rgba(122,79,45,0.2);
+    }
+
+    .item-card {
+      background: var(--parchment);
+      padding: 18px 20px;
+      transition: background 0.15s;
+      position: relative;
+    }
+
+    .item-card:hover { background: var(--aged); }
+
+    .item-card.out-of-stock { opacity: 0.55; }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .item-name {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .item-price {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--crimson);
+      white-space: nowrap;
+      margin-left: 12px;
+    }
+
+    .item-desc {
+      font-size: 13px;
+      color: #5a4020;
+      font-style: italic;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .item-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .item-stock {
+      font-size: 12px;
+      color: #7a5530;
+      letter-spacing: 0.5px;
+    }
+
+    .item-stock.low { color: var(--crimson); font-weight: 600; }
+    .item-stock.out { color: #aaa; font-style: italic; }
+
+    .buy-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 6px 16px;
+      background: linear-gradient(135deg, var(--leather), #5a3820);
+      color: var(--gold-light);
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .buy-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--gold), #e0a800);
+      color: var(--ink);
+      box-shadow: 0 2px 8px rgba(201,150,12,0.4);
+    }
+
+    .buy-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: #aaa;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--parchment);
+      border: 3px solid var(--leather);
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .modal h2 {
+      font-family: 'Cinzel', serif;
+      color: var(--leather);
+      font-size: 18px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--leather);
+      padding-bottom: 10px;
+    }
+
+    .modal-item-name {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      color: var(--ink);
+      margin: 16px 0 4px;
+    }
+
+    .modal-price {
+      color: var(--crimson);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .modal label {
+      display: block;
+      font-size: 13px;
+      color: #5a4020;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .modal input[type=number] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid var(--leather);
+      border-radius: 6px;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      background: var(--aged);
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .modal-total {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      color: var(--crimson);
+      margin-bottom: 20px;
+      padding: 10px;
+      background: rgba(139,26,26,0.08);
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .modal-warning {
+      color: var(--crimson);
+      font-size: 12px;
+      font-style: italic;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-confirm {
+      flex: 1;
+      padding: 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--leather), #5a3820);
+      color: var(--gold-light);
+      border: 1px solid var(--gold);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-confirm:hover { background: linear-gradient(135deg, var(--gold), #e0a800); color: var(--ink); }
+
+    .btn-cancel {
+      padding: 12px 20px;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      background: transparent;
+      color: #7a5530;
+      border: 1px solid #7a5530;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel:hover { background: rgba(122,79,45,0.1); }
+
+    /* ── WALLET MODAL ── */
+    .wallet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0 20px;
+    }
+
+    .wallet-field label {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .wallet-field input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid var(--leather);
+      border-radius: 6px;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      background: var(--aged);
+      color: var(--ink);
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a2e1a;
+      border: 1px solid #4caf50;
+      color: #a5d6a7;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      letter-spacing: 1px;
+      z-index: 300;
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #2e1a1a; border-color: #f44336; color: #ef9a9a; }
+
+    /* ── COMMAND BOX ── */
+    .command-box {
+      background: #0d0d0d;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #00ff88;
+      word-break: break-all;
+      margin: 8px 0 16px;
+    }
+
+    /* ── HISTORY ── */
+    .history-section {
+      margin-top: 32px;
+    }
+
+    .history-title {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-light);
+      font-size: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(201,150,12,0.3);
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      background: rgba(245,234,214,0.08);
+      border: 1px solid rgba(201,150,12,0.2);
+      border-radius: 6px;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: rgba(240,192,64,0.8);
+    }
+
+    .history-item .hi-name { font-family: 'Cinzel', serif; font-size: 13px; }
+    .history-item .hi-cost { color: var(--crimson); font-weight: 600; }
+
+    .clear-history {
+      background: transparent;
+      border: 1px solid rgba(139,26,26,0.5);
+      color: rgba(139,26,26,0.7);
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all 0.2s;
+    }
+
+    .clear-history:hover { background: rgba(139,26,26,0.1); color: var(--crimson); }
+
+    .empty-history {
+      color: rgba(240,192,64,0.4);
+      font-style: italic;
+      font-size: 13px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; gap: 16px; }
+      .wallet-display { flex-wrap: wrap; justify-content: center; }
+      .items-grid { grid-template-columns: 1fr; }
+      .header-title { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-title">
+    ⚔️ The Merchant's Guild
+    <span>D&D 5e — Roll20 Shop</span>
+  </div>
+  <div class="wallet-display">
+    <div class="coin pp"><span class="coin-amount" id="wallet-pp">0</span><span class="coin-label">PP</span></div>
+    <div class="coin gp"><span class="coin-amount" id="wallet-gp">0</span><span class="coin-label">GP</span></div>
+    <div class="coin sp"><span class="coin-amount" id="wallet-sp">0</span><span class="coin-label">SP</span></div>
+    <div class="coin cp"><span class="coin-amount" id="wallet-cp">0</span><span class="coin-label">CP</span></div>
+    <button class="wallet-edit-btn" onclick="openWalletModal()">✏ Modifier</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SHOP TABS -->
+  <div class="shop-tabs" id="shop-tabs"></div>
+
+  <!-- SHOP PANEL -->
+  <div class="shop-panel" id="shop-panel">
+    <div class="shop-header">
+      <div>
+        <div class="shop-name" id="shop-name"></div>
+        <div class="shop-desc" id="shop-desc"></div>
+      </div>
+      <div class="shop-meta" id="shop-meta"></div>
+    </div>
+    <div class="items-grid" id="items-grid"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-section">
+    <div class="history-title">📜 Historique des achats</div>
+    <div class="history-list" id="history-list"></div>
+    <button class="clear-history" onclick="clearHistory()">Effacer l'historique</button>
+  </div>
+
+</div>
+
+<!-- BUY MODAL -->
+<div class="modal-overlay" id="buy-modal">
+  <div class="modal">
+    <h2>🛒 Confirmer l'achat</h2>
+    <div class="modal-item-name" id="modal-item-name"></div>
+    <div class="modal-price" id="modal-item-price"></div>
+    <label>Quantité</label>
+    <input type="number" id="modal-qty" min="1" value="1" oninput="updateModalTotal()">
+    <div class="modal-total" id="modal-total"></div>
+    <div class="modal-warning" id="modal-warning">⚠️ Pas assez d'argent!</div>
+    <p style="font-size:12px;color:#7a5530;margin-bottom:8px;">Commande Roll20 à coller dans le chat :</p>
+    <div class="command-box" id="modal-command"></div>
+    <div class="modal-buttons">
+      <button class="btn-confirm" id="btn-confirm" onclick="confirmPurchase()">Confirmer & Copier</button>
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET MODAL -->
+<div class="modal-overlay" id="wallet-modal">
+  <div class="modal">
+    <h2>💰 Modifier le portefeuille</h2>
+    <p style="font-size:13px;color:#5a4020;margin-top:8px;">Entre les valeurs de ta fiche de personnage.</p>
+    <div class="wallet-grid">
+      <div class="wallet-field">
+        <label style="color:#e8e8ff;">Platinum (PP)</label>
+        <input type="number" id="edit-pp" min="0" value="0">
+      </div>
+      <div class="wallet-field">
+        <label style="color:var(--gold-light);">Gold (GP)</label>
+        <input type="number" id="edit-gp" min="0" value="0">
+      </div>
+      <div class="wallet-field">
+        <label style="color:#d0d0d0;">Silver (SP)</label>
+        <input type="number" id="edit-sp" min="0" value="0">
+      </div>
+      <div class="wallet-field">
+        <label style="color:var(--copper);">Copper (CP)</label>
+        <input type="number" id="edit-cp" min="0" value="0">
+      </div>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn-confirm" onclick="saveWallet()">Sauvegarder</button>
+      <button class="btn-cancel" onclick="closeWalletModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DONNÉES DES MAGASINS ─────────────────────────────────────
+const SHOPS = {
+  "Sales | Martial Weapons": {
+    description: "Armes martiales forgées par des maîtres artisans.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Club",          price: 0.01, stock: 5,  desc: "Dégâts 1d4 contondant." },
+      { name: "Dagger",        price: 0.4,  stock: 12, desc: "1d4 perforant. Léger, lancer." },
+      { name: "Handaxe",       price: 1,    stock: 4,  desc: "1d6 tranchant. Léger, lancer." },
+      { name: "Mace",          price: 5,    stock: 3,  desc: "1d6 contondant." },
+      { name: "Quarterstaff",  price: 0.02, stock: 4,  desc: "1d6 contondant. Polyvalent." },
+      { name: "Spear",         price: 0.8,  stock: 4,  desc: "1d6 perforant. Lancer." },
+      { name: "Longsword",     price: 2,    stock: 2,  desc: "1d8 tranchant. Polyvalent." },
+      { name: "Battleaxe",     price: 3,    stock: 2,  desc: "1d8 tranchant. Polyvalent." },
+    ]
+  },
+  "Marchand du Village": {
+    description: "Provisions et équipement pour les aventuriers.",
+    sellMultiplier: 0.5,
+    items: [
+      { name: "Torche",            price: 0.01, stock: 20, desc: "Éclaire 6m, dure 1 heure." },
+      { name: "Rations (1 jour)",  price: 0.5,  stock: 30, desc: "Nourriture sèche pour 1 jour." },
+      { name: "Corde (15m)",       price: 1,    stock: 5,  desc: "Corde en chanvre solide." },
+      { name: "Sac à dos",         price: 2,    stock: 3,  desc: "Capacité standard." },
+      { name: "Potion de soin",    price: 50,   stock: 2,  desc: "Récupère 2d4+2 PV." },
+      { name: "Antitoxine",        price: 50,   stock: 1,  desc: "Avantage contre le poison." },
+    ]
+  }
+};
+
+// ── ÉTAT ────────────────────────────────────────────────────
+let wallet   = { pp: 0, gp: 7, sp: 0, cp: 0 };
+let history  = JSON.parse(localStorage.getItem("shopHistory") || "[]");
+let activeShop = Object.keys(SHOPS)[0];
+let pendingItem = null;
+
+// ── MONNAIE ─────────────────────────────────────────────────
+function walletInGp() {
+  return wallet.pp * 10 + wallet.gp + wallet.sp / 10 + wallet.cp / 100;
+}
+
+function gpToCoins(totalGp) {
+  let rem = Math.round(totalGp * 100);
+  const pp = Math.floor(rem / 1000); rem %= 1000;
+  const gp = Math.floor(rem / 100);  rem %= 100;
+  const sp = Math.floor(rem / 10);   rem %= 10;
+  const cp = rem;
+  return { pp, gp, sp, cp };
+}
+
+function fmtGp(gp) {
+  if (gp <= 0)   return "0 GP";
+  if (gp >= 1)   return (gp % 1 === 0 ? gp : gp.toFixed(2)) + " GP";
+  if (gp >= 0.1) return Math.round(gp * 10) + " SP";
+  return Math.round(gp * 100) + " CP";
+}
+
+function updateWalletDisplay() {
+  document.getElementById("wallet-pp").textContent = wallet.pp;
+  document.getElementById("wallet-gp").textContent = wallet.gp;
+  document.getElementById("wallet-sp").textContent = wallet.sp;
+  document.getElementById("wallet-cp").textContent = wallet.cp;
+  localStorage.setItem("shopWallet", JSON.stringify(wallet));
+}
+
+// ── TABS ────────────────────────────────────────────────────
+function renderTabs() {
+  const container = document.getElementById("shop-tabs");
+  container.innerHTML = "";
+  Object.keys(SHOPS).forEach(name => {
+    const btn = document.createElement("button");
+    btn.className = "shop-tab" + (name === activeShop ? " active" : "");
+    btn.textContent = "🏪 " + name;
+    btn.onclick = () => { activeShop = name; renderTabs(); renderShop(); };
+    container.appendChild(btn);
+  });
+}
+
+// ── SHOP ────────────────────────────────────────────────────
+function renderShop() {
+  const shop = SHOPS[activeShop];
+  document.getElementById("shop-name").textContent = activeShop;
+  document.getElementById("shop-desc").textContent = shop.description;
+  document.getElementById("shop-meta").innerHTML =
+    "Rachat : " + Math.round(shop.sellMultiplier * 100) + "% du prix<br>" +
+    shop.items.length + " articles";
+
+  const grid = document.getElementById("items-grid");
+  grid.innerHTML = "";
+
+  shop.items.forEach((item, idx) => {
+    const canAfford = walletInGp() >= item.price;
+    const inStock   = item.stock > 0;
+    const card = document.createElement("div");
+    card.className = "item-card" + (!inStock ? " out-of-stock" : "");
+
+    let stockClass = "item-stock";
+    let stockTxt   = "En stock : " + item.stock;
+    if (!inStock)       { stockClass += " out"; stockTxt = "Épuisé"; }
+    else if (item.stock <= 2) stockClass += " low";
+
+    card.innerHTML = `
+      <div class="item-top">
+        <div class="item-name">${item.name}</div>
+        <div class="item-price">${fmtGp(item.price)}</div>
+      </div>
+      <div class="item-desc">${item.desc}</div>
+      <div class="item-bottom">
+        <span class="${stockClass}">${stockTxt}</span>
+        <button class="buy-btn" ${(!inStock || !canAfford) ? "disabled" : ""}
+          onclick="openBuyModal(${idx})">
+          ${!inStock ? "Épuisé" : !canAfford ? "Insuffisant" : "Acheter"}
+        </button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── BUY MODAL ───────────────────────────────────────────────
+function openBuyModal(itemIdx) {
+  const item = SHOPS[activeShop].items[itemIdx];
+  pendingItem = { item, itemIdx };
+  document.getElementById("modal-item-name").textContent = item.name;
+  document.getElementById("modal-item-price").textContent = fmtGp(item.price) + " / unité";
+  document.getElementById("modal-qty").value = 1;
+  document.getElementById("modal-qty").max = item.stock;
+  updateModalTotal();
+  document.getElementById("buy-modal").classList.add("open");
+}
+
+function updateModalTotal() {
+  if (!pendingItem) return;
+  const qty   = parseInt(document.getElementById("modal-qty").value) || 1;
+  const total = pendingItem.item.price * qty;
+  const enough = walletInGp() >= total;
+  document.getElementById("modal-total").textContent =
+    "Total : " + fmtGp(total) + "  (solde : " + fmtGp(walletInGp()) + ")";
+  document.getElementById("modal-warning").style.display = enough ? "none" : "block";
+  document.getElementById("btn-confirm").disabled = !enough;
+
+  const cmd = "!shop-buy " + activeShop + "|" + pendingItem.item.name + "|" + qty;
+  document.getElementById("modal-command").textContent = cmd;
+}
+
+function confirmPurchase() {
+  if (!pendingItem) return;
+  const qty   = parseInt(document.getElementById("modal-qty").value) || 1;
+  const item  = pendingItem.item;
+  const total = item.price * qty;
+
+  // Déduire l'argent
+  const newCoins = gpToCoins(walletInGp() - total);
+  wallet = newCoins;
+  updateWalletDisplay();
+
+  // Diminuer le stock
+  item.stock -= qty;
+
+  // Copier la commande Roll20
+  const cmd = "!shop-buy " + activeShop + "|" + item.name + "|" + qty;
+  navigator.clipboard.writeText(cmd).catch(() => {});
+
+  // Historique
+  history.unshift({
+    name: item.name,
+    qty,
+    total,
+    shop: activeShop,
+    time: new Date().toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit" })
+  });
+  if (history.length > 20) history.pop();
+  localStorage.setItem("shopHistory", JSON.stringify(history));
+
+  closeModal();
+  renderShop();
+  renderHistory();
+  showToast("✓ " + qty + "× " + item.name + " acheté — commande copiée!");
+}
+
+function closeModal() {
+  document.getElementById("buy-modal").classList.remove("open");
+  pendingItem = null;
+}
+
+// ── WALLET MODAL ────────────────────────────────────────────
+function openWalletModal() {
+  document.getElementById("edit-pp").value = wallet.pp;
+  document.getElementById("edit-gp").value = wallet.gp;
+  document.getElementById("edit-sp").value = wallet.sp;
+  document.getElementById("edit-cp").value = wallet.cp;
+  document.getElementById("wallet-modal").classList.add("open");
+}
+
+function saveWallet() {
+  wallet = {
+    pp: parseInt(document.getElementById("edit-pp").value) || 0,
+    gp: parseInt(document.getElementById("edit-gp").value) || 0,
+    sp: parseInt(document.getElementById("edit-sp").value) || 0,
+    cp: parseInt(document.getElementById("edit-cp").value) || 0,
+  };
+  updateWalletDisplay();
+  closeWalletModal();
+  renderShop();
+  showToast("💰 Portefeuille mis à jour!");
+}
+
+function closeWalletModal() {
+  document.getElementById("wallet-modal").classList.remove("open");
+}
+
+// ── HISTORY ─────────────────────────────────────────────────
+function renderHistory() {
+  const list = document.getElementById("history-list");
+  if (history.length === 0) {
+    list.innerHTML = '<div class="empty-history">Aucun achat pour le moment...</div>';
+    return;
+  }
+  list.innerHTML = history.map(h => `
+    <div class="history-item">
+      <span class="hi-name">${h.time} — ${h.qty}× ${h.name} <span style="opacity:0.5;font-size:11px;">(${h.shop})</span></span>
+      <span class="hi-cost">−${fmtGp(h.total)}</span>
+    </div>`).join("");
+}
+
+function clearHistory() {
+  history = [];
+  localStorage.removeItem("shopHistory");
+  renderHistory();
+}
+
+// ── TOAST ───────────────────────────────────────────────────
+function showToast(msg, isError = false) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast" + (isError ? " error" : "");
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+// ── INIT ────────────────────────────────────────────────────
+const savedWallet = localStorage.getItem("shopWallet");
+if (savedWallet) wallet = JSON.parse(savedWallet);
+
+updateWalletDisplay();
+renderTabs();
+renderShop();
+renderHistory();
+
+// Fermer modals en cliquant dehors
+document.getElementById("buy-modal").addEventListener("click", e => {
+  if (e.target === document.getElementById("buy-modal")) closeModal();
+});
+document.getElementById("wallet-modal").addEventListener("click", e => {
+  if (e.target === document.getElementById("wallet-modal")) closeWalletModal();
+});
+</script>
+</body>
+</html>
