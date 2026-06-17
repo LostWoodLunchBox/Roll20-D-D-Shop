@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Merchant's Guild — D&D 5e</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -48,16 +54,60 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.7);
       transition: all 0.4s;
     }
+    /* Bordure dorée quand le mode MJ est actif */
+    body.gm-active header { border-bottom: 3px solid #ffd700; box-shadow: 0 4px 24px rgba(255,215,0,0.35); }
+
     .header-title { font-family: 'Cinzel', serif; color: var(--accent2); font-size: 22px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
     .header-title span { font-size: 11px; display: block; letter-spacing: 4px; font-weight: 400; margin-top: 2px; opacity: 0.7; color: var(--accent2); }
+    .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .header-top-row { display: flex; gap: 10px; align-items: center; }
     .wallet-display { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .coin { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 5px 10px; min-width: 55px; }
     .coin-amount { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; line-height: 1; }
     .coin-label  { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; opacity: 0.75; }
     .coin.pp { color: #e8e8ff; } .coin.gp { color: #ffd700; } .coin.sp { color: #d0d0d0; } .coin.cp { color: #cd7f32; }
-    .conversion-note { color: rgba(255,255,255,0.35); font-size: 10px; font-style: italic; text-align: right; margin-top: 3px; }
+    .conversion-note { color: rgba(255,255,255,0.35); font-size: 10px; font-style: italic; text-align: right; }
     .wallet-edit-btn { background: transparent; border: 1px solid var(--accent2); color: var(--accent2); padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 11px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; }
     .wallet-edit-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* Bouton Mode MJ */
+    .gm-toggle-btn {
+      background: transparent; border: 1px solid rgba(255,215,0,0.4); color: rgba(255,215,0,0.7);
+      padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 11px;
+      cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+    }
+    .gm-toggle-btn:hover { background: rgba(255,215,0,0.1); border-color: #ffd700; color: #ffd700; }
+    body.gm-active .gm-toggle-btn { background: rgba(255,215,0,0.15); border-color: #ffd700; color: #ffd700; }
+
+    /* Badge MJ actif */
+    .gm-badge { display: none; background: #ffd700; color: #1a1000; font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+    body.gm-active .gm-badge { display: inline-block; }
+
+    /* Bouton flottant MJ: ajouter un item */
+    .gm-fab {
+      display: none; position: fixed; bottom: 30px; right: 30px; z-index: 150;
+      background: #ffd700; color: #1a1000; border: none; border-radius: 50%;
+      width: 52px; height: 52px; font-size: 26px; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255,215,0,0.5); transition: all 0.2s;
+      align-items: center; justify-content: center;
+    }
+    .gm-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(255,215,0,0.7); }
+    body.gm-active .gm-fab { display: flex; }
+
+    /* Bouton éditer sur les cartes */
+    .item-edit-btn {
+      display: none; background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.4);
+      color: #b8860b; padding: 4px 10px; border-radius: 4px; font-family: 'Cinzel', serif;
+      font-size: 10px; cursor: pointer; transition: all 0.2s; margin-left: 4px;
+    }
+    .item-edit-btn:hover { background: rgba(255,215,0,0.3); color: #ffd700; }
+    body.gm-active .item-edit-btn { display: inline-block; }
+
+    /* Indicateur Firebase */
+    .firebase-status { font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 1px; padding: 2px 6px; border-radius: 4px; }
+    .firebase-status.connecting { color: rgba(255,200,0,0.6); }
+    .firebase-status.connected  { color: rgba(100,255,100,0.6); }
+    .firebase-status.error      { color: rgba(255,100,100,0.6); }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
 
@@ -109,28 +159,36 @@
     /* ── MODALS ── */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal { background: var(--card); border: 2px solid var(--border); border-radius: 10px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
+    .modal { background: var(--card); border: 2px solid var(--border); border-radius: 10px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; }
+    .modal.wide { max-width: 480px; }
     .modal h2 { font-family: 'Cinzel', serif; color: var(--price); font-size: 17px; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
     .modal-item-name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--text); margin: 14px 0 3px; }
     .modal-price { color: var(--price); font-size: 13px; margin-bottom: 14px; }
     .modal label { display: block; font-size: 12px; color: var(--text); margin-bottom: 5px; font-weight: 600; opacity: 0.8; }
-    .modal input[type=number] { width: 100%; padding: 9px 12px; border: 2px solid var(--border); border-radius: 6px; font-family: 'Cinzel', serif; font-size: 16px; background: var(--card-hover); color: var(--text); margin-bottom: 6px; }
+    .modal input[type=number], .modal input[type=text], .modal input[type=password] { width: 100%; padding: 9px 12px; border: 2px solid var(--border); border-radius: 6px; font-family: 'Cinzel', serif; font-size: 14px; background: var(--card-hover); color: var(--text); margin-bottom: 12px; }
+    .modal textarea { width: 100%; padding: 9px 12px; border: 2px solid var(--border); border-radius: 6px; font-family: 'Crimson Text', serif; font-size: 13px; background: var(--card-hover); color: var(--text); margin-bottom: 12px; resize: vertical; min-height: 60px; }
     .modal-total { font-family: 'Cinzel', serif; font-size: 12px; color: var(--price); margin-bottom: 8px; padding: 10px; background: rgba(0,0,0,0.06); border-radius: 6px; text-align: center; line-height: 1.8; }
     .modal-warning { color: #c62828; font-size: 12px; font-style: italic; margin-bottom: 10px; display: none; }
-    .modal-buttons { display: flex; gap: 10px; }
+    .modal-buttons { display: flex; gap: 10px; margin-top: 4px; }
     .btn-confirm { flex: 1; padding: 11px; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px; background: linear-gradient(135deg, var(--header-from), var(--header-to)); color: var(--accent2); border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
     .btn-confirm:hover:not(:disabled) { background: var(--accent); color: #fff; }
     .btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-cancel { padding: 11px 18px; font-family: 'Cinzel', serif; font-size: 12px; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; opacity: 0.7; }
     .btn-cancel:hover { opacity: 1; }
+    .btn-danger { padding: 11px 18px; font-family: 'Cinzel', serif; font-size: 12px; background: transparent; color: #c62828; border: 1px solid #c62828; border-radius: 6px; cursor: pointer; opacity: 0.8; }
+    .btn-danger:hover { opacity: 1; background: rgba(198,40,40,0.1); }
     .command-box { background: #0d0d0d; border: 1px solid #333; border-radius: 5px; padding: 9px 12px; font-family: monospace; font-size: 11px; color: #00ff88; word-break: break-all; margin: 7px 0 14px; }
     .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 8px; }
     .wallet-field label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
     .wallet-field input { width: 100%; padding: 7px 10px; border: 2px solid var(--border); border-radius: 5px; font-family: 'Cinzel', serif; font-size: 15px; background: var(--card-hover); color: var(--text); }
+    .price-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .price-field label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 3px; }
+    .price-field input { width: 100%; padding: 7px 8px; border: 2px solid var(--border); border-radius: 5px; font-family: 'Cinzel', serif; font-size: 14px; background: var(--card-hover); color: var(--text); margin-bottom: 0; }
     .conversion-info { background: rgba(0,0,0,0.06); border: 1px solid var(--border); border-radius: 5px; padding: 7px 10px; margin-bottom: 14px; font-size: 11px; color: var(--text); text-align: center; line-height: 1.8; opacity: 0.8; }
     .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a2e1a; border: 1px solid #4caf50; color: #a5d6a7; padding: 12px 22px; border-radius: 8px; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px; z-index: 300; transition: transform 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast.error { background: #2e1a1a; border-color: #f44336; color: #ef9a9a; }
+    .toast.gm    { background: #2a2000; border-color: #ffd700; color: #ffd700; }
     .history-section { margin-top: 24px; }
     .history-title { font-family: 'Cinzel', serif; color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); }
     .history-list { display: flex; flex-direction: column; gap: 6px; }
@@ -141,6 +199,21 @@
     .clear-history:hover { background: rgba(200,50,50,0.1); color: #ef5350; }
     .empty-history { color: rgba(255,255,255,0.25); font-style: italic; font-size: 12px; text-align: center; padding: 16px; }
 
+    /* ── GM LOGIN MODAL ── */
+    .gm-modal { background: #1a1500 !important; border: 2px solid #ffd700 !important; }
+    .gm-modal h2 { color: #ffd700 !important; border-bottom-color: rgba(255,215,0,0.3) !important; }
+    .gm-modal label { color: #ffe082 !important; opacity: 1 !important; }
+    .gm-error { color: #ef5350; font-size: 12px; margin-bottom: 10px; display: none; }
+    .google-signin-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 12px 16px; border-radius: 8px;
+      background: #fff; color: #3c4043; border: 1px solid #dadce0;
+      font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 1px;
+      cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      margin-bottom: 12px;
+    }
+    .google-signin-btn:hover { background: #f8f8f8; box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
+
     @media (max-width: 700px) {
       .layout { flex-direction: column; }
       .sidebar { width: 100%; position: static; display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; }
@@ -148,6 +221,7 @@
       .shop-tab { width: auto; flex: 1; min-width: 120px; font-size: 12px; padding: 6px 8px; }
       header { flex-direction: column; gap: 12px; }
       .wallet-display { justify-content: center; }
+      .gm-fab { bottom: 16px; right: 16px; }
     }
   </style>
 </head>
@@ -158,15 +232,22 @@
     ⚔️ The Merchant's Guild
     <span>D&D 5e — Roll20 Shop</span>
   </div>
-  <div>
-    <div class="wallet-display">
-      <div class="coin pp"><span class="coin-amount" id="wallet-pp">0</span><span class="coin-label">PP</span></div>
-      <div class="coin gp"><span class="coin-amount" id="wallet-gp">0</span><span class="coin-label">GP</span></div>
-      <div class="coin sp"><span class="coin-amount" id="wallet-sp">0</span><span class="coin-label">SP</span></div>
-      <div class="coin cp"><span class="coin-amount" id="wallet-cp">0</span><span class="coin-label">CP</span></div>
-      <button class="wallet-edit-btn" onclick="openWalletModal()">✏ Modifier</button>
+  <div class="header-right">
+    <div class="header-top-row">
+      <div class="wallet-display">
+        <div class="coin pp"><span class="coin-amount" id="wallet-pp">0</span><span class="coin-label">PP</span></div>
+        <div class="coin gp"><span class="coin-amount" id="wallet-gp">0</span><span class="coin-label">GP</span></div>
+        <div class="coin sp"><span class="coin-amount" id="wallet-sp">0</span><span class="coin-label">SP</span></div>
+        <div class="coin cp"><span class="coin-amount" id="wallet-cp">0</span><span class="coin-label">CP</span></div>
+        <button class="wallet-edit-btn" onclick="openWalletModal()">✏ Modifier</button>
+      </div>
+      <button class="gm-toggle-btn" onclick="handleGMButton()">🔒 MJ</button>
     </div>
-    <div class="conversion-note">20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 10 GP = 1 PP</div>
+    <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;">
+      <span class="gm-badge">⚜ Mode MJ Actif</span>
+      <span class="firebase-status connecting" id="firebase-status">● Firebase...</span>
+      <div class="conversion-note">20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 10 GP = 1 PP</div>
+    </div>
   </div>
 </header>
 
@@ -195,6 +276,9 @@
     </div>
   </div>
 </div>
+
+<!-- Bouton flottant MJ: ajouter un item -->
+<button class="gm-fab" title="Ajouter un item" onclick="openAddItemModal()">+</button>
 
 <!-- BUY MODAL -->
 <div class="modal-overlay" id="buy-modal">
@@ -234,360 +318,394 @@
   </div>
 </div>
 
+<!-- GM LOGIN MODAL -->
+<div class="modal-overlay" id="gm-login-modal">
+  <div class="modal gm-modal">
+    <h2>⚜ Mode Maître de Jeu</h2>
+    <p style="font-size:12px;color:#ffe082;opacity:0.8;margin:10px 0 20px;">Connectez-vous avec votre compte Google pour accéder aux outils d'édition des magasins.</p>
+    <button class="google-signin-btn" onclick="signInWithGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48" style="margin-right:10px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      Se connecter avec Google
+    </button>
+    <div class="gm-error" id="gm-error">❌ Connexion annulée ou erreur.</div>
+    <div style="margin-top:12px;">
+      <button class="btn-cancel" onclick="closeGMLogin()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- GM EDIT ITEM MODAL -->
+<div class="modal-overlay" id="gm-edit-modal">
+  <div class="modal wide">
+    <h2 id="gm-edit-title">✏️ Modifier l'item</h2>
+    <label>Nom de l'item</label>
+    <input type="text" id="gm-item-name" placeholder="Ex: Épée longue">
+    <label>Description</label>
+    <textarea id="gm-item-desc" placeholder="Ex: 1d8 tranchant. Polyvalent."></textarea>
+    <label>Prix (Base 20 : 20 CP = 1 SP | 20 SP = 1 GP | 10 GP = 1 PP)</label>
+    <div class="price-grid">
+      <div class="price-field"><label style="color:#cd7f32;">Copper (CP)</label><input type="number" id="gm-price-cp" min="0" value="0"></div>
+      <div class="price-field"><label style="color:#d0d0d0;">Silver (SP)</label><input type="number" id="gm-price-sp" min="0" value="0"></div>
+      <div class="price-field"><label style="color:#ffd700;">Gold (GP)</label><input type="number" id="gm-price-gp" min="0" value="0"></div>
+    </div>
+    <label>Stock</label>
+    <input type="number" id="gm-item-stock" min="0" value="1">
+    <div class="modal-buttons">
+      <button class="btn-confirm" onclick="saveGMItem()">Sauvegarder</button>
+      <button class="btn-danger" id="gm-edit-delete" onclick="deleteGMItem()" style="display:none;">Supprimer</button>
+      <button class="btn-cancel" onclick="closeGMEditModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ── BASE 20: 20CP=1SP, 20SP=1GP, 10GP=1PP ───────────────────
+// ═══════════════════════════════════════════════════════════════
+// FIREBASE CONFIGURATION
+// ═══════════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyDP7kbTeWu0z_0EyYmxCMCX9Dl2HCHcfQI",
+  authDomain: "roll20-chop.firebaseapp.com",
+  databaseURL: "https://roll20-chop-default-rtdb.firebaseio.com",
+  projectId: "roll20-chop",
+  storageBucket: "roll20-chop.firebasestorage.app",
+  messagingSenderId: "137783287778",
+  appId: "1:137783287778:web:d0f22a2fe27fe31b4d23bb",
+  measurementId: "G-0W6FXQEP90"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-const SHOPS = {
+// ═══════════════════════════════════════════════════════════════
+// AUTH FIREBASE — seul ce compte Google peut activer le Mode MJ
+// Remplacez par votre propre UID après la première connexion
+// (l'UID s'affiche dans la console du navigateur au login)
+// ═══════════════════════════════════════════════════════════════
+const GM_UID = "PENDING"; // sera remplacé automatiquement au 1er login
+const auth = firebase.auth();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+// ═══════════════════════════════════════════════════════════════
+// DONNÉES PAR DÉFAUT (pour initialiser Firebase au premier lancement)
+// ═══════════════════════════════════════════════════════════════
+const DEFAULT_SHOPS = {
   "Sales | Martial Weapons": {
-    icon: "⚔️", theme: "theme-weapons",
-    description: "Lames et acier forgés pour les guerriers.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Club",             price:{cp:1,sp:0,gp:0},   stock:5,  desc:"1d4 contondant." },
-      { name: "Dagger",           price:{cp:0,sp:8,gp:0},   stock:12, desc:"1d4 perforant. Léger, lancer." },
-      { name: "Handaxe",          price:{cp:0,sp:0,gp:1},   stock:4,  desc:"1d6 tranchant. Léger, lancer." },
-      { name: "Mace",             price:{cp:0,sp:0,gp:5},   stock:3,  desc:"1d6 contondant." },
-      { name: "Quarterstaff",     price:{cp:2,sp:0,gp:0},   stock:4,  desc:"1d6 contondant. Polyvalent." },
-      { name: "Spear",            price:{cp:0,sp:16,gp:0},  stock:4,  desc:"1d6 perforant. Lancer." },
-      { name: "Longsword",        price:{cp:0,sp:0,gp:2},   stock:2,  desc:"1d8 tranchant. Polyvalent." },
-      { name: "Battleaxe",        price:{cp:0,sp:0,gp:3},   stock:2,  desc:"1d8 tranchant. Polyvalent." },
-      { name: "Greatsword",       price:{cp:0,sp:0,gp:5},   stock:1,  desc:"2d6 tranchant. Lourde, deux mains." },
-      { name: "Shortsword",       price:{cp:0,sp:0,gp:1},   stock:3,  desc:"1d6 perforant. Léger, finesse." },
-      { name: "Warhammer",        price:{cp:0,sp:0,gp:3},   stock:2,  desc:"1d8 contondant. Polyvalent." },
-      { name: "Flail",            price:{cp:0,sp:0,gp:2},   stock:2,  desc:"1d8 contondant." },
+    icon:"⚔️",theme:"theme-weapons",description:"Lames et acier forgés pour les guerriers.",sellMultiplier:0.5,
+    items:[
+      {name:"Club",price:{cp:1,sp:0,gp:0},stock:5,desc:"1d4 contondant."},
+      {name:"Dagger",price:{cp:0,sp:8,gp:0},stock:12,desc:"1d4 perforant. Léger, lancer."},
+      {name:"Handaxe",price:{cp:0,sp:0,gp:1},stock:4,desc:"1d6 tranchant. Léger, lancer."},
+      {name:"Mace",price:{cp:0,sp:0,gp:5},stock:3,desc:"1d6 contondant."},
+      {name:"Quarterstaff",price:{cp:2,sp:0,gp:0},stock:4,desc:"1d6 contondant. Polyvalent."},
+      {name:"Spear",price:{cp:0,sp:16,gp:0},stock:4,desc:"1d6 perforant. Lancer."},
+      {name:"Longsword",price:{cp:0,sp:0,gp:2},stock:2,desc:"1d8 tranchant. Polyvalent."},
+      {name:"Battleaxe",price:{cp:0,sp:0,gp:3},stock:2,desc:"1d8 tranchant. Polyvalent."},
+      {name:"Greatsword",price:{cp:0,sp:0,gp:5},stock:1,desc:"2d6 tranchant. Lourde, deux mains."},
+      {name:"Shortsword",price:{cp:0,sp:0,gp:1},stock:3,desc:"1d6 perforant. Léger, finesse."},
+      {name:"Warhammer",price:{cp:0,sp:0,gp:3},stock:2,desc:"1d8 contondant. Polyvalent."},
+      {name:"Flail",price:{cp:0,sp:0,gp:2},stock:2,desc:"1d8 contondant."}
     ]
   },
   "Sales | Archery & Traps": {
-    icon: "🏹", theme: "theme-archery",
-    description: "Arcs, arbalètes et pièges pour chasseurs.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Arc court",         price:{cp:0,sp:0,gp:1},   stock:3,  desc:"1d6 perforant. Portée 24/96m." },
-      { name: "Arc long",          price:{cp:0,sp:0,gp:5},   stock:2,  desc:"1d8 perforant. Portée 45/180m." },
-      { name: "Arbalète légère",   price:{cp:0,sp:0,gp:5},   stock:2,  desc:"1d8 perforant. Chargement." },
-      { name: "Arbalète lourde",   price:{cp:0,sp:0,gp:25},  stock:1,  desc:"1d10 perforant. Portée 30/120m." },
-      { name: "Flèches (20)",      price:{cp:0,sp:0,gp:1},   stock:10, desc:"Pour arcs." },
-      { name: "Carreaux (20)",     price:{cp:0,sp:0,gp:1},   stock:10, desc:"Pour arbalètes." },
-      { name: "Carquois",          price:{cp:0,sp:0,gp:1},   stock:5,  desc:"Capacité 20 munitions." },
-      { name: "Piège à ours",      price:{cp:0,sp:0,gp:2},   stock:3,  desc:"Immobilise, 1d4 dégâts." },
-      { name: "Filet de chasse",   price:{cp:0,sp:0,gp:1},   stock:4,  desc:"Entrave une créature." },
-      { name: "Javeline",          price:{cp:0,sp:10,gp:0},  stock:6,  desc:"1d6 perforant. Lancer 9/36m." },
+    icon:"🏹",theme:"theme-archery",description:"Arcs, arbalètes et pièges pour chasseurs.",sellMultiplier:0.5,
+    items:[
+      {name:"Arc court",price:{cp:0,sp:0,gp:1},stock:3,desc:"1d6 perforant. Portée 24/96m."},
+      {name:"Arc long",price:{cp:0,sp:0,gp:5},stock:2,desc:"1d8 perforant. Portée 45/180m."},
+      {name:"Arbalète légère",price:{cp:0,sp:0,gp:5},stock:2,desc:"1d8 perforant. Chargement."},
+      {name:"Arbalète lourde",price:{cp:0,sp:0,gp:25},stock:1,desc:"1d10 perforant. Portée 30/120m."},
+      {name:"Flèches (20)",price:{cp:0,sp:0,gp:1},stock:10,desc:"Pour arcs."},
+      {name:"Carreaux (20)",price:{cp:0,sp:0,gp:1},stock:10,desc:"Pour arbalètes."},
+      {name:"Carquois",price:{cp:0,sp:0,gp:1},stock:5,desc:"Capacité 20 munitions."},
+      {name:"Piège à ours",price:{cp:0,sp:0,gp:2},stock:3,desc:"Immobilise, 1d4 dégâts."},
+      {name:"Filet de chasse",price:{cp:0,sp:0,gp:1},stock:4,desc:"Entrave une créature."},
+      {name:"Javeline",price:{cp:0,sp:10,gp:0},stock:6,desc:"1d6 perforant. Lancer 9/36m."}
     ]
   },
   "Sales | Potions & Ingredients": {
-    icon: "⚗️", theme: "theme-potions",
-    description: "Élixirs, potions et ingrédients alchimiques.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Potion de soin",       price:{cp:0,sp:0,gp:50},  stock:3,  desc:"Récupère 2d4+2 PV." },
-      { name: "Potion de soin sup.",  price:{cp:0,sp:0,gp:100}, stock:1,  desc:"Récupère 4d4+4 PV." },
-      { name: "Antitoxine",           price:{cp:0,sp:0,gp:50},  stock:2,  desc:"Avantage jets contre poison." },
-      { name: "Huile de feu grégeois",price:{cp:0,sp:0,gp:5},   stock:3,  desc:"Dégâts de feu. Difficile à éteindre." },
-      { name: "Acide (fiole)",        price:{cp:0,sp:0,gp:25},  stock:2,  desc:"2d6 dégâts acide." },
-      { name: "Poison de base",       price:{cp:0,sp:0,gp:100}, stock:1,  desc:"1d4 poison sur contact." },
-      { name: "Herbes médicinales",   price:{cp:0,sp:10,gp:0},  stock:10, desc:"Composant pour soins." },
-      { name: "Poudre de soufre",     price:{cp:0,sp:5,gp:0},   stock:8,  desc:"Composant alchimique." },
-      { name: "Fiole vide",           price:{cp:0,sp:1,gp:0},   stock:20, desc:"Contenant en verre." },
-      { name: "Kit d'alchimiste",     price:{cp:0,sp:0,gp:50},  stock:1,  desc:"Outils pour alchimie." },
+    icon:"⚗️",theme:"theme-potions",description:"Élixirs, potions et ingrédients alchimiques.",sellMultiplier:0.5,
+    items:[
+      {name:"Potion de soin",price:{cp:0,sp:0,gp:50},stock:3,desc:"Récupère 2d4+2 PV."},
+      {name:"Potion de soin sup.",price:{cp:0,sp:0,gp:100},stock:1,desc:"Récupère 4d4+4 PV."},
+      {name:"Antitoxine",price:{cp:0,sp:0,gp:50},stock:2,desc:"Avantage jets contre poison."},
+      {name:"Huile de feu grégeois",price:{cp:0,sp:0,gp:5},stock:3,desc:"Dégâts de feu."},
+      {name:"Acide (fiole)",price:{cp:0,sp:0,gp:25},stock:2,desc:"2d6 dégâts acide."},
+      {name:"Poison de base",price:{cp:0,sp:0,gp:100},stock:1,desc:"1d4 poison sur contact."},
+      {name:"Herbes médicinales",price:{cp:0,sp:10,gp:0},stock:10,desc:"Composant pour soins."},
+      {name:"Poudre de soufre",price:{cp:0,sp:5,gp:0},stock:8,desc:"Composant alchimique."},
+      {name:"Fiole vide",price:{cp:0,sp:1,gp:0},stock:20,desc:"Contenant en verre."},
+      {name:"Kit d'alchimiste",price:{cp:0,sp:0,gp:50},stock:1,desc:"Outils pour alchimie."}
     ]
   },
   "Sales | Tomes & Scrolls": {
-    icon: "📚", theme: "theme-tomes",
-    description: "Grimoires, parchemins et savoirs arcanes.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Parchemin vierge",      price:{cp:0,sp:1,gp:0},  stock:20, desc:"Pour notes ou sorts." },
-      { name: "Livre vierge",          price:{cp:0,sp:0,gp:1},  stock:5,  desc:"100 pages, couverture cuir." },
-      { name: "Encre (bouteille)",     price:{cp:0,sp:0,gp:10}, stock:5,  desc:"Encre noire de qualité." },
-      { name: "Plume d'écriture",      price:{cp:2,sp:0,gp:0},  stock:10, desc:"Pour écrire et dessiner." },
-      { name: "Parchemin sort niv.1",  price:{cp:0,sp:0,gp:25}, stock:3,  desc:"Contient un sort de niveau 1." },
-      { name: "Parchemin sort niv.2",  price:{cp:0,sp:0,gp:75}, stock:2,  desc:"Contient un sort de niveau 2." },
-      { name: "Carte de région",       price:{cp:0,sp:0,gp:5},  stock:4,  desc:"Carte détaillée de la région." },
-      { name: "Grimoire vierge",       price:{cp:0,sp:0,gp:50}, stock:1,  desc:"100 pages, pour magicien." },
-      { name: "Composants sorts",      price:{cp:0,sp:0,gp:5},  stock:5,  desc:"Pochette composants variés." },
+    icon:"📚",theme:"theme-tomes",description:"Grimoires, parchemins et savoirs arcanes.",sellMultiplier:0.5,
+    items:[
+      {name:"Parchemin vierge",price:{cp:0,sp:1,gp:0},stock:20,desc:"Pour notes ou sorts."},
+      {name:"Livre vierge",price:{cp:0,sp:0,gp:1},stock:5,desc:"100 pages, couverture cuir."},
+      {name:"Encre (bouteille)",price:{cp:0,sp:0,gp:10},stock:5,desc:"Encre noire de qualité."},
+      {name:"Plume d'écriture",price:{cp:2,sp:0,gp:0},stock:10,desc:"Pour écrire et dessiner."},
+      {name:"Parchemin sort niv.1",price:{cp:0,sp:0,gp:25},stock:3,desc:"Contient un sort de niveau 1."},
+      {name:"Parchemin sort niv.2",price:{cp:0,sp:0,gp:75},stock:2,desc:"Contient un sort de niveau 2."},
+      {name:"Carte de région",price:{cp:0,sp:0,gp:5},stock:4,desc:"Carte détaillée de la région."},
+      {name:"Grimoire vierge",price:{cp:0,sp:0,gp:50},stock:1,desc:"100 pages, pour magicien."},
+      {name:"Composants sorts",price:{cp:0,sp:0,gp:5},stock:5,desc:"Pochette composants variés."}
     ]
   },
   "Sales | Wands & Staff": {
-    icon: "🪄", theme: "theme-wands",
-    description: "Baguettes, bâtons et focaliseurs magiques.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Bâton de marche",      price:{cp:0,sp:2,gp:0},  stock:5,  desc:"1d6 contondant. Polyvalent." },
-      { name: "Focaliseur arcanique", price:{cp:0,sp:0,gp:20}, stock:3,  desc:"Cristal, orbe ou baguette." },
-      { name: "Symbole sacré",        price:{cp:0,sp:0,gp:5},  stock:3,  desc:"Focaliseur divin." },
-      { name: "Bâton de combat",      price:{cp:0,sp:0,gp:10}, stock:2,  desc:"Renforcé en métal." },
-      { name: "Focaliseur druidique", price:{cp:0,sp:0,gp:5},  stock:2,  desc:"Branche de gui, totem." },
-      { name: "Composants rare",      price:{cp:0,sp:0,gp:50}, stock:2,  desc:"Matériaux pour sorts coûteux." },
+    icon:"🪄",theme:"theme-wands",description:"Baguettes, bâtons et focaliseurs magiques.",sellMultiplier:0.5,
+    items:[
+      {name:"Bâton de marche",price:{cp:0,sp:2,gp:0},stock:5,desc:"1d6 contondant. Polyvalent."},
+      {name:"Focaliseur arcanique",price:{cp:0,sp:0,gp:20},stock:3,desc:"Cristal, orbe ou baguette."},
+      {name:"Symbole sacré",price:{cp:0,sp:0,gp:5},stock:3,desc:"Focaliseur divin."},
+      {name:"Bâton de combat",price:{cp:0,sp:0,gp:10},stock:2,desc:"Renforcé en métal."},
+      {name:"Focaliseur druidique",price:{cp:0,sp:0,gp:5},stock:2,desc:"Branche de gui, totem."},
+      {name:"Composants rare",price:{cp:0,sp:0,gp:50},stock:2,desc:"Matériaux pour sorts coûteux."}
     ]
   },
   "Sales | Heavy Armors": {
-    icon: "🛡️", theme: "theme-heavy",
-    description: "Armures lourdes pour guerriers aguerris.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Cotte de mailles",   price:{cp:0,sp:0,gp:75},  stock:2,  desc:"CA 16. Désavantage Discrétion." },
-      { name: "Cuirasse",           price:{cp:0,sp:0,gp:400}, stock:1,  desc:"CA 17. Désavantage Discrétion." },
-      { name: "Armure à plaques",   price:{cp:0,sp:0,gp:1500},stock:1,  desc:"CA 18. Désavantage Discrétion." },
-      { name: "Armure en anneaux",  price:{cp:0,sp:0,gp:30},  stock:2,  desc:"CA 14. Désavantage Discrétion." },
-      { name: "Bouclier",           price:{cp:0,sp:0,gp:10},  stock:4,  desc:"+2 CA." },
-      { name: "Casque de plates",   price:{cp:0,sp:0,gp:15},  stock:3,  desc:"Protection tête." },
-      { name: "Gantelets de métal", price:{cp:0,sp:0,gp:10},  stock:3,  desc:"Protection mains." },
-      { name: "Jambières de métal", price:{cp:0,sp:0,gp:15},  stock:2,  desc:"Protection jambes." },
+    icon:"🛡️",theme:"theme-heavy",description:"Armures lourdes pour guerriers aguerris.",sellMultiplier:0.5,
+    items:[
+      {name:"Cotte de mailles",price:{cp:0,sp:0,gp:75},stock:2,desc:"CA 16. Désavantage Discrétion."},
+      {name:"Cuirasse",price:{cp:0,sp:0,gp:400},stock:1,desc:"CA 17. Désavantage Discrétion."},
+      {name:"Armure à plaques",price:{cp:0,sp:0,gp:1500},stock:1,desc:"CA 18. Désavantage Discrétion."},
+      {name:"Armure en anneaux",price:{cp:0,sp:0,gp:30},stock:2,desc:"CA 14. Désavantage Discrétion."},
+      {name:"Bouclier",price:{cp:0,sp:0,gp:10},stock:4,desc:"+2 CA."},
+      {name:"Casque de plates",price:{cp:0,sp:0,gp:15},stock:3,desc:"Protection tête."},
+      {name:"Gantelets de métal",price:{cp:0,sp:0,gp:10},stock:3,desc:"Protection mains."},
+      {name:"Jambières de métal",price:{cp:0,sp:0,gp:15},stock:2,desc:"Protection jambes."}
     ]
   },
   "Sales | Medium Armors": {
-    icon: "🔰", theme: "theme-medium",
-    description: "Armures intermédiaires alliant protection et mobilité.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Armure de cuir clouté",price:{cp:0,sp:0,gp:45}, stock:3,  desc:"CA 13+Dex." },
-      { name: "Armure d'écailles",    price:{cp:0,sp:0,gp:50}, stock:2,  desc:"CA 14+Dex(max2). Désavantage Discrétion." },
-      { name: "Demi-plaque",          price:{cp:0,sp:0,gp:750},stock:1,  desc:"CA 15+Dex(max2). Désavantage Discrétion." },
-      { name: "Cuirasse en bronze",   price:{cp:0,sp:0,gp:200},stock:1,  desc:"CA 15+Dex(max2)." },
-      { name: "Bouclier de bois",     price:{cp:0,sp:0,gp:5},  stock:5,  desc:"+2 CA. Plus léger." },
-      { name: "Plastron de cuir",     price:{cp:0,sp:0,gp:25}, stock:3,  desc:"CA 13+Dex. Léger." },
+    icon:"🔰",theme:"theme-medium",description:"Armures intermédiaires alliant protection et mobilité.",sellMultiplier:0.5,
+    items:[
+      {name:"Armure de cuir clouté",price:{cp:0,sp:0,gp:45},stock:3,desc:"CA 13+Dex."},
+      {name:"Armure d'écailles",price:{cp:0,sp:0,gp:50},stock:2,desc:"CA 14+Dex(max2). Désavantage Discrétion."},
+      {name:"Demi-plaque",price:{cp:0,sp:0,gp:750},stock:1,desc:"CA 15+Dex(max2). Désavantage Discrétion."},
+      {name:"Cuirasse en bronze",price:{cp:0,sp:0,gp:200},stock:1,desc:"CA 15+Dex(max2)."},
+      {name:"Bouclier de bois",price:{cp:0,sp:0,gp:5},stock:5,desc:"+2 CA. Plus léger."},
+      {name:"Plastron de cuir",price:{cp:0,sp:0,gp:25},stock:3,desc:"CA 13+Dex. Léger."}
     ]
   },
   "Sales | Light Armors": {
-    icon: "🥋", theme: "theme-light",
-    description: "Protections légères pour roublards et rôdeurs.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Armure matelassée",  price:{cp:0,sp:0,gp:5},  stock:4,  desc:"CA 11+Dex. Désavantage Discrétion." },
-      { name: "Armure de cuir",     price:{cp:0,sp:0,gp:10}, stock:5,  desc:"CA 11+Dex." },
-      { name: "Chemise de mailles", price:{cp:0,sp:0,gp:50}, stock:2,  desc:"CA 13+Dex(max2). Discrète." },
-      { name: "Vêtements communs",  price:{cp:0,sp:10,gp:0}, stock:10, desc:"Tenue ordinaire." },
-      { name: "Tenue de voyage",    price:{cp:0,sp:0,gp:2},  stock:5,  desc:"Pratique pour l'aventure." },
-      { name: "Manteau à capuche",  price:{cp:0,sp:0,gp:1},  stock:6,  desc:"Discrétion facilitée." },
+    icon:"🥋",theme:"theme-light",description:"Protections légères pour roublards et rôdeurs.",sellMultiplier:0.5,
+    items:[
+      {name:"Armure matelassée",price:{cp:0,sp:0,gp:5},stock:4,desc:"CA 11+Dex. Désavantage Discrétion."},
+      {name:"Armure de cuir",price:{cp:0,sp:0,gp:10},stock:5,desc:"CA 11+Dex."},
+      {name:"Chemise de mailles",price:{cp:0,sp:0,gp:50},stock:2,desc:"CA 13+Dex(max2). Discrète."},
+      {name:"Vêtements communs",price:{cp:0,sp:10,gp:0},stock:10,desc:"Tenue ordinaire."},
+      {name:"Tenue de voyage",price:{cp:0,sp:0,gp:2},stock:5,desc:"Pratique pour l'aventure."},
+      {name:"Manteau à capuche",price:{cp:0,sp:0,gp:1},stock:6,desc:"Discrétion facilitée."}
     ]
   },
   "Sales | Tailor": {
-    icon: "🧵", theme: "theme-tailor",
-    description: "Vêtements et tenues sur mesure pour toutes occasions.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Vêtements fins",     price:{cp:0,sp:0,gp:15}, stock:5,  desc:"Tenue élégante pour nobles." },
-      { name: "Costume de cour",    price:{cp:0,sp:0,gp:30}, stock:2,  desc:"Tenue pour événements." },
-      { name: "Robe de mage",       price:{cp:0,sp:0,gp:10}, stock:3,  desc:"Longue robe à capuche." },
-      { name: "Tenue de roublard",  price:{cp:0,sp:0,gp:8},  stock:3,  desc:"Sombre, discrète." },
-      { name: "Habits religieux",   price:{cp:0,sp:0,gp:5},  stock:3,  desc:"Tenue de clerc ou moine." },
-      { name: "Capes et manteaux",  price:{cp:0,sp:0,gp:5},  stock:6,  desc:"Protection contre le froid." },
-      { name: "Bottes de qualité",  price:{cp:0,sp:0,gp:4},  stock:4,  desc:"Solides et confortables." },
-      { name: "Sac de voyage",      price:{cp:0,sp:0,gp:3},  stock:5,  desc:"Sac en cuir robuste." },
+    icon:"🧵",theme:"theme-tailor",description:"Vêtements et tenues sur mesure pour toutes occasions.",sellMultiplier:0.4,
+    items:[
+      {name:"Vêtements fins",price:{cp:0,sp:0,gp:15},stock:5,desc:"Tenue élégante pour nobles."},
+      {name:"Costume de cour",price:{cp:0,sp:0,gp:30},stock:2,desc:"Tenue pour événements."},
+      {name:"Robe de mage",price:{cp:0,sp:0,gp:10},stock:3,desc:"Longue robe à capuche."},
+      {name:"Tenue de roublard",price:{cp:0,sp:0,gp:8},stock:3,desc:"Sombre, discrète."},
+      {name:"Habits religieux",price:{cp:0,sp:0,gp:5},stock:3,desc:"Tenue de clerc ou moine."},
+      {name:"Capes et manteaux",price:{cp:0,sp:0,gp:5},stock:6,desc:"Protection contre le froid."},
+      {name:"Bottes de qualité",price:{cp:0,sp:0,gp:4},stock:4,desc:"Solides et confortables."},
+      {name:"Sac de voyage",price:{cp:0,sp:0,gp:3},stock:5,desc:"Sac en cuir robuste."}
     ]
   },
   "Sales | Musical Instruments": {
-    icon: "🎵", theme: "theme-music",
-    description: "Instruments pour bardes et musiciens itinérants.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Luth",               price:{cp:0,sp:0,gp:35}, stock:2,  desc:"Instrument à cordes classique." },
-      { name: "Flûte",              price:{cp:0,sp:0,gp:2},  stock:4,  desc:"Flûte traversière en bois." },
-      { name: "Tambour",            price:{cp:0,sp:0,gp:6},  stock:3,  desc:"Tambour de voyage." },
-      { name: "Cor",                price:{cp:0,sp:0,gp:3},  stock:2,  desc:"Corne pour signaler." },
-      { name: "Viole",              price:{cp:0,sp:0,gp:30}, stock:1,  desc:"Instrument à cordes frottées." },
-      { name: "Cornemuse",          price:{cp:0,sp:0,gp:30}, stock:1,  desc:"Instrument à vent à soufflet." },
-      { name: "Cithare",            price:{cp:0,sp:0,gp:25}, stock:1,  desc:"Instrument à cordes pincées." },
-      { name: "Partitions",         price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Recueil de mélodies." },
+    icon:"🎵",theme:"theme-music",description:"Instruments pour bardes et musiciens itinérants.",sellMultiplier:0.4,
+    items:[
+      {name:"Luth",price:{cp:0,sp:0,gp:35},stock:2,desc:"Instrument à cordes classique."},
+      {name:"Flûte",price:{cp:0,sp:0,gp:2},stock:4,desc:"Flûte traversière en bois."},
+      {name:"Tambour",price:{cp:0,sp:0,gp:6},stock:3,desc:"Tambour de voyage."},
+      {name:"Cor",price:{cp:0,sp:0,gp:3},stock:2,desc:"Corne pour signaler."},
+      {name:"Viole",price:{cp:0,sp:0,gp:30},stock:1,desc:"Instrument à cordes frottées."},
+      {name:"Cornemuse",price:{cp:0,sp:0,gp:30},stock:1,desc:"Instrument à vent à soufflet."},
+      {name:"Cithare",price:{cp:0,sp:0,gp:25},stock:1,desc:"Instrument à cordes pincées."},
+      {name:"Partitions",price:{cp:0,sp:5,gp:0},stock:8,desc:"Recueil de mélodies."}
     ]
   },
   "Sales | Perfumes & Jewels": {
-    icon: "💎", theme: "theme-jewels",
-    description: "Bijoux précieux et parfums exotiques.",
-    sellMultiplier: 0.6,
-    items: [
-      { name: "Bague en argent",    price:{cp:0,sp:0,gp:5},  stock:5,  desc:"Anneau d'argent simple." },
-      { name: "Collier en or",      price:{cp:0,sp:0,gp:25}, stock:3,  desc:"Chaîne en or pur." },
-      { name: "Bracelet de jade",   price:{cp:0,sp:0,gp:15}, stock:3,  desc:"Pierre verte polie." },
-      { name: "Broche décorative",  price:{cp:0,sp:0,gp:8},  stock:5,  desc:"Métal et pierre fine." },
-      { name: "Parfum rare",        price:{cp:0,sp:0,gp:10}, stock:4,  desc:"Fiole de 30ml, odeur exotique." },
-      { name: "Eau de rose",        price:{cp:0,sp:10,gp:0}, stock:6,  desc:"Parfum léger floral." },
-      { name: "Gemme semi-précieuse",price:{cp:0,sp:0,gp:10},stock:6,  desc:"Améthyste, citrine ou topaze." },
-      { name: "Pendentif en or",    price:{cp:0,sp:0,gp:20}, stock:2,  desc:"Pendentif décoratif." },
+    icon:"💎",theme:"theme-jewels",description:"Bijoux précieux et parfums exotiques.",sellMultiplier:0.6,
+    items:[
+      {name:"Bague en argent",price:{cp:0,sp:0,gp:5},stock:5,desc:"Anneau d'argent simple."},
+      {name:"Collier en or",price:{cp:0,sp:0,gp:25},stock:3,desc:"Chaîne en or pur."},
+      {name:"Bracelet de jade",price:{cp:0,sp:0,gp:15},stock:3,desc:"Pierre verte polie."},
+      {name:"Broche décorative",price:{cp:0,sp:0,gp:8},stock:5,desc:"Métal et pierre fine."},
+      {name:"Parfum rare",price:{cp:0,sp:0,gp:10},stock:4,desc:"Fiole de 30ml, odeur exotique."},
+      {name:"Eau de rose",price:{cp:0,sp:10,gp:0},stock:6,desc:"Parfum léger floral."},
+      {name:"Gemme semi-précieuse",price:{cp:0,sp:0,gp:10},stock:6,desc:"Améthyste, citrine ou topaze."},
+      {name:"Pendentif en or",price:{cp:0,sp:0,gp:20},stock:2,desc:"Pendentif décoratif."}
     ]
   },
   "Sales | Rations and Outdoors": {
-    icon: "🎒", theme: "theme-rations",
-    description: "Équipement d'aventure et provisions de voyage.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Rations (1 jour)",   price:{cp:0,sp:10,gp:0}, stock:30, desc:"Nourriture sèche pour 1 jour." },
-      { name: "Sac à dos",          price:{cp:0,sp:0,gp:2},  stock:5,  desc:"Capacité standard." },
-      { name: "Corde (15m)",        price:{cp:0,sp:0,gp:1},  stock:8,  desc:"Corde en chanvre." },
-      { name: "Torche",             price:{cp:1,sp:0,gp:0},  stock:30, desc:"Éclaire 6m, 1 heure." },
-      { name: "Lanterne sourde",    price:{cp:0,sp:0,gp:5},  stock:3,  desc:"Éclaire 9m, oriente." },
-      { name: "Huile (flasque)",    price:{cp:0,sp:1,gp:0},  stock:15, desc:"Pour lanterne, 6 heures." },
-      { name: "Silex et amadou",    price:{cp:5,sp:0,gp:0},  stock:10, desc:"Pour allumer un feu." },
-      { name: "Couverture de laine",price:{cp:0,sp:10,gp:0}, stock:8,  desc:"Contre le froid nocturne." },
-      { name: "Grappin",            price:{cp:0,sp:0,gp:2},  stock:3,  desc:"Pour escalader." },
-      { name: "Kit de survie",      price:{cp:0,sp:0,gp:5},  stock:4,  desc:"Outils essentiels d'aventurier." },
+    icon:"🎒",theme:"theme-rations",description:"Équipement d'aventure et provisions de voyage.",sellMultiplier:0.5,
+    items:[
+      {name:"Rations (1 jour)",price:{cp:0,sp:10,gp:0},stock:30,desc:"Nourriture sèche pour 1 jour."},
+      {name:"Sac à dos",price:{cp:0,sp:0,gp:2},stock:5,desc:"Capacité standard."},
+      {name:"Corde (15m)",price:{cp:0,sp:0,gp:1},stock:8,desc:"Corde en chanvre."},
+      {name:"Torche",price:{cp:1,sp:0,gp:0},stock:30,desc:"Éclaire 6m, 1 heure."},
+      {name:"Lanterne sourde",price:{cp:0,sp:0,gp:5},stock:3,desc:"Éclaire 9m, oriente."},
+      {name:"Huile (flasque)",price:{cp:0,sp:1,gp:0},stock:15,desc:"Pour lanterne, 6 heures."},
+      {name:"Silex et amadou",price:{cp:5,sp:0,gp:0},stock:10,desc:"Pour allumer un feu."},
+      {name:"Couverture de laine",price:{cp:0,sp:10,gp:0},stock:8,desc:"Contre le froid nocturne."},
+      {name:"Grappin",price:{cp:0,sp:0,gp:2},stock:3,desc:"Pour escalader."},
+      {name:"Kit de survie",price:{cp:0,sp:0,gp:5},stock:4,desc:"Outils essentiels d'aventurier."}
     ]
   },
   "Sales | Herbs & Spices": {
-    icon: "🌿", theme: "theme-herbs",
-    description: "Herbes aromatiques, épices et plantes médicinales.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Herbes médicinales", price:{cp:0,sp:5,gp:0},  stock:15, desc:"Pour soigner blessures légères." },
-      { name: "Racine de valériane",price:{cp:0,sp:8,gp:0},  stock:8,  desc:"Aide au sommeil, calme." },
-      { name: "Poivre noir",        price:{cp:0,sp:2,gp:0},  stock:20, desc:"Épice commune." },
-      { name: "Safran",             price:{cp:0,sp:0,gp:3},  stock:5,  desc:"Épice rare, dorée." },
-      { name: "Herbes aromatiques", price:{cp:5,sp:0,gp:0},  stock:20, desc:"Mélange pour cuisine." },
-      { name: "Racine antidote",    price:{cp:0,sp:0,gp:2},  stock:6,  desc:"Composant anti-poison." },
-      { name: "Champignons séchés", price:{cp:0,sp:3,gp:0},  stock:12, desc:"Comestibles ou médicinaux." },
-      { name: "Huile essentielle",  price:{cp:0,sp:0,gp:1},  stock:8,  desc:"Petite fiole concentrée." },
+    icon:"🌿",theme:"theme-herbs",description:"Herbes aromatiques, épices et plantes médicinales.",sellMultiplier:0.5,
+    items:[
+      {name:"Herbes médicinales",price:{cp:0,sp:5,gp:0},stock:15,desc:"Pour soigner blessures légères."},
+      {name:"Racine de valériane",price:{cp:0,sp:8,gp:0},stock:8,desc:"Aide au sommeil, calme."},
+      {name:"Poivre noir",price:{cp:0,sp:2,gp:0},stock:20,desc:"Épice commune."},
+      {name:"Safran",price:{cp:0,sp:0,gp:3},stock:5,desc:"Épice rare, dorée."},
+      {name:"Herbes aromatiques",price:{cp:5,sp:0,gp:0},stock:20,desc:"Mélange pour cuisine."},
+      {name:"Racine antidote",price:{cp:0,sp:0,gp:2},stock:6,desc:"Composant anti-poison."},
+      {name:"Champignons séchés",price:{cp:0,sp:3,gp:0},stock:12,desc:"Comestibles ou médicinaux."},
+      {name:"Huile essentielle",price:{cp:0,sp:0,gp:1},stock:8,desc:"Petite fiole concentrée."}
     ]
   },
   "Sales | Bakery": {
-    icon: "🥖", theme: "theme-bakery",
-    description: "Pains frais, pâtisseries et douceurs du four.",
-    sellMultiplier: 0.3,
-    items: [
-      { name: "Miche de pain",      price:{cp:2,sp:0,gp:0},  stock:20, desc:"Pain frais du jour." },
-      { name: "Biscuits (douzaine)",price:{cp:5,sp:0,gp:0},  stock:10, desc:"Biscuits secs de voyage." },
-      { name: "Tarte aux fruits",   price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Garnie de fruits de saison." },
-      { name: "Gâteau de fête",     price:{cp:0,sp:0,gp:1},  stock:3,  desc:"Pour célébrations." },
-      { name: "Pain de seigle",     price:{cp:3,sp:0,gp:0},  stock:15, desc:"Dense et nourrissant." },
-      { name: "Brioches (x4)",      price:{cp:0,sp:3,gp:0},  stock:10, desc:"Moelleuses et beurrées." },
-      { name: "Galettes de voyage", price:{cp:4,sp:0,gp:0},  stock:20, desc:"Se conservent longtemps." },
+    icon:"🥖",theme:"theme-bakery",description:"Pains frais, pâtisseries et douceurs du four.",sellMultiplier:0.3,
+    items:[
+      {name:"Miche de pain",price:{cp:2,sp:0,gp:0},stock:20,desc:"Pain frais du jour."},
+      {name:"Biscuits (douzaine)",price:{cp:5,sp:0,gp:0},stock:10,desc:"Biscuits secs de voyage."},
+      {name:"Tarte aux fruits",price:{cp:0,sp:5,gp:0},stock:8,desc:"Garnie de fruits de saison."},
+      {name:"Gâteau de fête",price:{cp:0,sp:0,gp:1},stock:3,desc:"Pour célébrations."},
+      {name:"Pain de seigle",price:{cp:3,sp:0,gp:0},stock:15,desc:"Dense et nourrissant."},
+      {name:"Brioches (x4)",price:{cp:0,sp:3,gp:0},stock:10,desc:"Moelleuses et beurrées."},
+      {name:"Galettes de voyage",price:{cp:4,sp:0,gp:0},stock:20,desc:"Se conservent longtemps."}
     ]
   },
   "Sales | Butcher": {
-    icon: "🥩", theme: "theme-butcher",
-    description: "Viandes fraîches, charcuteries et gibiers.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Poulet entier",      price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Volaille fraîche." },
-      { name: "Jambon fumé",        price:{cp:0,sp:0,gp:1},  stock:5,  desc:"Bien conservé, voyage." },
-      { name: "Côtelettes (x4)",    price:{cp:0,sp:8,gp:0},  stock:10, desc:"Viande de porc fraîche." },
-      { name: "Saucisses (x6)",     price:{cp:0,sp:6,gp:0},  stock:12, desc:"Épicées ou nature." },
-      { name: "Viande séchée",      price:{cp:0,sp:0,gp:1},  stock:10, desc:"Se conserve 1 semaine." },
-      { name: "Gibier du jour",     price:{cp:0,sp:10,gp:0}, stock:4,  desc:"Sanglier, cerf ou lièvre." },
-      { name: "Os à moelle",        price:{cp:3,sp:0,gp:0},  stock:8,  desc:"Pour bouillon ou chien." },
+    icon:"🥩",theme:"theme-butcher",description:"Viandes fraîches, charcuteries et gibiers.",sellMultiplier:0.4,
+    items:[
+      {name:"Poulet entier",price:{cp:0,sp:5,gp:0},stock:8,desc:"Volaille fraîche."},
+      {name:"Jambon fumé",price:{cp:0,sp:0,gp:1},stock:5,desc:"Bien conservé, voyage."},
+      {name:"Côtelettes (x4)",price:{cp:0,sp:8,gp:0},stock:10,desc:"Viande de porc fraîche."},
+      {name:"Saucisses (x6)",price:{cp:0,sp:6,gp:0},stock:12,desc:"Épicées ou nature."},
+      {name:"Viande séchée",price:{cp:0,sp:0,gp:1},stock:10,desc:"Se conserve 1 semaine."},
+      {name:"Gibier du jour",price:{cp:0,sp:10,gp:0},stock:4,desc:"Sanglier, cerf ou lièvre."},
+      {name:"Os à moelle",price:{cp:3,sp:0,gp:0},stock:8,desc:"Pour bouillon ou chien."}
     ]
   },
   "Sales | Poissonnerie": {
-    icon: "🐟", theme: "theme-poisson",
-    description: "Poissons frais, fruits de mer et produits aquatiques.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Truite fraîche",     price:{cp:0,sp:4,gp:0},  stock:10, desc:"Poisson d'eau douce." },
-      { name: "Hareng fumé (x3)",   price:{cp:0,sp:6,gp:0},  stock:8,  desc:"Bien conservé." },
-      { name: "Crabe royal",        price:{cp:0,sp:0,gp:1},  stock:4,  desc:"Gros crabe des côtes." },
-      { name: "Huîtres (douzaine)", price:{cp:0,sp:0,gp:1},  stock:5,  desc:"Fraîches de la mer." },
-      { name: "Saumon entier",      price:{cp:0,sp:0,gp:1},  stock:5,  desc:"Poisson de grande taille." },
-      { name: "Poisson séché",      price:{cp:0,sp:5,gp:0},  stock:12, desc:"Se conserve plusieurs semaines." },
-      { name: "Anguille fumée",     price:{cp:0,sp:8,gp:0},  stock:6,  desc:"Délicatesse régionale." },
+    icon:"🐟",theme:"theme-poisson",description:"Poissons frais, fruits de mer et produits aquatiques.",sellMultiplier:0.4,
+    items:[
+      {name:"Truite fraîche",price:{cp:0,sp:4,gp:0},stock:10,desc:"Poisson d'eau douce."},
+      {name:"Hareng fumé (x3)",price:{cp:0,sp:6,gp:0},stock:8,desc:"Bien conservé."},
+      {name:"Crabe royal",price:{cp:0,sp:0,gp:1},stock:4,desc:"Gros crabe des côtes."},
+      {name:"Huîtres (douzaine)",price:{cp:0,sp:0,gp:1},stock:5,desc:"Fraîches de la mer."},
+      {name:"Saumon entier",price:{cp:0,sp:0,gp:1},stock:5,desc:"Poisson de grande taille."},
+      {name:"Poisson séché",price:{cp:0,sp:5,gp:0},stock:12,desc:"Se conserve plusieurs semaines."},
+      {name:"Anguille fumée",price:{cp:0,sp:8,gp:0},stock:6,desc:"Délicatesse régionale."}
     ]
   },
   "Sales | Fruits & Veggies": {
-    icon: "🍎", theme: "theme-fruits",
-    description: "Fruits frais et légumes de saison du marché.",
-    sellMultiplier: 0.3,
-    items: [
-      { name: "Pommes (x6)",        price:{cp:3,sp:0,gp:0},  stock:20, desc:"Fruits croquants de saison." },
-      { name: "Carottes (botte)",   price:{cp:2,sp:0,gp:0},  stock:15, desc:"Légumes frais." },
-      { name: "Raisins (grappe)",   price:{cp:5,sp:0,gp:0},  stock:10, desc:"Raisins sucrés." },
-      { name: "Légumes variés",     price:{cp:4,sp:0,gp:0},  stock:20, desc:"Assortiment de saison." },
-      { name: "Baies sauvages",     price:{cp:3,sp:0,gp:0},  stock:12, desc:"Cueillis en forêt." },
-      { name: "Fruits exotiques",   price:{cp:0,sp:5,gp:0},  stock:5,  desc:"Importés de contrées lointaines." },
-      { name: "Herbes fraîches",    price:{cp:2,sp:0,gp:0},  stock:15, desc:"Persil, thym, romarin." },
+    icon:"🍎",theme:"theme-fruits",description:"Fruits frais et légumes de saison du marché.",sellMultiplier:0.3,
+    items:[
+      {name:"Pommes (x6)",price:{cp:3,sp:0,gp:0},stock:20,desc:"Fruits croquants de saison."},
+      {name:"Carottes (botte)",price:{cp:2,sp:0,gp:0},stock:15,desc:"Légumes frais."},
+      {name:"Raisins (grappe)",price:{cp:5,sp:0,gp:0},stock:10,desc:"Raisins sucrés."},
+      {name:"Légumes variés",price:{cp:4,sp:0,gp:0},stock:20,desc:"Assortiment de saison."},
+      {name:"Baies sauvages",price:{cp:3,sp:0,gp:0},stock:12,desc:"Cueillis en forêt."},
+      {name:"Fruits exotiques",price:{cp:0,sp:5,gp:0},stock:5,desc:"Importés de contrées lointaines."},
+      {name:"Herbes fraîches",price:{cp:2,sp:0,gp:0},stock:15,desc:"Persil, thym, romarin."}
     ]
   },
   "Sales | Cheese, Eggs & Dairy": {
-    icon: "🧀", theme: "theme-dairy",
-    description: "Fromages affinés, œufs frais et produits laitiers.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Fromage affiné",     price:{cp:0,sp:5,gp:0},  stock:10, desc:"Fromage à pâte dure." },
-      { name: "Fromage frais",      price:{cp:0,sp:3,gp:0},  stock:8,  desc:"Doux et crémeux." },
-      { name: "Œufs (douzaine)",    price:{cp:0,sp:3,gp:0},  stock:15, desc:"Œufs de poule frais." },
-      { name: "Beurre (bloc)",      price:{cp:0,sp:4,gp:0},  stock:8,  desc:"Beurre de ferme salé." },
-      { name: "Lait (cruche)",      price:{cp:2,sp:0,gp:0},  stock:10, desc:"Lait frais de la matinée." },
-      { name: "Crème épaisse",      price:{cp:0,sp:3,gp:0},  stock:6,  desc:"Pour sauces et desserts." },
-      { name: "Fromage de voyage",  price:{cp:0,sp:8,gp:0},  stock:8,  desc:"Enrobé de cire, se conserve." },
+    icon:"🧀",theme:"theme-dairy",description:"Fromages affinés, œufs frais et produits laitiers.",sellMultiplier:0.4,
+    items:[
+      {name:"Fromage affiné",price:{cp:0,sp:5,gp:0},stock:10,desc:"Fromage à pâte dure."},
+      {name:"Fromage frais",price:{cp:0,sp:3,gp:0},stock:8,desc:"Doux et crémeux."},
+      {name:"Œufs (douzaine)",price:{cp:0,sp:3,gp:0},stock:15,desc:"Œufs de poule frais."},
+      {name:"Beurre (bloc)",price:{cp:0,sp:4,gp:0},stock:8,desc:"Beurre de ferme salé."},
+      {name:"Lait (cruche)",price:{cp:2,sp:0,gp:0},stock:10,desc:"Lait frais de la matinée."},
+      {name:"Crème épaisse",price:{cp:0,sp:3,gp:0},stock:6,desc:"Pour sauces et desserts."},
+      {name:"Fromage de voyage",price:{cp:0,sp:8,gp:0},stock:8,desc:"Enrobé de cire, se conserve."}
     ]
   },
   "Sales | Grains & Flours": {
-    icon: "🌾", theme: "theme-grains",
-    description: "Grains, farines et céréales pour la cuisine.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Farine (sac 5kg)",   price:{cp:0,sp:5,gp:0},  stock:10, desc:"Farine de blé standard." },
-      { name: "Avoine (sac)",       price:{cp:0,sp:3,gp:0},  stock:12, desc:"Pour porridge ou chevaux." },
-      { name: "Riz (sac 5kg)",      price:{cp:0,sp:8,gp:0},  stock:8,  desc:"Riz importé du sud." },
-      { name: "Orge (sac)",         price:{cp:0,sp:4,gp:0},  stock:10, desc:"Pour bière ou soupe." },
-      { name: "Sel (paquet)",       price:{cp:5,sp:0,gp:0},  stock:20, desc:"Sel de mer ou de mine." },
-      { name: "Sucre (sachet)",     price:{cp:0,sp:5,gp:0},  stock:10, desc:"Sucre raffiné rare." },
-      { name: "Levure",             price:{cp:3,sp:0,gp:0},  stock:8,  desc:"Pour pain et bière." },
+    icon:"🌾",theme:"theme-grains",description:"Grains, farines et céréales pour la cuisine.",sellMultiplier:0.4,
+    items:[
+      {name:"Farine (sac 5kg)",price:{cp:0,sp:5,gp:0},stock:10,desc:"Farine de blé standard."},
+      {name:"Avoine (sac)",price:{cp:0,sp:3,gp:0},stock:12,desc:"Pour porridge ou chevaux."},
+      {name:"Riz (sac 5kg)",price:{cp:0,sp:8,gp:0},stock:8,desc:"Riz importé du sud."},
+      {name:"Orge (sac)",price:{cp:0,sp:4,gp:0},stock:10,desc:"Pour bière ou soupe."},
+      {name:"Sel (paquet)",price:{cp:5,sp:0,gp:0},stock:20,desc:"Sel de mer ou de mine."},
+      {name:"Sucre (sachet)",price:{cp:0,sp:5,gp:0},stock:10,desc:"Sucre raffiné rare."},
+      {name:"Levure",price:{cp:3,sp:0,gp:0},stock:8,desc:"Pour pain et bière."}
     ]
   },
   "Sales | Honey & Sweets": {
-    icon: "🍯", theme: "theme-honey",
-    description: "Miels artisanaux, confitures et confiseries.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Miel sauvage (pot)", price:{cp:0,sp:0,gp:1},  stock:8,  desc:"Miel de fleurs sauvages." },
-      { name: "Miel de trèfle",     price:{cp:0,sp:8,gp:0},  stock:6,  desc:"Doux et clair." },
-      { name: "Confiture de baies", price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Baies sauvages sucrées." },
-      { name: "Bonbons au miel",    price:{cp:3,sp:0,gp:0},  stock:20, desc:"Friandises pour enfants." },
-      { name: "Nougat",             price:{cp:0,sp:4,gp:0},  stock:8,  desc:"Miel, sucre et noix." },
-      { name: "Sirop d'érable",     price:{cp:0,sp:0,gp:2},  stock:4,  desc:"Importé du nord." },
-      { name: "Cire d'abeille",     price:{cp:0,sp:3,gp:0},  stock:6,  desc:"Pour bougies ou cire à cacheter." },
+    icon:"🍯",theme:"theme-honey",description:"Miels artisanaux, confitures et confiseries.",sellMultiplier:0.4,
+    items:[
+      {name:"Miel sauvage (pot)",price:{cp:0,sp:0,gp:1},stock:8,desc:"Miel de fleurs sauvages."},
+      {name:"Miel de trèfle",price:{cp:0,sp:8,gp:0},stock:6,desc:"Doux et clair."},
+      {name:"Confiture de baies",price:{cp:0,sp:5,gp:0},stock:8,desc:"Baies sauvages sucrées."},
+      {name:"Bonbons au miel",price:{cp:3,sp:0,gp:0},stock:20,desc:"Friandises pour enfants."},
+      {name:"Nougat",price:{cp:0,sp:4,gp:0},stock:8,desc:"Miel, sucre et noix."},
+      {name:"Sirop d'érable",price:{cp:0,sp:0,gp:2},stock:4,desc:"Importé du nord."},
+      {name:"Cire d'abeille",price:{cp:0,sp:3,gp:0},stock:6,desc:"Pour bougies ou cire à cacheter."}
     ]
   },
   "Sales | Pottery": {
-    icon: "🏺", theme: "theme-pottery",
-    description: "Céramiques, poteries et ustensiles en argile.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Pot en argile",      price:{cp:0,sp:3,gp:0},  stock:10, desc:"Pour conserver aliments." },
-      { name: "Pichet en céramique",price:{cp:0,sp:5,gp:0},  stock:8,  desc:"Pour eau ou vin." },
-      { name: "Bol en terre cuite", price:{cp:2,sp:0,gp:0},  stock:15, desc:"Vaisselle courante." },
-      { name: "Amphore",            price:{cp:0,sp:0,gp:1},  stock:5,  desc:"Grande jarre de stockage." },
-      { name: "Flacon en terre",    price:{cp:5,sp:0,gp:0},  stock:12, desc:"Petit contenant étanche." },
-      { name: "Carreaux de faïence",price:{cp:0,sp:8,gp:0},  stock:6,  desc:"Décoration murale." },
-      { name: "Vase décoratif",     price:{cp:0,sp:0,gp:2},  stock:4,  desc:"Peint à la main." },
+    icon:"🏺",theme:"theme-pottery",description:"Céramiques, poteries et ustensiles en argile.",sellMultiplier:0.4,
+    items:[
+      {name:"Pot en argile",price:{cp:0,sp:3,gp:0},stock:10,desc:"Pour conserver aliments."},
+      {name:"Pichet en céramique",price:{cp:0,sp:5,gp:0},stock:8,desc:"Pour eau ou vin."},
+      {name:"Bol en terre cuite",price:{cp:2,sp:0,gp:0},stock:15,desc:"Vaisselle courante."},
+      {name:"Amphore",price:{cp:0,sp:0,gp:1},stock:5,desc:"Grande jarre de stockage."},
+      {name:"Flacon en terre",price:{cp:5,sp:0,gp:0},stock:12,desc:"Petit contenant étanche."},
+      {name:"Carreaux de faïence",price:{cp:0,sp:8,gp:0},stock:6,desc:"Décoration murale."},
+      {name:"Vase décoratif",price:{cp:0,sp:0,gp:2},stock:4,desc:"Peint à la main."}
     ]
   },
   "Sales | Candles, Oils & Lanterns": {
-    icon: "🕯️", theme: "theme-candles",
-    description: "Lumières, huiles et équipement pour l'éclairage.",
-    sellMultiplier: 0.4,
-    items: [
-      { name: "Bougie",             price:{cp:1,sp:0,gp:0},  stock:30, desc:"Éclaire 1.5m, 1 heure." },
-      { name: "Bougies (x10)",      price:{cp:8,sp:0,gp:0},  stock:15, desc:"Pack économique." },
-      { name: "Lanterne commune",   price:{cp:0,sp:0,gp:5},  stock:4,  desc:"Éclaire 9m, 6h par huile." },
-      { name: "Lanterne sourde",    price:{cp:0,sp:0,gp:5},  stock:3,  desc:"Dirige la lumière." },
-      { name: "Huile (flasque)",    price:{cp:0,sp:1,gp:0},  stock:20, desc:"Pour lanterne, 6 heures." },
-      { name: "Torche",             price:{cp:1,sp:0,gp:0},  stock:25, desc:"Éclaire 6m, 1 heure." },
-      { name: "Bougie parfumée",    price:{cp:0,sp:5,gp:0},  stock:6,  desc:"Odeur agréable, 4 heures." },
-      { name: "Mèche et cire",      price:{cp:3,sp:0,gp:0},  stock:10, desc:"Pour fabriquer bougies." },
+    icon:"🕯️",theme:"theme-candles",description:"Lumières, huiles et équipement pour l'éclairage.",sellMultiplier:0.4,
+    items:[
+      {name:"Bougie",price:{cp:1,sp:0,gp:0},stock:30,desc:"Éclaire 1.5m, 1 heure."},
+      {name:"Bougies (x10)",price:{cp:8,sp:0,gp:0},stock:15,desc:"Pack économique."},
+      {name:"Lanterne commune",price:{cp:0,sp:0,gp:5},stock:4,desc:"Éclaire 9m, 6h par huile."},
+      {name:"Lanterne sourde",price:{cp:0,sp:0,gp:5},stock:3,desc:"Dirige la lumière."},
+      {name:"Huile (flasque)",price:{cp:0,sp:1,gp:0},stock:20,desc:"Pour lanterne, 6 heures."},
+      {name:"Torche",price:{cp:1,sp:0,gp:0},stock:25,desc:"Éclaire 6m, 1 heure."},
+      {name:"Bougie parfumée",price:{cp:0,sp:5,gp:0},stock:6,desc:"Odeur agréable, 4 heures."},
+      {name:"Mèche et cire",price:{cp:3,sp:0,gp:0},stock:10,desc:"Pour fabriquer bougies."}
     ]
   },
   "Sales | Livestock": {
-    icon: "🐄", theme: "theme-livestock",
-    description: "Animaux de ferme, montures et bêtes de somme.",
-    sellMultiplier: 0.5,
-    items: [
-      { name: "Poulet",             price:{cp:0,sp:2,gp:0},  stock:10, desc:"Volaille de ferme." },
-      { name: "Cochon",             price:{cp:0,sp:0,gp:3},  stock:4,  desc:"Bon pour la charcuterie." },
-      { name: "Chèvre",             price:{cp:0,sp:0,gp:1},  stock:3,  desc:"Lait et viande." },
-      { name: "Mouton",             price:{cp:0,sp:0,gp:2},  stock:3,  desc:"Laine et viande." },
-      { name: "Vache laitière",     price:{cp:0,sp:0,gp:10}, stock:2,  desc:"Produit 4L de lait/jour." },
-      { name: "Cheval de trait",    price:{cp:0,sp:0,gp:50}, stock:2,  desc:"Pour chariot et labour." },
-      { name: "Cheval de selle",    price:{cp:0,sp:0,gp:75}, stock:2,  desc:"Monture standard." },
-      { name: "Mule",               price:{cp:0,sp:0,gp:8},  stock:3,  desc:"Bête de somme résistante." },
-      { name: "Nourriture animale", price:{cp:0,sp:5,gp:0},  stock:15, desc:"Sac de foin ou grain." },
+    icon:"🐄",theme:"theme-livestock",description:"Animaux de ferme, montures et bêtes de somme.",sellMultiplier:0.5,
+    items:[
+      {name:"Poulet",price:{cp:0,sp:2,gp:0},stock:10,desc:"Volaille de ferme."},
+      {name:"Cochon",price:{cp:0,sp:0,gp:3},stock:4,desc:"Bon pour la charcuterie."},
+      {name:"Chèvre",price:{cp:0,sp:0,gp:1},stock:3,desc:"Lait et viande."},
+      {name:"Mouton",price:{cp:0,sp:0,gp:2},stock:3,desc:"Laine et viande."},
+      {name:"Vache laitière",price:{cp:0,sp:0,gp:10},stock:2,desc:"Produit 4L de lait/jour."},
+      {name:"Cheval de trait",price:{cp:0,sp:0,gp:50},stock:2,desc:"Pour chariot et labour."},
+      {name:"Cheval de selle",price:{cp:0,sp:0,gp:75},stock:2,desc:"Monture standard."},
+      {name:"Mule",price:{cp:0,sp:0,gp:8},stock:3,desc:"Bête de somme résistante."},
+      {name:"Nourriture animale",price:{cp:0,sp:5,gp:0},stock:15,desc:"Sac de foin ou grain."}
     ]
-  },
+  }
 };
 
-// ── CONVERSION BASE 20 ───────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// ÉTAT
+// ═══════════════════════════════════════════════════════════════
+let SHOPS = {};
+let wallet      = { pp:0, gp:7, sp:0, cp:0 };
+let history     = JSON.parse(localStorage.getItem("shopHistory3") || "[]");
+let activeShop  = "";
+let pendingItem = null;
+let gmMode      = false;
+let gmEditingShop = null;
+let gmEditingIdx  = null;
+
+// ═══════════════════════════════════════════════════════════════
+// CONVERSION BASE 20
+// ═══════════════════════════════════════════════════════════════
 function walletInCp() { return wallet.pp*4000 + wallet.gp*400 + wallet.sp*20 + wallet.cp; }
-function priceInCp(p) { return p.gp*400 + p.sp*20 + p.cp; }
+function priceInCp(p) { return (p.gp||0)*400 + (p.sp||0)*20 + (p.cp||0); }
 function cpToCoins(total) {
   let r = Math.round(total);
   const pp = Math.floor(r/4000); r%=4000;
@@ -607,12 +725,76 @@ function fmtCp(cp) {
   return [c.pp?c.pp+" PP":"", c.gp?c.gp+" GP":"", c.sp?c.sp+" SP":"", c.cp?c.cp+" CP":""].filter(Boolean).join(" + ");
 }
 
-// ── ÉTAT ────────────────────────────────────────────────────
-let wallet     = { pp:0, gp:7, sp:0, cp:0 };
-let history    = JSON.parse(localStorage.getItem("shopHistory3") || "[]");
-let activeShop = Object.keys(SHOPS)[0];
-let pendingItem = null;
+// ═══════════════════════════════════════════════════════════════
+// FIREBASE
+// ═══════════════════════════════════════════════════════════════
+function setFirebaseStatus(state, text) {
+  const el = document.getElementById("firebase-status");
+  el.className = "firebase-status " + state;
+  el.textContent = "● " + text;
+}
 
+function snapshotToShops(data) {
+  const shops = {};
+  Object.keys(data).forEach(key => {
+    const s = data[key];
+    shops[key] = {
+      icon: s.icon || "🏪",
+      theme: s.theme || "theme-weapons",
+      description: s.description || "",
+      sellMultiplier: s.sellMultiplier || 0.5,
+      items: s.items
+        ? Object.values(s.items).map(i => ({
+            name:  i.name  || "",
+            desc:  i.desc  || "",
+            price: i.price || {cp:0,sp:0,gp:0},
+            stock: i.stock !== undefined ? Number(i.stock) : 0
+          }))
+        : []
+    };
+  });
+  return shops;
+}
+
+// Écoute temps réel
+db.ref("shops").on("value", snapshot => {
+  const data = snapshot.val();
+  if (!data) {
+    setFirebaseStatus("connecting", "Initialisation...");
+    db.ref("shops").set(DEFAULT_SHOPS)
+      .then(() => setFirebaseStatus("connected", "Connecté"))
+      .catch(() => setFirebaseStatus("error", "Erreur"));
+    return;
+  }
+  setFirebaseStatus("connected", "Connecté");
+  SHOPS = snapshotToShops(data);
+  if (!activeShop || !SHOPS[activeShop]) activeShop = Object.keys(SHOPS)[0];
+  setTheme(activeShop);
+  renderTabs();
+  renderShop();
+}, err => {
+  console.error(err);
+  setFirebaseStatus("error", "Hors ligne");
+  if (Object.keys(SHOPS).length === 0) {
+    SHOPS = JSON.parse(JSON.stringify(DEFAULT_SHOPS));
+    activeShop = Object.keys(SHOPS)[0];
+    setTheme(activeShop);
+    renderTabs();
+    renderShop();
+  }
+});
+
+function fbUpdateStock(shopName, idx, newStock) {
+  db.ref("shops/" + shopName + "/items/" + idx + "/stock").set(newStock).catch(console.error);
+}
+
+function fbSaveShopItems(shopName) {
+  db.ref("shops/" + shopName + "/items").set(SHOPS[shopName].items).catch(console.error);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// WALLET
+// ═══════════════════════════════════════════════════════════════
 function updateWalletDisplay() {
   document.getElementById("wallet-pp").textContent = wallet.pp;
   document.getElementById("wallet-gp").textContent = wallet.gp;
@@ -622,11 +804,13 @@ function updateWalletDisplay() {
 }
 
 function setTheme(shopName) {
-  const t = SHOPS[shopName].theme;
-  document.body.className = t;
+  if (!SHOPS[shopName]) return;
+  document.body.className = SHOPS[shopName].theme + (gmMode ? " gm-active" : "");
 }
 
-// ── TABS ────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// TABS & SHOP
+// ═══════════════════════════════════════════════════════════════
 function renderTabs() {
   const c = document.getElementById("shop-tabs");
   c.innerHTML = "";
@@ -640,8 +824,8 @@ function renderTabs() {
   });
 }
 
-// ── SHOP ────────────────────────────────────────────────────
 function renderShop() {
+  if (!SHOPS[activeShop]) return;
   const shop = SHOPS[activeShop];
   document.getElementById("shop-name").textContent = shop.icon + " " + activeShop;
   document.getElementById("shop-desc").textContent = shop.description;
@@ -650,19 +834,29 @@ function renderShop() {
   grid.innerHTML = "";
   const myCp = walletInCp();
   shop.items.forEach((item, idx) => {
-    const itemCp = priceInCp(item.price);
+    const itemCp   = priceInCp(item.price);
     const canAfford = myCp >= itemCp;
-    const inStock = item.stock > 0;
+    const inStock   = item.stock > 0;
     const card = document.createElement("div");
     card.className = "item-card" + (!inStock ? " out-of-stock" : "");
     let sc = "item-stock", st = "En stock : " + item.stock;
     if (!inStock) { sc += " out"; st = "Épuisé"; } else if (item.stock <= 2) sc += " low";
-    card.innerHTML = `<div class="item-top"><div class="item-name">${item.name}</div><div class="item-price">${fmtPrice(item.price)}</div></div><div class="item-desc">${item.desc}</div><div class="item-bottom"><span class="${sc}">${st}</span><button class="buy-btn" ${(!inStock||!canAfford)?"disabled":""} onclick="openBuyModal(${idx})">${!inStock?"Épuisé":!canAfford?"Insuffisant":"Acheter"}</button></div>`;
+    card.innerHTML =
+      '<div class="item-top"><div class="item-name">' + item.name + '</div><div class="item-price">' + fmtPrice(item.price) + '</div></div>' +
+      '<div class="item-desc">' + item.desc + '</div>' +
+      '<div class="item-bottom"><span class="' + sc + '">' + st + '</span>' +
+      '<div style="display:flex;gap:4px;align-items:center;">' +
+      '<button class="item-edit-btn" onclick="openEditItemModal(' + idx + ')">✏️ Éditer</button>' +
+      '<button class="buy-btn"' + ((!inStock||!canAfford)?' disabled':'') + ' onclick="openBuyModal(' + idx + ')">' +
+      (!inStock ? "Épuisé" : !canAfford ? "Insuffisant" : "Acheter") + '</button>' +
+      '</div></div>';
     grid.appendChild(card);
   });
 }
 
-// ── BUY MODAL ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// BUY MODAL
+// ═══════════════════════════════════════════════════════════════
 function openBuyModal(idx) {
   const item = SHOPS[activeShop].items[idx];
   pendingItem = { item, idx };
@@ -691,12 +885,14 @@ function updateModalTotal() {
 
 function confirmPurchase() {
   if (!pendingItem) return;
-  const qty = parseInt(document.getElementById("modal-qty").value) || 1;
-  const item = pendingItem.item;
+  const qty   = parseInt(document.getElementById("modal-qty").value) || 1;
+  const item  = pendingItem.item;
+  const idx   = pendingItem.idx;
   const totalCp = priceInCp(item.price) * qty;
   wallet = cpToCoins(walletInCp() - totalCp);
   updateWalletDisplay();
-  item.stock -= qty;
+  SHOPS[activeShop].items[idx].stock -= qty;
+  fbUpdateStock(activeShop, idx, SHOPS[activeShop].items[idx].stock);
   navigator.clipboard.writeText("!shop-buy " + activeShop + "|" + item.name + "|" + qty).catch(()=>{});
   history.unshift({ name:item.name, qty, totalCp, shop:activeShop, time:new Date().toLocaleTimeString("fr-CA",{hour:"2-digit",minute:"2-digit"}) });
   if (history.length > 30) history.pop();
@@ -707,7 +903,9 @@ function confirmPurchase() {
 
 function closeModal() { document.getElementById("buy-modal").classList.remove("open"); pendingItem = null; }
 
-// ── WALLET ──────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// WALLET MODAL
+// ═══════════════════════════════════════════════════════════════
 function openWalletModal() {
   ["pp","gp","sp","cp"].forEach(k => document.getElementById("edit-"+k).value = wallet[k]);
   document.getElementById("wallet-modal").classList.add("open");
@@ -718,29 +916,174 @@ function saveWallet() {
 }
 function closeWalletModal() { document.getElementById("wallet-modal").classList.remove("open"); }
 
-// ── HISTORY ─────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// HISTORIQUE
+// ═══════════════════════════════════════════════════════════════
 function renderHistory() {
   const list = document.getElementById("history-list");
   if (!history.length) { list.innerHTML = '<div class="empty-history">Aucun achat pour le moment...</div>'; return; }
-  list.innerHTML = history.map(h => `<div class="history-item"><span class="hi-name">${h.time} — ${h.qty}× ${h.name} <span style="opacity:0.4;font-size:10px;">(${h.shop.replace("Sales | ","")})</span></span><span class="hi-cost">−${fmtCp(h.totalCp)}</span></div>`).join("");
+  list.innerHTML = history.map(h => '<div class="history-item"><span class="hi-name">' + h.time + ' — ' + h.qty + '× ' + h.name + ' <span style="opacity:0.4;font-size:10px;">(' + h.shop.replace("Sales | ","") + ')</span></span><span class="hi-cost">−' + fmtCp(h.totalCp) + '</span></div>').join("");
 }
 function clearHistory() { history = []; localStorage.removeItem("shopHistory3"); renderHistory(); }
 
-// ── TOAST ───────────────────────────────────────────────────
-function showToast(msg, isError=false) {
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+function showToast(msg, type) {
   const t = document.getElementById("toast");
-  t.textContent = msg; t.className = "toast"+(isError?" error":""); t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 3000);
+  t.textContent = msg;
+  t.className = "toast" + (type ? " " + type : "");
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
 }
 
-// ── INIT ────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// MODE MJ — Authentification Google
+// ═══════════════════════════════════════════════════════════════
+
+// Surveille l'état de connexion Firebase en permanence
+auth.onAuthStateChanged(user => {
+  if (user) {
+    // Affiche l'UID dans la console pour la première config
+    console.log("✅ Connecté en tant que MJ — UID:", user.uid);
+    gmMode = true;
+    setTheme(activeShop);
+    renderShop();
+    closeGMLogin();
+    showToast("⚜ Bienvenue " + (user.displayName || "MJ") + "!", "gm");
+  } else {
+    if (gmMode) {
+      gmMode = false;
+      setTheme(activeShop);
+      renderShop();
+    }
+  }
+});
+
+function handleGMButton() {
+  if (gmMode) {
+    auth.signOut().then(() => {
+      gmMode = false;
+      setTheme(activeShop);
+      renderShop();
+      showToast("🔒 Mode MJ désactivé");
+    });
+  } else {
+    openGMLogin();
+  }
+}
+
+function openGMLogin() {
+  document.getElementById("gm-error").style.display = "none";
+  document.getElementById("gm-login-modal").classList.add("open");
+}
+
+function closeGMLogin() { document.getElementById("gm-login-modal").classList.remove("open"); }
+
+function signInWithGoogle() {
+  document.getElementById("gm-error").style.display = "none";
+  auth.signInWithPopup(googleProvider)
+    .then(result => {
+      // onAuthStateChanged prend le relais automatiquement
+      console.log("UID MJ:", result.user.uid);
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("gm-error").style.display = "block";
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GM : ÉDITEUR D'ITEMS
+// ═══════════════════════════════════════════════════════════════
+function openAddItemModal() {
+  if (!gmMode) return;
+  gmEditingShop = activeShop;
+  gmEditingIdx  = null;
+  document.getElementById("gm-edit-title").textContent = "➕ Ajouter — " + activeShop.replace("Sales | ","");
+  document.getElementById("gm-item-name").value  = "";
+  document.getElementById("gm-item-desc").value  = "";
+  document.getElementById("gm-price-cp").value   = 0;
+  document.getElementById("gm-price-sp").value   = 0;
+  document.getElementById("gm-price-gp").value   = 0;
+  document.getElementById("gm-item-stock").value = 1;
+  document.getElementById("gm-edit-delete").style.display = "none";
+  document.getElementById("gm-edit-modal").classList.add("open");
+  setTimeout(() => document.getElementById("gm-item-name").focus(), 100);
+}
+
+function openEditItemModal(idx) {
+  if (!gmMode) return;
+  gmEditingShop = activeShop;
+  gmEditingIdx  = idx;
+  const item = SHOPS[activeShop].items[idx];
+  document.getElementById("gm-edit-title").textContent = "✏️ Modifier — " + item.name;
+  document.getElementById("gm-item-name").value  = item.name;
+  document.getElementById("gm-item-desc").value  = item.desc;
+  document.getElementById("gm-price-cp").value   = item.price.cp || 0;
+  document.getElementById("gm-price-sp").value   = item.price.sp || 0;
+  document.getElementById("gm-price-gp").value   = item.price.gp || 0;
+  document.getElementById("gm-item-stock").value = item.stock;
+  document.getElementById("gm-edit-delete").style.display = "block";
+  document.getElementById("gm-edit-modal").classList.add("open");
+}
+
+function closeGMEditModal() {
+  document.getElementById("gm-edit-modal").classList.remove("open");
+  gmEditingShop = null;
+  gmEditingIdx  = null;
+}
+
+function saveGMItem() {
+  if (!gmEditingShop) return;
+  const name  = document.getElementById("gm-item-name").value.trim();
+  const desc  = document.getElementById("gm-item-desc").value.trim();
+  const cp    = parseInt(document.getElementById("gm-price-cp").value) || 0;
+  const sp    = parseInt(document.getElementById("gm-price-sp").value) || 0;
+  const gp    = parseInt(document.getElementById("gm-price-gp").value) || 0;
+  const stock = parseInt(document.getElementById("gm-item-stock").value) || 0;
+  if (!name) { showToast("⚠️ Le nom est requis!", "error"); return; }
+  const newItem = { name, desc, price:{cp,sp,gp}, stock };
+  if (gmEditingIdx === null) {
+    SHOPS[gmEditingShop].items.push(newItem);
+    showToast("✅ Item ajouté : " + name, "gm");
+  } else {
+    SHOPS[gmEditingShop].items[gmEditingIdx] = newItem;
+    showToast("✅ Modifié : " + name, "gm");
+  }
+  fbSaveShopItems(gmEditingShop);
+  closeGMEditModal();
+  renderShop();
+}
+
+function deleteGMItem() {
+  if (!gmEditingShop || gmEditingIdx === null) return;
+  const itemName = SHOPS[gmEditingShop].items[gmEditingIdx].name;
+  if (!confirm("Supprimer « " + itemName + " » ? Cette action est permanente.")) return;
+  SHOPS[gmEditingShop].items.splice(gmEditingIdx, 1);
+  fbSaveShopItems(gmEditingShop);
+  closeGMEditModal();
+  renderShop();
+  showToast("🗑️ Supprimé : " + itemName, "gm");
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
 const sw = localStorage.getItem("shopWallet3");
 if (sw) wallet = JSON.parse(sw);
-setTheme(activeShop);
 updateWalletDisplay();
-renderTabs(); renderShop(); renderHistory();
-document.getElementById("buy-modal").addEventListener("click", e => { if (e.target===document.getElementById("buy-modal")) closeModal(); });
-document.getElementById("wallet-modal").addEventListener("click", e => { if (e.target===document.getElementById("wallet-modal")) closeWalletModal(); });
+renderHistory();
+
+["buy-modal","wallet-modal","gm-login-modal","gm-edit-modal"].forEach(id => {
+  document.getElementById(id).addEventListener("click", e => {
+    if (e.target !== document.getElementById(id)) return;
+    if (id === "buy-modal") closeModal();
+    else if (id === "wallet-modal") closeWalletModal();
+    else if (id === "gm-login-modal") closeGMLogin();
+    else if (id === "gm-edit-modal") closeGMEditModal();
+  });
+});
 </script>
 </body>
 </html>
