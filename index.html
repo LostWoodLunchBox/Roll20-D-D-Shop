@@ -890,14 +890,10 @@ function updateModalTotal() {
   if (!pendingItem) return;
   const qty = parseInt(document.getElementById("modal-qty").value) || 1;
   const totalCp = priceInCp(pendingItem.item.price) * qty;
-  const myCp = walletInCp();
-  const enough = myCp >= totalCp;
   document.getElementById("modal-total").innerHTML =
-    "Total : <strong>" + fmtCp(totalCp) + "</strong><br>" +
-    "Current balance: " + fmtCp(myCp) + "<br>" +
-    (enough ? "Remaining: <strong>" + fmtCp(myCp-totalCp) + "</strong>" : "<span style='color:#c62828'>Missing: " + fmtCp(totalCp-myCp) + "</span>");
-  document.getElementById("modal-warning").style.display = enough ? "none" : "block";
-  document.getElementById("btn-confirm").disabled = !enough;
+    "Total : <strong>" + fmtCp(totalCp) + "</strong>";
+  document.getElementById("modal-warning").style.display = "none";
+  document.getElementById("btn-confirm").disabled = false;
   document.getElementById("modal-command").textContent = "!shop-buy " + activeShop + "~~" + pendingItem.item.name + "~~" + qty;
 }
 
