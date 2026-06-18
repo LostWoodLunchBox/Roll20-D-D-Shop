@@ -1065,8 +1065,8 @@ function resetToDefaults() {
     Object.fromEntries(Object.entries(SHOPS).map(([name, shop]) => [name, { items: shop.items }]))
   ).then(function() {
     suppressFirebaseUpdate = false;
-    renderShopList();
-    renderItems();
+    renderTabs();
+    renderShop();
     showToast("✓ All shops reset to English defaults.", "gm");
   }).catch(function(err) {
     suppressFirebaseUpdate = false;
