@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Merchant's Guild — D&D 5e</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <!-- Firebase SDK (compat) -->
@@ -484,6 +485,37 @@
     .stock-badge.low { background: rgba(180,60,0,0.25); color: #c04010; border: 1px solid rgba(180,60,0,0.55); font-weight: 700; }
     .stock-badge.out { background: rgba(0,0,0,0.12); color: var(--text); opacity: 0.6; border: 1px solid rgba(0,0,0,0.18); font-style: italic; }
 
+    /* ── RARITY BADGES ── */
+    .rarity-badge {
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px;
+      padding: 2px 7px; border-radius: 10px; text-transform: uppercase; font-weight: 700;
+    }
+    .rarity-badge.Common    { background: rgba(157,157,157,0.12); color:#9d9d9d; border:1px solid rgba(157,157,157,0.25); }
+    .rarity-badge.Uncommon  { background: rgba(30,200,0,0.12);    color:#4dcc20; border:1px solid rgba(30,200,0,0.3); }
+    .rarity-badge.Rare      { background: rgba(0,100,220,0.15);   color:#5fa8ff; border:1px solid rgba(0,100,220,0.35); }
+    .rarity-badge.VeryRare  { background: rgba(163,53,238,0.15);  color:#c07aff; border:1px solid rgba(163,53,238,0.4); }
+    .rarity-badge.Legendary { background: rgba(255,128,0,0.15);   color:#ff9040; border:1px solid rgba(255,128,0,0.4); }
+    .item-card[data-rarity="Uncommon"]  { border-top: 2px solid rgba(30,200,0,0.45); }
+    .item-card[data-rarity="Rare"]      { border-top: 2px solid rgba(0,100,220,0.55); }
+    .item-card[data-rarity="Very Rare"] { border-top: 2px solid rgba(163,53,238,0.6); }
+    .item-card[data-rarity="Legendary"] { border-top: 2px solid rgba(255,128,0,0.7); box-shadow: 0 0 12px rgba(255,128,0,0.12); }
+
+    /* ── SHOP CLOSED ── */
+    .shop-closed-overlay {
+      grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 60px 20px; text-align: center;
+    }
+    .shop-closed-overlay .closed-icon { font-size: 52px; margin-bottom: 16px; filter: grayscale(0.3); }
+    .shop-closed-overlay h3 { font-family: 'Cinzel', serif; font-size: 20px; color: var(--accent2); margin-bottom: 8px; letter-spacing: 2px; }
+    .shop-closed-overlay p  { font-size: 14px; color: rgba(255,255,255,0.45); font-style: italic; }
+    .shop-badge.closed-badge { background: rgba(160,0,0,0.3); color: #ff6060; border: 1px solid rgba(200,0,0,0.4); }
+    .gm-toggle-open  { background: rgba(180,50,0,0.35) !important; color: #ff8060 !important; border: 1px solid rgba(180,50,0,0.55) !important; cursor: pointer; }
+    .gm-toggle-close { background: rgba(0,150,30,0.25) !important; color: #60dd40 !important; border: 1px solid rgba(0,150,30,0.45) !important; cursor: pointer; }
+
+    /* ── SIDEBAR ALERT DOTS ── */
+    .tab-dot-closed { width:8px; height:8px; border-radius:50%; background:#ff4444; margin-left:auto; flex-shrink:0; box-shadow:0 0 5px rgba(255,68,68,0.7); }
+    .tab-dot-stock  { width:7px; height:7px; border-radius:50%; background:#ff8800; margin-left:auto; flex-shrink:0; }
+
     /* ── BUY BUTTON ── */
     .buy-btn {
       font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1px;
@@ -848,6 +880,14 @@
     </div>
     <label>Stock</label>
     <input type="number" id="gm-item-stock" min="0" value="1">
+    <label>Rarity</label>
+    <select id="gm-item-rarity" style="width:100%;padding:8px 10px;background:#1a1a1a;color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:6px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;margin-bottom:4px;">
+      <option value="Common">Common</option>
+      <option value="Uncommon">Uncommon</option>
+      <option value="Rare">Rare</option>
+      <option value="Very Rare">Very Rare</option>
+      <option value="Legendary">Legendary</option>
+    </select>
     <div class="modal-buttons">
       <button class="btn-confirm" onclick="saveGMItem()">Save</button>
       <button class="btn-danger" id="gm-edit-delete" onclick="deleteGMItem()" style="display:none;">Delete</button>
@@ -927,399 +967,399 @@ const DEFAULT_SHOPS = {
   //  WEAPONS
   // ══════════════════════════════════════════════════════
   "Sales | Simple Weapons": {
-    icon:"🗡️",theme:"theme-weapons",description:"Simple weapons for any adventurer.",sellMultiplier:0.5,
+    icon:"🗡️",theme:"theme-weapons",description:"Simple weapons for any adventurer.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Club",          price:{gp:0,sp:0,cp:3},  stock:8,  desc:"1d4 bludgeoning. Light."},
-      {name:"Dagger",        price:{gp:0,sp:0,cp:8},  stock:12, desc:"1d4 piercing. Finesse, Light, Thrown (20/60 ft)."},
-      {name:"Greatclub",     price:{gp:0,sp:0,cp:4},  stock:4,  desc:"1d8 bludgeoning. Two-Handed."},
-      {name:"Handaxe",       price:{gp:0,sp:0,cp:12}, stock:6,  desc:"1d6 slashing. Light, Thrown (20/60 ft)."},
-      {name:"Javelin",       price:{gp:0,sp:0,cp:5},  stock:8,  desc:"1d6 piercing. Thrown (30/120 ft)."},
-      {name:"Light Hammer",  price:{gp:0,sp:0,cp:8},  stock:6,  desc:"1d4 bludgeoning. Light, Thrown (20/60 ft)."},
-      {name:"Mace",          price:{gp:0,sp:0,cp:12}, stock:4,  desc:"1d6 bludgeoning."},
-      {name:"Quarterstaff",  price:{gp:0,sp:0,cp:3},  stock:6,  desc:"1d6 bludgeoning. Versatile (1d8)."},
-      {name:"Sickle",        price:{gp:0,sp:0,cp:5},  stock:4,  desc:"1d4 slashing. Light."},
-      {name:"Spear",         price:{gp:0,sp:0,cp:6},  stock:6,  desc:"1d6 piercing. Thrown (20/60 ft), Versatile (1d8)."}
+      {name:"Club",          price:{gp:0,sp:0,cp:3},  stock:8,  rarity:"Common",   desc:"1d4 bludgeoning. Light."},
+      {name:"Dagger",        price:{gp:0,sp:0,cp:8},  stock:12, rarity:"Common",   desc:"1d4 piercing. Finesse, Light, Thrown (20/60 ft)."},
+      {name:"Greatclub",     price:{gp:0,sp:0,cp:4},  stock:4,  rarity:"Common",   desc:"1d8 bludgeoning. Two-Handed."},
+      {name:"Handaxe",       price:{gp:0,sp:0,cp:12}, stock:6,  rarity:"Common",   desc:"1d6 slashing. Light, Thrown (20/60 ft)."},
+      {name:"Javelin",       price:{gp:0,sp:0,cp:5},  stock:8,  rarity:"Common",   desc:"1d6 piercing. Thrown (30/120 ft)."},
+      {name:"Light Hammer",  price:{gp:0,sp:0,cp:8},  stock:6,  rarity:"Common",   desc:"1d4 bludgeoning. Light, Thrown (20/60 ft)."},
+      {name:"Mace",          price:{gp:0,sp:0,cp:12}, stock:4,  rarity:"Common",   desc:"1d6 bludgeoning."},
+      {name:"Quarterstaff",  price:{gp:0,sp:0,cp:3},  stock:6,  rarity:"Common",   desc:"1d6 bludgeoning. Versatile (1d8)."},
+      {name:"Sickle",        price:{gp:0,sp:0,cp:5},  stock:4,  rarity:"Common",   desc:"1d4 slashing. Light."},
+      {name:"Spear",         price:{gp:0,sp:0,cp:6},  stock:6,  rarity:"Common",   desc:"1d6 piercing. Thrown (20/60 ft), Versatile (1d8)."}
     ]
   },
   "Sales | Martial Weapons": {
-    icon:"⚔️",theme:"theme-weapons",description:"Forged blades and steel for warriors.",sellMultiplier:0.5,
+    icon:"⚔️",theme:"theme-weapons",description:"Forged blades and steel for warriors.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Battleaxe",   price:{gp:0,sp:8,cp:0},  stock:3,desc:"1d8 slashing. Versatile (1d10)."},
-      {name:"Flail",       price:{gp:0,sp:8,cp:0},  stock:3,desc:"1d8 bludgeoning."},
-      {name:"Glaive",      price:{gp:0,sp:12,cp:0}, stock:2,desc:"1d10 slashing. Heavy, Reach, Two-Handed."},
-      {name:"Greataxe",    price:{gp:0,sp:15,cp:0}, stock:2,desc:"1d12 slashing. Heavy, Two-Handed."},
-      {name:"Greatsword",  price:{gp:0,sp:18,cp:0}, stock:1,desc:"2d6 slashing. Heavy, Two-Handed."},
-      {name:"Halberd",     price:{gp:0,sp:12,cp:0}, stock:2,desc:"1d10 slashing. Heavy, Reach, Two-Handed."},
-      {name:"Lance",       price:{gp:0,sp:8,cp:0},  stock:2,desc:"1d10 piercing. Heavy, Reach. Requires mount."},
-      {name:"Longsword",   price:{gp:0,sp:10,cp:0}, stock:3,desc:"1d8 slashing. Versatile (1d10)."},
-      {name:"Maul",        price:{gp:0,sp:10,cp:0}, stock:2,desc:"2d6 bludgeoning. Heavy, Two-Handed."},
-      {name:"Morningstar", price:{gp:0,sp:8,cp:0},  stock:3,desc:"1d8 piercing."},
-      {name:"Pike",        price:{gp:0,sp:6,cp:0},  stock:2,desc:"1d10 piercing. Heavy, Reach, Two-Handed."},
-      {name:"Rapier",      price:{gp:0,sp:15,cp:0}, stock:2,desc:"1d8 piercing. Finesse."},
-      {name:"Scimitar",    price:{gp:0,sp:12,cp:0}, stock:2,desc:"1d6 slashing. Finesse, Light."},
-      {name:"Shortsword",  price:{gp:0,sp:10,cp:0}, stock:4,desc:"1d6 piercing. Finesse, Light."},
-      {name:"Trident",     price:{gp:0,sp:6,cp:0},  stock:3,desc:"1d6 piercing. Thrown (20/60 ft), Versatile (1d8)."},
-      {name:"War Pick",    price:{gp:0,sp:6,cp:0},  stock:3,desc:"1d8 piercing."},
-      {name:"Warhammer",   price:{gp:0,sp:10,cp:0}, stock:3,desc:"1d8 bludgeoning. Versatile (1d10)."},
-      {name:"Whip",        price:{gp:0,sp:5,cp:0},  stock:3,desc:"1d4 slashing. Finesse, Reach."}
+      {name:"Battleaxe",   price:{gp:0,sp:8,cp:0},  stock:3, rarity:"Common",   desc:"1d8 slashing. Versatile (1d10)."},
+      {name:"Flail",       price:{gp:0,sp:8,cp:0},  stock:3, rarity:"Common",   desc:"1d8 bludgeoning."},
+      {name:"Glaive",      price:{gp:0,sp:12,cp:0}, stock:2, rarity:"Uncommon", desc:"1d10 slashing. Heavy, Reach, Two-Handed."},
+      {name:"Greataxe",    price:{gp:0,sp:15,cp:0}, stock:2, rarity:"Uncommon", desc:"1d12 slashing. Heavy, Two-Handed."},
+      {name:"Greatsword",  price:{gp:0,sp:18,cp:0}, stock:1, rarity:"Uncommon", desc:"2d6 slashing. Heavy, Two-Handed."},
+      {name:"Halberd",     price:{gp:0,sp:12,cp:0}, stock:2, rarity:"Uncommon", desc:"1d10 slashing. Heavy, Reach, Two-Handed."},
+      {name:"Lance",       price:{gp:0,sp:8,cp:0},  stock:2, rarity:"Common",   desc:"1d10 piercing. Heavy, Reach. Requires mount."},
+      {name:"Longsword",   price:{gp:0,sp:10,cp:0}, stock:3, rarity:"Common",   desc:"1d8 slashing. Versatile (1d10)."},
+      {name:"Maul",        price:{gp:0,sp:10,cp:0}, stock:2, rarity:"Uncommon", desc:"2d6 bludgeoning. Heavy, Two-Handed."},
+      {name:"Morningstar", price:{gp:0,sp:8,cp:0},  stock:3, rarity:"Common",   desc:"1d8 piercing."},
+      {name:"Pike",        price:{gp:0,sp:6,cp:0},  stock:2, rarity:"Common",   desc:"1d10 piercing. Heavy, Reach, Two-Handed."},
+      {name:"Rapier",      price:{gp:0,sp:15,cp:0}, stock:2, rarity:"Uncommon", desc:"1d8 piercing. Finesse."},
+      {name:"Scimitar",    price:{gp:0,sp:12,cp:0}, stock:2, rarity:"Common",   desc:"1d6 slashing. Finesse, Light."},
+      {name:"Shortsword",  price:{gp:0,sp:10,cp:0}, stock:4, rarity:"Common",   desc:"1d6 piercing. Finesse, Light."},
+      {name:"Trident",     price:{gp:0,sp:6,cp:0},  stock:3, rarity:"Common",   desc:"1d6 piercing. Thrown (20/60 ft), Versatile (1d8)."},
+      {name:"War Pick",    price:{gp:0,sp:6,cp:0},  stock:3, rarity:"Common",   desc:"1d8 piercing."},
+      {name:"Warhammer",   price:{gp:0,sp:10,cp:0}, stock:3, rarity:"Common",   desc:"1d8 bludgeoning. Versatile (1d10)."},
+      {name:"Whip",        price:{gp:0,sp:5,cp:0},  stock:3, rarity:"Common",   desc:"1d4 slashing. Finesse, Reach."}
     ]
   },
   "Sales | Archery & Ranged": {
-    icon:"🏹",theme:"theme-archery",description:"Ranged weapons, ammunition and traps.",sellMultiplier:0.5,
+    icon:"🏹",theme:"theme-archery",description:"Ranged weapons, ammunition and traps.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Shortbow",             price:{gp:0,sp:8,cp:0},  stock:3, desc:"1d6 piercing. Range 80/320 ft. Two-Handed."},
-      {name:"Longbow",              price:{gp:0,sp:15,cp:0}, stock:2, desc:"1d8 piercing. Range 150/600 ft. Heavy, Two-Handed."},
-      {name:"Light Crossbow",       price:{gp:0,sp:10,cp:0}, stock:3, desc:"1d8 piercing. Range 80/320 ft. Loading, Two-Handed."},
-      {name:"Heavy Crossbow",       price:{gp:0,sp:15,cp:0}, stock:1, desc:"1d10 piercing. Range 100/400 ft. Heavy, Loading."},
-      {name:"Hand Crossbow",        price:{gp:0,sp:18,cp:0}, stock:2, desc:"1d6 piercing. Range 30/120 ft. Light, Loading."},
-      {name:"Sling",                price:{gp:0,sp:0,cp:3},  stock:5, desc:"1d4 bludgeoning. Range 30/120 ft."},
-      {name:"Dart",                 price:{gp:0,sp:0,cp:1},  stock:20,desc:"1d4 piercing. Range 20/60 ft. Finesse, Thrown."},
-      {name:"Net",                  price:{gp:0,sp:5,cp:0},  stock:4, desc:"Thrown (5/15 ft). Restrains Large or smaller creatures."},
-      {name:"Arrows (20)",          price:{gp:0,sp:0,cp:5},  stock:15,desc:"Ammunition for bows."},
-      {name:"Bolts (20)",           price:{gp:0,sp:0,cp:5},  stock:15,desc:"Ammunition for crossbows."},
-      {name:"Sling Bullets (20)",   price:{gp:0,sp:0,cp:2},  stock:10,desc:"Ammunition for slings."},
-      {name:"Blowgun Needles (50)", price:{gp:0,sp:0,cp:5},  stock:5, desc:"Ammunition for blowguns."},
-      {name:"Quiver",               price:{gp:0,sp:0,cp:8},  stock:8, desc:"Holds 20 arrows or bolts."},
-      {name:"Bear Trap",            price:{gp:0,sp:0,cp:15}, stock:3, desc:"Immobilizes a creature. DC 13 Str to escape."},
-      {name:"Hunting Net",          price:{gp:0,sp:0,cp:10}, stock:4, desc:"Thrown. Restrains a creature."}
+      {name:"Shortbow",             price:{gp:0,sp:8,cp:0},  stock:3,  rarity:"Common",   desc:"1d6 piercing. Range 80/320 ft. Two-Handed."},
+      {name:"Longbow",              price:{gp:0,sp:15,cp:0}, stock:2,  rarity:"Uncommon", desc:"1d8 piercing. Range 150/600 ft. Heavy, Two-Handed."},
+      {name:"Light Crossbow",       price:{gp:0,sp:10,cp:0}, stock:3,  rarity:"Common",   desc:"1d8 piercing. Range 80/320 ft. Loading, Two-Handed."},
+      {name:"Heavy Crossbow",       price:{gp:0,sp:15,cp:0}, stock:1,  rarity:"Uncommon", desc:"1d10 piercing. Range 100/400 ft. Heavy, Loading."},
+      {name:"Hand Crossbow",        price:{gp:0,sp:18,cp:0}, stock:2,  rarity:"Uncommon", desc:"1d6 piercing. Range 30/120 ft. Light, Loading."},
+      {name:"Sling",                price:{gp:0,sp:0,cp:3},  stock:5,  rarity:"Common",   desc:"1d4 bludgeoning. Range 30/120 ft."},
+      {name:"Dart",                 price:{gp:0,sp:0,cp:1},  stock:20, rarity:"Common",   desc:"1d4 piercing. Range 20/60 ft. Finesse, Thrown."},
+      {name:"Net",                  price:{gp:0,sp:5,cp:0},  stock:4,  rarity:"Common",   desc:"Thrown (5/15 ft). Restrains Large or smaller creatures."},
+      {name:"Arrows (20)",          price:{gp:0,sp:0,cp:5},  stock:15, rarity:"Common",   desc:"Ammunition for bows."},
+      {name:"Bolts (20)",           price:{gp:0,sp:0,cp:5},  stock:15, rarity:"Common",   desc:"Ammunition for crossbows."},
+      {name:"Sling Bullets (20)",   price:{gp:0,sp:0,cp:2},  stock:10, rarity:"Common",   desc:"Ammunition for slings."},
+      {name:"Blowgun Needles (50)", price:{gp:0,sp:0,cp:5},  stock:5,  rarity:"Common",   desc:"Ammunition for blowguns."},
+      {name:"Quiver",               price:{gp:0,sp:0,cp:8},  stock:8,  rarity:"Common",   desc:"Holds 20 arrows or bolts."},
+      {name:"Bear Trap",            price:{gp:0,sp:0,cp:15}, stock:3,  rarity:"Common",   desc:"Immobilizes a creature. DC 13 Str to escape."},
+      {name:"Hunting Net",          price:{gp:0,sp:0,cp:10}, stock:4,  rarity:"Common",   desc:"Thrown. Restrains a creature."}
     ]
   },
   "Sales | Potions & Elixirs": {
-    icon:"⚗️",theme:"theme-potions",description:"Elixirs, potions and alchemical ingredients.",sellMultiplier:0.5,
+    icon:"⚗️",theme:"theme-potions",description:"Elixirs, potions and alchemical ingredients.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Potion of Healing",          price:{gp:0,sp:15,cp:0},stock:5, desc:"Regain 2d4+2 HP."},
-      {name:"Potion of Greater Healing",  price:{gp:0,sp:20,cp:0},stock:2, desc:"Regain 4d4+4 HP."},
-      {name:"Potion of Superior Healing", price:{gp:0,sp:20,cp:0},stock:1, desc:"Regain 8d4+8 HP."},
-      {name:"Antitoxin",                  price:{gp:0,sp:10,cp:0},stock:3, desc:"Advantage on saves vs poison for 1 hour."},
-      {name:"Alchemist's Fire",           price:{gp:0,sp:8,cp:0}, stock:3, desc:"2d4 fire damage per turn until extinguished."},
-      {name:"Acid (vial)",                price:{gp:0,sp:5,cp:0}, stock:3, desc:"2d6 acid damage on impact."},
-      {name:"Holy Water (flask)",         price:{gp:0,sp:8,cp:0}, stock:3, desc:"2d6 radiant damage to undead and fiends."},
-      {name:"Basic Poison (vial)",        price:{gp:0,sp:12,cp:0},stock:2, desc:"1d4 poison damage. Apply to a weapon."},
-      {name:"Potion of Climbing",         price:{gp:0,sp:10,cp:0},stock:2, desc:"Climbing speed equals walking speed for 1 hour."},
-      {name:"Potion of Water Breathing",  price:{gp:0,sp:18,cp:0},stock:1, desc:"Breathe underwater for 1 hour."},
-      {name:"Potion of Animal Friendship",price:{gp:0,sp:12,cp:0},stock:1, desc:"Cast Animal Friendship for 1 hour."},
-      {name:"Potion of Heroism",          price:{gp:0,sp:18,cp:0},stock:1, desc:"Gain 10 temp HP and Blessed for 1 hour."},
-      {name:"Potion of Invisibility",     price:{gp:0,sp:20,cp:0},stock:1, desc:"Become invisible for 1 hour or until attack/spell."},
-      {name:"Healer's Kit",               price:{gp:0,sp:5,cp:0}, stock:3, desc:"10 uses. Stabilize a creature at 0 HP."},
-      {name:"Herbalism Kit",              price:{gp:0,sp:8,cp:0}, stock:2, desc:"Identify and apply herbal remedies."},
-      {name:"Alchemist's Supplies",       price:{gp:0,sp:15,cp:0},stock:1, desc:"Tools for alchemical crafting."},
-      {name:"Vial (empty)",               price:{gp:0,sp:0,cp:3}, stock:20,desc:"Small glass container."}
+      {name:"Potion of Healing",          price:{gp:0,sp:15,cp:0},stock:5,  rarity:"Uncommon",  desc:"Regain 2d4+2 HP."},
+      {name:"Potion of Greater Healing",  price:{gp:0,sp:20,cp:0},stock:2,  rarity:"Rare",      desc:"Regain 4d4+4 HP."},
+      {name:"Potion of Superior Healing", price:{gp:0,sp:20,cp:0},stock:1,  rarity:"Very Rare", desc:"Regain 8d4+8 HP."},
+      {name:"Antitoxin",                  price:{gp:0,sp:10,cp:0},stock:3,  rarity:"Common",    desc:"Advantage on saves vs poison for 1 hour."},
+      {name:"Alchemist's Fire",           price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Common",    desc:"2d4 fire damage per turn until extinguished."},
+      {name:"Acid (vial)",                price:{gp:0,sp:5,cp:0}, stock:3,  rarity:"Common",    desc:"2d6 acid damage on impact."},
+      {name:"Holy Water (flask)",         price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Common",    desc:"2d6 radiant damage to undead and fiends."},
+      {name:"Basic Poison (vial)",        price:{gp:0,sp:12,cp:0},stock:2,  rarity:"Uncommon",  desc:"1d4 poison damage. Apply to a weapon."},
+      {name:"Potion of Climbing",         price:{gp:0,sp:10,cp:0},stock:2,  rarity:"Uncommon",  desc:"Climbing speed equals walking speed for 1 hour."},
+      {name:"Potion of Water Breathing",  price:{gp:0,sp:18,cp:0},stock:1,  rarity:"Uncommon",  desc:"Breathe underwater for 1 hour."},
+      {name:"Potion of Animal Friendship",price:{gp:0,sp:12,cp:0},stock:1,  rarity:"Uncommon",  desc:"Cast Animal Friendship for 1 hour."},
+      {name:"Potion of Heroism",          price:{gp:0,sp:18,cp:0},stock:1,  rarity:"Rare",      desc:"Gain 10 temp HP and Blessed for 1 hour."},
+      {name:"Potion of Invisibility",     price:{gp:0,sp:20,cp:0},stock:1,  rarity:"Very Rare", desc:"Become invisible for 1 hour or until attack/spell."},
+      {name:"Healer's Kit",               price:{gp:0,sp:5,cp:0}, stock:3,  rarity:"Common",    desc:"10 uses. Stabilize a creature at 0 HP."},
+      {name:"Herbalism Kit",              price:{gp:0,sp:8,cp:0}, stock:2,  rarity:"Common",    desc:"Identify and apply herbal remedies."},
+      {name:"Alchemist's Supplies",       price:{gp:0,sp:15,cp:0},stock:1,  rarity:"Uncommon",  desc:"Tools for alchemical crafting."},
+      {name:"Vial (empty)",               price:{gp:0,sp:0,cp:3}, stock:20, rarity:"Common",    desc:"Small glass container."}
     ]
   },
   "Sales | Tomes & Scrolls": {
-    icon:"📚",theme:"theme-tomes",description:"Spellbooks, scrolls and arcane knowledge.",sellMultiplier:0.5,
+    icon:"📚",theme:"theme-tomes",description:"Spellbooks, scrolls and arcane knowledge.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Blank Book",            price:{gp:0,sp:5,cp:0}, stock:5,  desc:"100 pages, leather cover."},
-      {name:"Blank Spellbook",       price:{gp:0,sp:15,cp:0},stock:2,  desc:"100 pages, for wizards."},
-      {name:"Parchment (sheet)",     price:{gp:0,sp:0,cp:3}, stock:20, desc:"Single writing sheet."},
-      {name:"Paper (sheet)",         price:{gp:0,sp:0,cp:5}, stock:20, desc:"High quality writing paper."},
-      {name:"Ink (1 oz. bottle)",    price:{gp:0,sp:5,cp:0}, stock:5,  desc:"Black writing ink."},
-      {name:"Ink Pen",               price:{gp:0,sp:0,cp:1}, stock:10, desc:"For writing."},
-      {name:"Spell Components Pouch",price:{gp:0,sp:8,cp:0}, stock:3,  desc:"Replaces non-costly material components."},
-      {name:"Spell Scroll Lv.1",     price:{gp:0,sp:10,cp:0},stock:3,  desc:"Contains one 1st-level spell."},
-      {name:"Spell Scroll Lv.2",     price:{gp:0,sp:15,cp:0},stock:2,  desc:"Contains one 2nd-level spell."},
-      {name:"Spell Scroll Lv.3",     price:{gp:0,sp:20,cp:0},stock:1,  desc:"Contains one 3rd-level spell."},
-      {name:"Region Map",            price:{gp:0,sp:8,cp:0}, stock:4,  desc:"Detailed map of the local region."},
-      {name:"Sealing Wax",           price:{gp:0,sp:0,cp:2}, stock:5,  desc:"For sealing letters and documents."},
-      {name:"Signet Ring",           price:{gp:0,sp:10,cp:0},stock:3,  desc:"Personal seal ring."}
+      {name:"Blank Book",            price:{gp:0,sp:5,cp:0}, stock:5,  rarity:"Common",   desc:"100 pages, leather cover."},
+      {name:"Blank Spellbook",       price:{gp:0,sp:15,cp:0},stock:2,  rarity:"Common",   desc:"100 pages, for wizards."},
+      {name:"Parchment (sheet)",     price:{gp:0,sp:0,cp:3}, stock:20, rarity:"Common",   desc:"Single writing sheet."},
+      {name:"Paper (sheet)",         price:{gp:0,sp:0,cp:5}, stock:20, rarity:"Common",   desc:"High quality writing paper."},
+      {name:"Ink (1 oz. bottle)",    price:{gp:0,sp:5,cp:0}, stock:5,  rarity:"Common",   desc:"Black writing ink."},
+      {name:"Ink Pen",               price:{gp:0,sp:0,cp:1}, stock:10, rarity:"Common",   desc:"For writing."},
+      {name:"Spell Components Pouch",price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Common",   desc:"Replaces non-costly material components."},
+      {name:"Spell Scroll Lv.1",     price:{gp:0,sp:10,cp:0},stock:3,  rarity:"Uncommon", desc:"Contains one 1st-level spell."},
+      {name:"Spell Scroll Lv.2",     price:{gp:0,sp:15,cp:0},stock:2,  rarity:"Uncommon", desc:"Contains one 2nd-level spell."},
+      {name:"Spell Scroll Lv.3",     price:{gp:0,sp:20,cp:0},stock:1,  rarity:"Rare",     desc:"Contains one 3rd-level spell."},
+      {name:"Region Map",            price:{gp:0,sp:8,cp:0}, stock:4,  rarity:"Common",   desc:"Detailed map of the local region."},
+      {name:"Sealing Wax",           price:{gp:0,sp:0,cp:2}, stock:5,  rarity:"Common",   desc:"For sealing letters and documents."},
+      {name:"Signet Ring",           price:{gp:0,sp:10,cp:0},stock:3,  rarity:"Common",   desc:"Personal seal ring."}
     ]
   },
   "Sales | Wands & Staff": {
-    icon:"🪄",theme:"theme-wands",description:"Wands, staves and magical focii.",sellMultiplier:0.5,
+    icon:"🪄",theme:"theme-wands",description:"Wands, staves and magical focii.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Arcane Focus (Crystal)", price:{gp:0,sp:10,cp:0},stock:3,desc:"Spellcasting focus for wizards and sorcerers."},
-      {name:"Arcane Focus (Orb)",     price:{gp:0,sp:12,cp:0},stock:2,desc:"Spellcasting focus."},
-      {name:"Arcane Focus (Rod)",     price:{gp:0,sp:8,cp:0}, stock:3,desc:"Spellcasting focus."},
-      {name:"Arcane Focus (Staff)",   price:{gp:0,sp:5,cp:0}, stock:3,desc:"1d6 bludgeoning. Spellcasting focus. Versatile (1d8)."},
-      {name:"Arcane Focus (Wand)",    price:{gp:0,sp:10,cp:0},stock:3,desc:"Spellcasting focus."},
-      {name:"Holy Symbol (Amulet)",   price:{gp:0,sp:8,cp:0}, stock:3,desc:"Divine spellcasting focus."},
-      {name:"Holy Symbol (Emblem)",   price:{gp:0,sp:6,cp:0}, stock:3,desc:"Worn on armor or shield."},
-      {name:"Holy Symbol (Reliquary)",price:{gp:0,sp:10,cp:0},stock:2,desc:"Box containing holy relic."},
-      {name:"Druidic Focus (Sprig)",  price:{gp:0,sp:0,cp:1}, stock:4,desc:"Mistletoe or holly sprig. Druid focus."},
-      {name:"Druidic Focus (Staff)",  price:{gp:0,sp:5,cp:0}, stock:2,desc:"1d6 bludgeoning. Druid focus. Versatile (1d8)."},
-      {name:"Druidic Focus (Totem)",  price:{gp:0,sp:0,cp:3}, stock:3,desc:"Animal-shaped totem. Druid focus."},
-      {name:"Druidic Focus (Wand)",   price:{gp:0,sp:8,cp:0}, stock:2,desc:"Yew wand. Druid focus."}
+      {name:"Arcane Focus (Crystal)", price:{gp:0,sp:10,cp:0},stock:3, rarity:"Common", desc:"Spellcasting focus for wizards and sorcerers."},
+      {name:"Arcane Focus (Orb)",     price:{gp:0,sp:12,cp:0},stock:2, rarity:"Common", desc:"Spellcasting focus."},
+      {name:"Arcane Focus (Rod)",     price:{gp:0,sp:8,cp:0}, stock:3, rarity:"Common", desc:"Spellcasting focus."},
+      {name:"Arcane Focus (Staff)",   price:{gp:0,sp:5,cp:0}, stock:3, rarity:"Common", desc:"1d6 bludgeoning. Spellcasting focus. Versatile (1d8)."},
+      {name:"Arcane Focus (Wand)",    price:{gp:0,sp:10,cp:0},stock:3, rarity:"Common", desc:"Spellcasting focus."},
+      {name:"Holy Symbol (Amulet)",   price:{gp:0,sp:8,cp:0}, stock:3, rarity:"Common", desc:"Divine spellcasting focus."},
+      {name:"Holy Symbol (Emblem)",   price:{gp:0,sp:6,cp:0}, stock:3, rarity:"Common", desc:"Worn on armor or shield."},
+      {name:"Holy Symbol (Reliquary)",price:{gp:0,sp:10,cp:0},stock:2, rarity:"Uncommon",desc:"Box containing holy relic."},
+      {name:"Druidic Focus (Sprig)",  price:{gp:0,sp:0,cp:1}, stock:4, rarity:"Common", desc:"Mistletoe or holly sprig. Druid focus."},
+      {name:"Druidic Focus (Staff)",  price:{gp:0,sp:5,cp:0}, stock:2, rarity:"Common", desc:"1d6 bludgeoning. Druid focus. Versatile (1d8)."},
+      {name:"Druidic Focus (Totem)",  price:{gp:0,sp:0,cp:3}, stock:3, rarity:"Common", desc:"Animal-shaped totem. Druid focus."},
+      {name:"Druidic Focus (Wand)",   price:{gp:0,sp:8,cp:0}, stock:2, rarity:"Common", desc:"Yew wand. Druid focus."}
     ]
   },
   "Sales | Heavy Armors": {
-    icon:"🛡️",theme:"theme-heavy",description:"Heavy armor for seasoned warriors.",sellMultiplier:0.5,
+    icon:"🛡️",theme:"theme-heavy",description:"Heavy armor for seasoned warriors.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Ring Mail",   price:{gp:0,sp:10,cp:0},stock:2,desc:"AC 14. Stealth disadvantage. 40 lb."},
-      {name:"Chain Mail",  price:{gp:0,sp:15,cp:0},stock:2,desc:"AC 16. Str 13 required. Stealth disadvantage. 55 lb."},
-      {name:"Splint",      price:{gp:0,sp:18,cp:0},stock:1,desc:"AC 17. Str 15 required. Stealth disadvantage. 60 lb."},
-      {name:"Plate Armor", price:{gp:0,sp:20,cp:0},stock:1,desc:"AC 18. Str 15 required. Stealth disadvantage. 65 lb."},
-      {name:"Shield",      price:{gp:0,sp:5,cp:0}, stock:5,desc:"+2 AC. 6 lb."},
-      {name:"Helm",        price:{gp:0,sp:5,cp:0}, stock:4,desc:"Head protection."},
-      {name:"Gauntlets",   price:{gp:0,sp:4,cp:0}, stock:4,desc:"Hand protection."},
-      {name:"Greaves",     price:{gp:0,sp:5,cp:0}, stock:3,desc:"Leg protection."}
+      {name:"Ring Mail",   price:{gp:0,sp:10,cp:0},stock:2, rarity:"Common",   desc:"AC 14. Stealth disadvantage. 40 lb."},
+      {name:"Chain Mail",  price:{gp:0,sp:15,cp:0},stock:2, rarity:"Common",   desc:"AC 16. Str 13 required. Stealth disadvantage. 55 lb."},
+      {name:"Splint",      price:{gp:0,sp:18,cp:0},stock:1, rarity:"Uncommon", desc:"AC 17. Str 15 required. Stealth disadvantage. 60 lb."},
+      {name:"Plate Armor", price:{gp:0,sp:20,cp:0},stock:1, rarity:"Rare",     desc:"AC 18. Str 15 required. Stealth disadvantage. 65 lb."},
+      {name:"Shield",      price:{gp:0,sp:5,cp:0}, stock:5, rarity:"Common",   desc:"+2 AC. 6 lb."},
+      {name:"Helm",        price:{gp:0,sp:5,cp:0}, stock:4, rarity:"Common",   desc:"Head protection."},
+      {name:"Gauntlets",   price:{gp:0,sp:4,cp:0}, stock:4, rarity:"Common",   desc:"Hand protection."},
+      {name:"Greaves",     price:{gp:0,sp:5,cp:0}, stock:3, rarity:"Common",   desc:"Leg protection."}
     ]
   },
   "Sales | Medium Armors": {
-    icon:"🔰",theme:"theme-medium",description:"Balanced armor combining protection and mobility.",sellMultiplier:0.5,
+    icon:"🔰",theme:"theme-medium",description:"Balanced armor combining protection and mobility.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Hide Armor",  price:{gp:0,sp:5,cp:0}, stock:3,desc:"AC 12+Dex(max2). 12 lb."},
-      {name:"Chain Shirt", price:{gp:0,sp:8,cp:0}, stock:3,desc:"AC 13+Dex(max2). 20 lb."},
-      {name:"Scale Mail",  price:{gp:0,sp:10,cp:0},stock:2,desc:"AC 14+Dex(max2). Stealth disadvantage. 45 lb."},
-      {name:"Breastplate", price:{gp:0,sp:15,cp:0},stock:1,desc:"AC 14+Dex(max2). 20 lb."},
-      {name:"Half Plate",  price:{gp:0,sp:18,cp:0},stock:1,desc:"AC 15+Dex(max2). Stealth disadvantage. 40 lb."}
+      {name:"Hide Armor",  price:{gp:0,sp:5,cp:0}, stock:3, rarity:"Common",   desc:"AC 12+Dex(max2). 12 lb."},
+      {name:"Chain Shirt", price:{gp:0,sp:8,cp:0}, stock:3, rarity:"Common",   desc:"AC 13+Dex(max2). 20 lb."},
+      {name:"Scale Mail",  price:{gp:0,sp:10,cp:0},stock:2, rarity:"Common",   desc:"AC 14+Dex(max2). Stealth disadvantage. 45 lb."},
+      {name:"Breastplate", price:{gp:0,sp:15,cp:0},stock:1, rarity:"Uncommon", desc:"AC 14+Dex(max2). 20 lb."},
+      {name:"Half Plate",  price:{gp:0,sp:18,cp:0},stock:1, rarity:"Uncommon", desc:"AC 15+Dex(max2). Stealth disadvantage. 40 lb."}
     ]
   },
   "Sales | Light Armors": {
-    icon:"🥋",theme:"theme-light",description:"Light protection for rogues and rangers.",sellMultiplier:0.5,
+    icon:"🥋",theme:"theme-light",description:"Light protection for rogues and rangers.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Padded Armor",      price:{gp:0,sp:0,cp:5}, stock:4, desc:"AC 11+Dex. Stealth disadvantage. 8 lb."},
-      {name:"Leather Armor",     price:{gp:0,sp:0,cp:8}, stock:5, desc:"AC 11+Dex. 10 lb."},
-      {name:"Studded Leather",   price:{gp:0,sp:5,cp:0}, stock:3, desc:"AC 12+Dex. 13 lb."},
-      {name:"Common Clothes",    price:{gp:0,sp:0,cp:3}, stock:10,desc:"Ordinary outfit. 3 lb."},
-      {name:"Traveler's Clothes",price:{gp:0,sp:0,cp:8}, stock:6, desc:"Practical for adventuring. 4 lb."},
-      {name:"Fine Clothes",      price:{gp:0,sp:5,cp:0}, stock:3, desc:"Elegant noble attire. 6 lb."},
-      {name:"Robes",             price:{gp:0,sp:0,cp:5}, stock:4, desc:"Long flowing robes. 4 lb."},
-      {name:"Costume",           price:{gp:0,sp:0,cp:8}, stock:3, desc:"Disguise outfit. 4 lb."}
+      {name:"Padded Armor",      price:{gp:0,sp:0,cp:5}, stock:4,  rarity:"Common", desc:"AC 11+Dex. Stealth disadvantage. 8 lb."},
+      {name:"Leather Armor",     price:{gp:0,sp:0,cp:8}, stock:5,  rarity:"Common", desc:"AC 11+Dex. 10 lb."},
+      {name:"Studded Leather",   price:{gp:0,sp:5,cp:0}, stock:3,  rarity:"Uncommon",desc:"AC 12+Dex. 13 lb."},
+      {name:"Common Clothes",    price:{gp:0,sp:0,cp:3}, stock:10, rarity:"Common", desc:"Ordinary outfit. 3 lb."},
+      {name:"Traveler's Clothes",price:{gp:0,sp:0,cp:8}, stock:6,  rarity:"Common", desc:"Practical for adventuring. 4 lb."},
+      {name:"Fine Clothes",      price:{gp:0,sp:5,cp:0}, stock:3,  rarity:"Common", desc:"Elegant noble attire. 6 lb."},
+      {name:"Robes",             price:{gp:0,sp:0,cp:5}, stock:4,  rarity:"Common", desc:"Long flowing robes. 4 lb."},
+      {name:"Costume",           price:{gp:0,sp:0,cp:8}, stock:3,  rarity:"Common", desc:"Disguise outfit. 4 lb."}
     ]
   },
   "Sales | Tailor": {
-    icon:"🧵",theme:"theme-tailor",description:"Custom-made clothing and outfits for all occasions.",sellMultiplier:0.4,
+    icon:"🧵",theme:"theme-tailor",description:"Custom-made clothing and outfits for all occasions.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Fine Clothes",        price:{gp:0,sp:5,cp:0}, stock:5,desc:"Elegant attire for nobles."},
-      {name:"Court Costume",       price:{gp:0,sp:10,cp:0},stock:2,desc:"Outfit for formal events."},
-      {name:"Wizard's Robe",       price:{gp:0,sp:8,cp:0}, stock:3,desc:"Long hooded robe."},
-      {name:"Rogue's Outfit",      price:{gp:0,sp:8,cp:0}, stock:3,desc:"Dark, discreet."},
-      {name:"Religious Vestments", price:{gp:0,sp:5,cp:0}, stock:3,desc:"Cleric or monk attire."},
-      {name:"Cloaks & Mantles",    price:{gp:0,sp:5,cp:0}, stock:6,desc:"Protection against cold."},
-      {name:"Quality Boots",       price:{gp:0,sp:4,cp:0}, stock:4,desc:"Sturdy and comfortable."},
-      {name:"Travel Bag",          price:{gp:0,sp:3,cp:0}, stock:5,desc:"Sturdy leather bag."}
+      {name:"Fine Clothes",        price:{gp:0,sp:5,cp:0}, stock:5, rarity:"Common",   desc:"Elegant attire for nobles."},
+      {name:"Court Costume",       price:{gp:0,sp:10,cp:0},stock:2, rarity:"Uncommon", desc:"Outfit for formal events."},
+      {name:"Wizard's Robe",       price:{gp:0,sp:8,cp:0}, stock:3, rarity:"Common",   desc:"Long hooded robe."},
+      {name:"Rogue's Outfit",      price:{gp:0,sp:8,cp:0}, stock:3, rarity:"Common",   desc:"Dark, discreet."},
+      {name:"Religious Vestments", price:{gp:0,sp:5,cp:0}, stock:3, rarity:"Common",   desc:"Cleric or monk attire."},
+      {name:"Cloaks & Mantles",    price:{gp:0,sp:5,cp:0}, stock:6, rarity:"Common",   desc:"Protection against cold."},
+      {name:"Quality Boots",       price:{gp:0,sp:4,cp:0}, stock:4, rarity:"Common",   desc:"Sturdy and comfortable."},
+      {name:"Travel Bag",          price:{gp:0,sp:3,cp:0}, stock:5, rarity:"Common",   desc:"Sturdy leather bag."}
     ]
   },
   "Sales | Musical Instruments": {
-    icon:"🎵",theme:"theme-music",description:"Instruments for bards and traveling musicians.",sellMultiplier:0.4,
+    icon:"🎵",theme:"theme-music",description:"Instruments for bards and traveling musicians.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Lute",       price:{gp:0,sp:15,cp:0},stock:2,desc:"Classic string instrument."},
-      {name:"Flute",      price:{gp:0,sp:8,cp:0}, stock:4,desc:"Wooden transverse flute."},
-      {name:"Drum",       price:{gp:0,sp:10,cp:0},stock:3,desc:"Travel drum."},
-      {name:"Horn",       price:{gp:0,sp:8,cp:0}, stock:2,desc:"Signal horn."},
-      {name:"Viol",       price:{gp:0,sp:18,cp:0},stock:1,desc:"Bowed string instrument."},
-      {name:"Bagpipes",   price:{gp:0,sp:18,cp:0},stock:1,desc:"Wind instrument with bellows."},
-      {name:"Zither",     price:{gp:0,sp:15,cp:0},stock:1,desc:"Plucked string instrument."},
-      {name:"Sheet Music",price:{gp:0,sp:0,cp:3}, stock:8,desc:"Collection of melodies."}
+      {name:"Lute",       price:{gp:0,sp:15,cp:0},stock:2, rarity:"Common",   desc:"Classic string instrument."},
+      {name:"Flute",      price:{gp:0,sp:8,cp:0}, stock:4, rarity:"Common",   desc:"Wooden transverse flute."},
+      {name:"Drum",       price:{gp:0,sp:10,cp:0},stock:3, rarity:"Common",   desc:"Travel drum."},
+      {name:"Horn",       price:{gp:0,sp:8,cp:0}, stock:2, rarity:"Common",   desc:"Signal horn."},
+      {name:"Viol",       price:{gp:0,sp:18,cp:0},stock:1, rarity:"Uncommon", desc:"Bowed string instrument."},
+      {name:"Bagpipes",   price:{gp:0,sp:18,cp:0},stock:1, rarity:"Uncommon", desc:"Wind instrument with bellows."},
+      {name:"Zither",     price:{gp:0,sp:15,cp:0},stock:1, rarity:"Uncommon", desc:"Plucked string instrument."},
+      {name:"Sheet Music",price:{gp:0,sp:0,cp:3}, stock:8, rarity:"Common",   desc:"Collection of melodies."}
     ]
   },
   "Sales | Perfumes & Jewels": {
-    icon:"💎",theme:"theme-jewels",description:"Precious jewelry and exotic perfumes.",sellMultiplier:0.6,
+    icon:"💎",theme:"theme-jewels",description:"Precious jewelry and exotic perfumes.",sellMultiplier:0.6,isOpen:true,
     items:[
-      {name:"Silver Ring",       price:{gp:0,sp:8,cp:0}, stock:5,desc:"Simple silver band."},
-      {name:"Gold Necklace",     price:{gp:0,sp:18,cp:0},stock:3,desc:"Pure gold chain."},
-      {name:"Jade Bracelet",     price:{gp:0,sp:12,cp:0},stock:3,desc:"Polished green stone."},
-      {name:"Decorative Brooch", price:{gp:0,sp:8,cp:0}, stock:5,desc:"Metal and gemstone."},
-      {name:"Rare Perfume",      price:{gp:0,sp:15,cp:0},stock:4,desc:"30ml vial, exotic scent."},
-      {name:"Rose Water",        price:{gp:0,sp:0,cp:3}, stock:6,desc:"Light floral scent."},
-      {name:"Semi-precious Gem", price:{gp:0,sp:10,cp:0},stock:6,desc:"Amethyst, citrine or topaz."},
-      {name:"Gold Pendant",      price:{gp:0,sp:20,cp:0},stock:2,desc:"Decorative pendant."}
+      {name:"Silver Ring",       price:{gp:0,sp:8,cp:0}, stock:5, rarity:"Common",   desc:"Simple silver band."},
+      {name:"Gold Necklace",     price:{gp:0,sp:18,cp:0},stock:3, rarity:"Uncommon", desc:"Pure gold chain."},
+      {name:"Jade Bracelet",     price:{gp:0,sp:12,cp:0},stock:3, rarity:"Uncommon", desc:"Polished green stone."},
+      {name:"Decorative Brooch", price:{gp:0,sp:8,cp:0}, stock:5, rarity:"Common",   desc:"Metal and gemstone."},
+      {name:"Rare Perfume",      price:{gp:0,sp:15,cp:0},stock:4, rarity:"Uncommon", desc:"30ml vial, exotic scent."},
+      {name:"Rose Water",        price:{gp:0,sp:0,cp:3}, stock:6, rarity:"Common",   desc:"Light floral scent."},
+      {name:"Semi-precious Gem", price:{gp:0,sp:10,cp:0},stock:6, rarity:"Uncommon", desc:"Amethyst, citrine or topaz."},
+      {name:"Gold Pendant",      price:{gp:0,sp:20,cp:0},stock:2, rarity:"Rare",     desc:"Decorative pendant."}
     ]
   },
   "Sales | Adventuring Gear": {
-    icon:"🎒",theme:"theme-rations",description:"Essential supplies and equipment for any expedition.",sellMultiplier:0.5,
+    icon:"🎒",theme:"theme-rations",description:"Essential supplies and equipment for any expedition.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Backpack",            price:{gp:0,sp:0,cp:10},stock:5, desc:"Holds 30 lb / 1 cu. ft."},
-      {name:"Bedroll",             price:{gp:0,sp:0,cp:8}, stock:6, desc:"Comfortable sleeping roll. 7 lb."},
-      {name:"Blanket",             price:{gp:0,sp:0,cp:5}, stock:8, desc:"Warm wool blanket. 3 lb."},
-      {name:"Rations (1 day)",     price:{gp:0,sp:0,cp:3}, stock:30,desc:"Dried food for one day. 2 lb."},
-      {name:"Waterskin",           price:{gp:0,sp:0,cp:2}, stock:10,desc:"Holds 4 pints of liquid. 5 lb full."},
-      {name:"Torch",               price:{gp:0,sp:0,cp:1}, stock:30,desc:"Bright light 20 ft, dim 40 ft. 1 hour."},
-      {name:"Tinderbox",           price:{gp:0,sp:0,cp:3}, stock:10,desc:"Strike to light a fire. 1 lb."},
-      {name:"Candle",              price:{gp:0,sp:0,cp:1}, stock:30,desc:"Bright light 5 ft, dim 10 ft. 1 hour."},
-      {name:"Lantern (Hooded)",    price:{gp:0,sp:8,cp:0}, stock:3, desc:"Bright light 30 ft, dim 60 ft. Directional."},
-      {name:"Lantern (Bullseye)",  price:{gp:0,sp:12,cp:0},stock:2, desc:"Bright light 60 ft cone, dim 120 ft."},
-      {name:"Oil (flask)",         price:{gp:0,sp:0,cp:1}, stock:20,desc:"Lantern fuel for 6 hours. 1 lb."},
-      {name:"Rope, Hempen (50 ft)",price:{gp:0,sp:0,cp:5}, stock:8, desc:"Supports 3 creatures. AC 11, 6 HP."},
-      {name:"Rope, Silk (50 ft)",  price:{gp:0,sp:8,cp:0}, stock:3, desc:"Lighter and stronger. 5 lb."},
-      {name:"Grappling Hook",      price:{gp:0,sp:0,cp:8}, stock:4, desc:"For climbing and anchoring. 4 lb."},
-      {name:"Climber's Kit",       price:{gp:0,sp:10,cp:0},stock:2, desc:"Pitons, boots, gloves and harness. 12 lb."},
-      {name:"Crowbar",             price:{gp:0,sp:0,cp:8}, stock:4, desc:"Advantage on Str checks to pry things open."},
-      {name:"Hammer",              price:{gp:0,sp:0,cp:5}, stock:5, desc:"For driving pitons. 3 lb."},
-      {name:"Piton",               price:{gp:0,sp:0,cp:1}, stock:20,desc:"Iron climbing spike. 1/4 lb."},
-      {name:"Shovel",              price:{gp:0,sp:0,cp:8}, stock:3, desc:"For digging. 5 lb."},
-      {name:"Pole (10 ft)",        price:{gp:0,sp:0,cp:2}, stock:5, desc:"Wooden pole. 7 lb."},
-      {name:"Chain (10 ft)",       price:{gp:0,sp:8,cp:0}, stock:3, desc:"Iron chain. 10 lb."},
-      {name:"Manacles",            price:{gp:0,sp:0,cp:8}, stock:3, desc:"Escape DC 20 Str or DC 17 Thieves' Tools."},
-      {name:"Lock",                price:{gp:0,sp:8,cp:0}, stock:3, desc:"DC 15 Thieves' Tools to open. With key."},
-      {name:"Tent (Two-Person)",   price:{gp:0,sp:0,cp:10},stock:3, desc:"Portable shelter for two. 20 lb."},
-      {name:"Merchant's Scale",    price:{gp:0,sp:8,cp:0}, stock:2, desc:"Precise weight measurements. 3 lb."},
-      {name:"Mirror (Steel)",      price:{gp:0,sp:5,cp:0}, stock:3, desc:"Small hand mirror. 1/2 lb."},
-      {name:"Signal Whistle",      price:{gp:0,sp:0,cp:1}, stock:8, desc:"Audible up to 600 ft."},
-      {name:"Soap",                price:{gp:0,sp:0,cp:1}, stock:10,desc:"Keeps you presentable. 1/2 lb."},
-      {name:"Whetstone",           price:{gp:0,sp:0,cp:1}, stock:10,desc:"Sharpen bladed weapons. 1 lb."},
-      {name:"Hunting Trap",        price:{gp:0,sp:8,cp:0}, stock:3, desc:"DC 13 Str to escape. 25 lb."},
-      {name:"Spyglass",            price:{gp:0,sp:20,cp:0},stock:1, desc:"Magnifies objects up to 8× at range. 1 lb."},
-      {name:"Magnifying Glass",    price:{gp:0,sp:12,cp:0},stock:1, desc:"Start fires in sunlight. Examine small objects."},
-      {name:"Hourglass",           price:{gp:0,sp:10,cp:0},stock:2, desc:"Tracks time accurately. 1 lb."},
-      {name:"Pouch",               price:{gp:0,sp:0,cp:2}, stock:10,desc:"Holds 6 lb / 1/5 cu. ft."},
-      {name:"Sack",                price:{gp:0,sp:0,cp:1}, stock:10,desc:"Holds 30 lb / 1 cu. ft. 1/2 lb."},
-      {name:"Chest",               price:{gp:0,sp:0,cp:12},stock:3, desc:"Holds 300 lb / 12 cu. ft. 25 lb."}
+      {name:"Backpack",            price:{gp:0,sp:0,cp:10},stock:5,  rarity:"Common",   desc:"Holds 30 lb / 1 cu. ft."},
+      {name:"Bedroll",             price:{gp:0,sp:0,cp:8}, stock:6,  rarity:"Common",   desc:"Comfortable sleeping roll. 7 lb."},
+      {name:"Blanket",             price:{gp:0,sp:0,cp:5}, stock:8,  rarity:"Common",   desc:"Warm wool blanket. 3 lb."},
+      {name:"Rations (1 day)",     price:{gp:0,sp:0,cp:3}, stock:30, rarity:"Common",   desc:"Dried food for one day. 2 lb."},
+      {name:"Waterskin",           price:{gp:0,sp:0,cp:2}, stock:10, rarity:"Common",   desc:"Holds 4 pints of liquid. 5 lb full."},
+      {name:"Torch",               price:{gp:0,sp:0,cp:1}, stock:30, rarity:"Common",   desc:"Bright light 20 ft, dim 40 ft. 1 hour."},
+      {name:"Tinderbox",           price:{gp:0,sp:0,cp:3}, stock:10, rarity:"Common",   desc:"Strike to light a fire. 1 lb."},
+      {name:"Candle",              price:{gp:0,sp:0,cp:1}, stock:30, rarity:"Common",   desc:"Bright light 5 ft, dim 10 ft. 1 hour."},
+      {name:"Lantern (Hooded)",    price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Common",   desc:"Bright light 30 ft, dim 60 ft. Directional."},
+      {name:"Lantern (Bullseye)",  price:{gp:0,sp:12,cp:0},stock:2,  rarity:"Uncommon", desc:"Bright light 60 ft cone, dim 120 ft."},
+      {name:"Oil (flask)",         price:{gp:0,sp:0,cp:1}, stock:20, rarity:"Common",   desc:"Lantern fuel for 6 hours. 1 lb."},
+      {name:"Rope, Hempen (50 ft)",price:{gp:0,sp:0,cp:5}, stock:8,  rarity:"Common",   desc:"Supports 3 creatures. AC 11, 6 HP."},
+      {name:"Rope, Silk (50 ft)",  price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Uncommon", desc:"Lighter and stronger. 5 lb."},
+      {name:"Grappling Hook",      price:{gp:0,sp:0,cp:8}, stock:4,  rarity:"Common",   desc:"For climbing and anchoring. 4 lb."},
+      {name:"Climber's Kit",       price:{gp:0,sp:10,cp:0},stock:2,  rarity:"Uncommon", desc:"Pitons, boots, gloves and harness. 12 lb."},
+      {name:"Crowbar",             price:{gp:0,sp:0,cp:8}, stock:4,  rarity:"Common",   desc:"Advantage on Str checks to pry things open."},
+      {name:"Hammer",              price:{gp:0,sp:0,cp:5}, stock:5,  rarity:"Common",   desc:"For driving pitons. 3 lb."},
+      {name:"Piton",               price:{gp:0,sp:0,cp:1}, stock:20, rarity:"Common",   desc:"Iron climbing spike. 1/4 lb."},
+      {name:"Shovel",              price:{gp:0,sp:0,cp:8}, stock:3,  rarity:"Common",   desc:"For digging. 5 lb."},
+      {name:"Pole (10 ft)",        price:{gp:0,sp:0,cp:2}, stock:5,  rarity:"Common",   desc:"Wooden pole. 7 lb."},
+      {name:"Chain (10 ft)",       price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Common",   desc:"Iron chain. 10 lb."},
+      {name:"Manacles",            price:{gp:0,sp:0,cp:8}, stock:3,  rarity:"Common",   desc:"Escape DC 20 Str or DC 17 Thieves' Tools."},
+      {name:"Lock",                price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Common",   desc:"DC 15 Thieves' Tools to open. With key."},
+      {name:"Tent (Two-Person)",   price:{gp:0,sp:0,cp:10},stock:3,  rarity:"Common",   desc:"Portable shelter for two. 20 lb."},
+      {name:"Merchant's Scale",    price:{gp:0,sp:8,cp:0}, stock:2,  rarity:"Common",   desc:"Precise weight measurements. 3 lb."},
+      {name:"Mirror (Steel)",      price:{gp:0,sp:5,cp:0}, stock:3,  rarity:"Common",   desc:"Small hand mirror. 1/2 lb."},
+      {name:"Signal Whistle",      price:{gp:0,sp:0,cp:1}, stock:8,  rarity:"Common",   desc:"Audible up to 600 ft."},
+      {name:"Soap",                price:{gp:0,sp:0,cp:1}, stock:10, rarity:"Common",   desc:"Keeps you presentable. 1/2 lb."},
+      {name:"Whetstone",           price:{gp:0,sp:0,cp:1}, stock:10, rarity:"Common",   desc:"Sharpen bladed weapons. 1 lb."},
+      {name:"Hunting Trap",        price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Common",   desc:"DC 13 Str to escape. 25 lb."},
+      {name:"Spyglass",            price:{gp:0,sp:20,cp:0},stock:1,  rarity:"Uncommon", desc:"Magnifies objects up to 8× at range. 1 lb."},
+      {name:"Magnifying Glass",    price:{gp:0,sp:12,cp:0},stock:1,  rarity:"Uncommon", desc:"Start fires in sunlight. Examine small objects."},
+      {name:"Hourglass",           price:{gp:0,sp:10,cp:0},stock:2,  rarity:"Common",   desc:"Tracks time accurately. 1 lb."},
+      {name:"Pouch",               price:{gp:0,sp:0,cp:2}, stock:10, rarity:"Common",   desc:"Holds 6 lb / 1/5 cu. ft."},
+      {name:"Sack",                price:{gp:0,sp:0,cp:1}, stock:10, rarity:"Common",   desc:"Holds 30 lb / 1 cu. ft. 1/2 lb."},
+      {name:"Chest",               price:{gp:0,sp:0,cp:12},stock:3,  rarity:"Common",   desc:"Holds 300 lb / 12 cu. ft. 25 lb."}
     ]
   },
   "Sales | Tools & Kits": {
-    icon:"🔧",theme:"theme-tomes",description:"Artisan tools, kits and professional instruments.",sellMultiplier:0.5,
+    icon:"🔧",theme:"theme-tomes",description:"Artisan tools, kits and professional instruments.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Thieves' Tools",         price:{gp:0,sp:12,cp:0},stock:2,desc:"Pick locks and disarm traps. 1 lb."},
-      {name:"Disguise Kit",           price:{gp:0,sp:10,cp:0},stock:2,desc:"Costumes and makeup for disguise. 3 lb."},
-      {name:"Forgery Kit",            price:{gp:0,sp:8,cp:0}, stock:1,desc:"Duplicate documents and seals. 5 lb."},
-      {name:"Poisoner's Kit",         price:{gp:0,sp:15,cp:0},stock:1,desc:"Harvest and apply poisons. 2 lb."},
-      {name:"Navigator's Tools",      price:{gp:0,sp:10,cp:0},stock:1,desc:"Chart and follow courses. Includes charts. 2 lb."},
-      {name:"Smith's Tools",          price:{gp:0,sp:8,cp:0}, stock:2,desc:"Craft and repair metal items. 8 lb."},
-      {name:"Carpenter's Tools",      price:{gp:0,sp:5,cp:0}, stock:2,desc:"Craft and repair wooden items. 6 lb."},
-      {name:"Leatherworker's Tools",  price:{gp:0,sp:3,cp:0}, stock:2,desc:"Craft leather goods. 5 lb."},
-      {name:"Weaver's Tools",         price:{gp:0,sp:2,cp:0}, stock:3,desc:"Craft cloth items. 5 lb."},
-      {name:"Cook's Utensils",        price:{gp:0,sp:2,cp:0}, stock:3,desc:"Prepare meals. Includes pots and pans. 8 lb."},
-      {name:"Tinker's Tools",         price:{gp:0,sp:15,cp:0},stock:1,desc:"Craft and repair small devices. 10 lb."},
-      {name:"Woodcarver's Tools",     price:{gp:0,sp:2,cp:0}, stock:3,desc:"Craft wooden objects and ammunition. 5 lb."},
-      {name:"Mason's Tools",          price:{gp:0,sp:5,cp:0}, stock:2,desc:"Craft stone items. 8 lb."},
-      {name:"Potter's Tools",         price:{gp:0,sp:5,cp:0}, stock:2,desc:"Craft clay items. 3 lb."},
-      {name:"Glassblower's Tools",    price:{gp:0,sp:8,cp:0}, stock:1,desc:"Craft glass items and vials. 5 lb."},
-      {name:"Jeweler's Tools",        price:{gp:0,sp:10,cp:0},stock:1,desc:"Identify and craft jewelry. 2 lb."},
-      {name:"Cobbler's Tools",        price:{gp:0,sp:3,cp:0}, stock:2,desc:"Craft and repair footwear. 5 lb."},
-      {name:"Brewer's Supplies",      price:{gp:0,sp:8,cp:0}, stock:1,desc:"Brew ales and other beverages. 9 lb."},
-      {name:"Calligrapher's Supplies",price:{gp:0,sp:5,cp:0}, stock:2,desc:"Artistic writing tools. 5 lb."},
-      {name:"Cartographer's Tools",   price:{gp:0,sp:8,cp:0}, stock:1,desc:"Draft and read maps. 6 lb."},
-      {name:"Painter's Supplies",     price:{gp:0,sp:5,cp:0}, stock:2,desc:"Pigments and brushes. 5 lb."},
-      {name:"Gaming Set (Dice)",      price:{gp:0,sp:0,cp:1}, stock:5,desc:"Set of dice for games of chance."},
-      {name:"Gaming Set (Cards)",     price:{gp:0,sp:0,cp:2}, stock:3,desc:"Deck of playing cards."},
-      {name:"Gaming Set (Chess)",     price:{gp:0,sp:0,cp:5}, stock:2,desc:"Strategy board game set. 1/2 lb."}
+      {name:"Thieves' Tools",         price:{gp:0,sp:12,cp:0},stock:2, rarity:"Uncommon", desc:"Pick locks and disarm traps. 1 lb."},
+      {name:"Disguise Kit",           price:{gp:0,sp:10,cp:0},stock:2, rarity:"Uncommon", desc:"Costumes and makeup for disguise. 3 lb."},
+      {name:"Forgery Kit",            price:{gp:0,sp:8,cp:0}, stock:1, rarity:"Uncommon", desc:"Duplicate documents and seals. 5 lb."},
+      {name:"Poisoner's Kit",         price:{gp:0,sp:15,cp:0},stock:1, rarity:"Uncommon", desc:"Harvest and apply poisons. 2 lb."},
+      {name:"Navigator's Tools",      price:{gp:0,sp:10,cp:0},stock:1, rarity:"Uncommon", desc:"Chart and follow courses. Includes charts. 2 lb."},
+      {name:"Smith's Tools",          price:{gp:0,sp:8,cp:0}, stock:2, rarity:"Common",   desc:"Craft and repair metal items. 8 lb."},
+      {name:"Carpenter's Tools",      price:{gp:0,sp:5,cp:0}, stock:2, rarity:"Common",   desc:"Craft and repair wooden items. 6 lb."},
+      {name:"Leatherworker's Tools",  price:{gp:0,sp:3,cp:0}, stock:2, rarity:"Common",   desc:"Craft leather goods. 5 lb."},
+      {name:"Weaver's Tools",         price:{gp:0,sp:2,cp:0}, stock:3, rarity:"Common",   desc:"Craft cloth items. 5 lb."},
+      {name:"Cook's Utensils",        price:{gp:0,sp:2,cp:0}, stock:3, rarity:"Common",   desc:"Prepare meals. Includes pots and pans. 8 lb."},
+      {name:"Tinker's Tools",         price:{gp:0,sp:15,cp:0},stock:1, rarity:"Uncommon", desc:"Craft and repair small devices. 10 lb."},
+      {name:"Woodcarver's Tools",     price:{gp:0,sp:2,cp:0}, stock:3, rarity:"Common",   desc:"Craft wooden objects and ammunition. 5 lb."},
+      {name:"Mason's Tools",          price:{gp:0,sp:5,cp:0}, stock:2, rarity:"Common",   desc:"Craft stone items. 8 lb."},
+      {name:"Potter's Tools",         price:{gp:0,sp:5,cp:0}, stock:2, rarity:"Common",   desc:"Craft clay items. 3 lb."},
+      {name:"Glassblower's Tools",    price:{gp:0,sp:8,cp:0}, stock:1, rarity:"Common",   desc:"Craft glass items and vials. 5 lb."},
+      {name:"Jeweler's Tools",        price:{gp:0,sp:10,cp:0},stock:1, rarity:"Uncommon", desc:"Identify and craft jewelry. 2 lb."},
+      {name:"Cobbler's Tools",        price:{gp:0,sp:3,cp:0}, stock:2, rarity:"Common",   desc:"Craft and repair footwear. 5 lb."},
+      {name:"Brewer's Supplies",      price:{gp:0,sp:8,cp:0}, stock:1, rarity:"Common",   desc:"Brew ales and other beverages. 9 lb."},
+      {name:"Calligrapher's Supplies",price:{gp:0,sp:5,cp:0}, stock:2, rarity:"Common",   desc:"Artistic writing tools. 5 lb."},
+      {name:"Cartographer's Tools",   price:{gp:0,sp:8,cp:0}, stock:1, rarity:"Uncommon", desc:"Draft and read maps. 6 lb."},
+      {name:"Painter's Supplies",     price:{gp:0,sp:5,cp:0}, stock:2, rarity:"Common",   desc:"Pigments and brushes. 5 lb."},
+      {name:"Gaming Set (Dice)",      price:{gp:0,sp:0,cp:1}, stock:5, rarity:"Common",   desc:"Set of dice for games of chance."},
+      {name:"Gaming Set (Cards)",     price:{gp:0,sp:0,cp:2}, stock:3, rarity:"Common",   desc:"Deck of playing cards."},
+      {name:"Gaming Set (Chess)",     price:{gp:0,sp:0,cp:5}, stock:2, rarity:"Common",   desc:"Strategy board game set. 1/2 lb."}
     ]
   },
   "Sales | Herbs & Spices": {
-    icon:"🌿",theme:"theme-herbs",description:"Aromatic herbs, spices and medicinal plants.",sellMultiplier:0.5,
+    icon:"🌿",theme:"theme-herbs",description:"Aromatic herbs, spices and medicinal plants.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Medicinal Herbs",price:{gp:0,sp:0,cp:5},stock:15,desc:"For treating minor wounds."},
-      {name:"Valerian Root",  price:{gp:0,sp:0,cp:3},stock:8, desc:"Aids sleep, calming."},
-      {name:"Black Pepper",   price:{gp:0,sp:0,cp:1},stock:20,desc:"Common spice."},
-      {name:"Saffron",        price:{gp:0,sp:8,cp:0},stock:5, desc:"Rare golden spice."},
-      {name:"Aromatic Herbs", price:{gp:0,sp:0,cp:2},stock:20,desc:"Cooking herb blend."},
-      {name:"Antidote Root",  price:{gp:0,sp:0,cp:5},stock:6, desc:"Anti-poison component."},
-      {name:"Dried Mushrooms",price:{gp:0,sp:0,cp:2},stock:12,desc:"Edible or medicinal."},
-      {name:"Essential Oil",  price:{gp:0,sp:0,cp:5},stock:8, desc:"Small concentrated vial."}
+      {name:"Medicinal Herbs",price:{gp:0,sp:0,cp:5},stock:15, rarity:"Common",   desc:"For treating minor wounds."},
+      {name:"Valerian Root",  price:{gp:0,sp:0,cp:3},stock:8,  rarity:"Common",   desc:"Aids sleep, calming."},
+      {name:"Black Pepper",   price:{gp:0,sp:0,cp:1},stock:20, rarity:"Common",   desc:"Common spice."},
+      {name:"Saffron",        price:{gp:0,sp:8,cp:0},stock:5,  rarity:"Uncommon", desc:"Rare golden spice."},
+      {name:"Aromatic Herbs", price:{gp:0,sp:0,cp:2},stock:20, rarity:"Common",   desc:"Cooking herb blend."},
+      {name:"Antidote Root",  price:{gp:0,sp:0,cp:5},stock:6,  rarity:"Common",   desc:"Anti-poison component."},
+      {name:"Dried Mushrooms",price:{gp:0,sp:0,cp:2},stock:12, rarity:"Common",   desc:"Edible or medicinal."},
+      {name:"Essential Oil",  price:{gp:0,sp:0,cp:5},stock:8,  rarity:"Common",   desc:"Small concentrated vial."}
     ]
   },
   "Sales | Bakery": {
-    icon:"🥖",theme:"theme-bakery",description:"Fresh bread, pastries and oven-baked goods.",sellMultiplier:0.3,
+    icon:"🥖",theme:"theme-bakery",description:"Fresh bread, pastries and oven-baked goods.",sellMultiplier:0.3,isOpen:true,
     items:[
-      {name:"Loaf of Bread",   price:{gp:0,sp:0,cp:1},stock:20,desc:"Fresh-baked daily."},
-      {name:"Biscuits (dozen)",price:{gp:0,sp:0,cp:3},stock:10,desc:"Dry travel biscuits."},
-      {name:"Fruit Pie",       price:{gp:0,sp:0,cp:5},stock:8, desc:"Filled with seasonal fruit."},
-      {name:"Celebration Cake",price:{gp:0,sp:0,cp:15},stock:3,desc:"For special occasions."},
-      {name:"Rye Bread",       price:{gp:0,sp:0,cp:2},stock:15,desc:"Dense and filling."},
-      {name:"Rolls (x4)",      price:{gp:0,sp:0,cp:2},stock:10,desc:"Soft and buttery."},
-      {name:"Travel Crackers", price:{gp:0,sp:0,cp:3},stock:20,desc:"Long-lasting."}
+      {name:"Loaf of Bread",   price:{gp:0,sp:0,cp:1},stock:20, rarity:"Common", desc:"Fresh-baked daily."},
+      {name:"Biscuits (dozen)",price:{gp:0,sp:0,cp:3},stock:10, rarity:"Common", desc:"Dry travel biscuits."},
+      {name:"Fruit Pie",       price:{gp:0,sp:0,cp:5},stock:8,  rarity:"Common", desc:"Filled with seasonal fruit."},
+      {name:"Celebration Cake",price:{gp:0,sp:0,cp:15},stock:3, rarity:"Uncommon",desc:"For special occasions."},
+      {name:"Rye Bread",       price:{gp:0,sp:0,cp:2},stock:15, rarity:"Common", desc:"Dense and filling."},
+      {name:"Rolls (x4)",      price:{gp:0,sp:0,cp:2},stock:10, rarity:"Common", desc:"Soft and buttery."},
+      {name:"Travel Crackers", price:{gp:0,sp:0,cp:3},stock:20, rarity:"Common", desc:"Long-lasting."}
     ]
   },
   "Sales | Butcher": {
-    icon:"🥩",theme:"theme-butcher",description:"Fresh meats, charcuterie and game.",sellMultiplier:0.4,
+    icon:"🥩",theme:"theme-butcher",description:"Fresh meats, charcuterie and game.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Whole Chicken",   price:{gp:0,sp:0,cp:5}, stock:8, desc:"Fresh poultry."},
-      {name:"Smoked Ham",      price:{gp:0,sp:0,cp:10},stock:5, desc:"Well preserved, travel-ready."},
-      {name:"Pork Chops (x4)", price:{gp:0,sp:0,cp:8}, stock:10,desc:"Fresh pork meat."},
-      {name:"Sausages (x6)",   price:{gp:0,sp:0,cp:6}, stock:12,desc:"Spiced or plain."},
-      {name:"Dried Meat",      price:{gp:0,sp:0,cp:15},stock:10,desc:"Keeps for 1 week."},
-      {name:"Game of the Day", price:{gp:0,sp:0,cp:10},stock:4, desc:"Boar, deer or hare."},
-      {name:"Marrow Bones",    price:{gp:0,sp:0,cp:3}, stock:8, desc:"For broth or pets."}
+      {name:"Whole Chicken",   price:{gp:0,sp:0,cp:5}, stock:8,  rarity:"Common",   desc:"Fresh poultry."},
+      {name:"Smoked Ham",      price:{gp:0,sp:0,cp:10},stock:5,  rarity:"Common",   desc:"Well preserved, travel-ready."},
+      {name:"Pork Chops (x4)", price:{gp:0,sp:0,cp:8}, stock:10, rarity:"Common",   desc:"Fresh pork meat."},
+      {name:"Sausages (x6)",   price:{gp:0,sp:0,cp:6}, stock:12, rarity:"Common",   desc:"Spiced or plain."},
+      {name:"Dried Meat",      price:{gp:0,sp:0,cp:15},stock:10, rarity:"Common",   desc:"Keeps for 1 week."},
+      {name:"Game of the Day", price:{gp:0,sp:0,cp:10},stock:4,  rarity:"Uncommon", desc:"Boar, deer or hare."},
+      {name:"Marrow Bones",    price:{gp:0,sp:0,cp:3}, stock:8,  rarity:"Common",   desc:"For broth or pets."}
     ]
   },
   "Sales | Fishmonger": {
-    icon:"🐟",theme:"theme-poisson",description:"Fresh fish, seafood and aquatic products.",sellMultiplier:0.4,
+    icon:"🐟",theme:"theme-poisson",description:"Fresh fish, seafood and aquatic products.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Fresh Trout",        price:{gp:0,sp:0,cp:4}, stock:10,desc:"Freshwater fish."},
-      {name:"Smoked Herring (x3)",price:{gp:0,sp:0,cp:6}, stock:8, desc:"Well preserved."},
-      {name:"King Crab",          price:{gp:0,sp:0,cp:10},stock:4, desc:"Large coastal crab."},
-      {name:"Oysters (dozen)",    price:{gp:0,sp:0,cp:10},stock:5, desc:"Fresh from the sea."},
-      {name:"Whole Salmon",       price:{gp:0,sp:0,cp:10},stock:5, desc:"Large fish."},
-      {name:"Dried Fish",         price:{gp:0,sp:0,cp:5}, stock:12,desc:"Keeps for several weeks."},
-      {name:"Smoked Eel",         price:{gp:0,sp:0,cp:8}, stock:6, desc:"Regional delicacy."}
+      {name:"Fresh Trout",        price:{gp:0,sp:0,cp:4}, stock:10, rarity:"Common",   desc:"Freshwater fish."},
+      {name:"Smoked Herring (x3)",price:{gp:0,sp:0,cp:6}, stock:8,  rarity:"Common",   desc:"Well preserved."},
+      {name:"King Crab",          price:{gp:0,sp:0,cp:10},stock:4,  rarity:"Uncommon", desc:"Large coastal crab."},
+      {name:"Oysters (dozen)",    price:{gp:0,sp:0,cp:10},stock:5,  rarity:"Common",   desc:"Fresh from the sea."},
+      {name:"Whole Salmon",       price:{gp:0,sp:0,cp:10},stock:5,  rarity:"Common",   desc:"Large fish."},
+      {name:"Dried Fish",         price:{gp:0,sp:0,cp:5}, stock:12, rarity:"Common",   desc:"Keeps for several weeks."},
+      {name:"Smoked Eel",         price:{gp:0,sp:0,cp:8}, stock:6,  rarity:"Uncommon", desc:"Regional delicacy."}
     ]
   },
   "Sales | Fruits & Veggies": {
-    icon:"🍎",theme:"theme-fruits",description:"Fresh fruits and seasonal vegetables from the market.",sellMultiplier:0.3,
+    icon:"🍎",theme:"theme-fruits",description:"Fresh fruits and seasonal vegetables from the market.",sellMultiplier:0.3,isOpen:true,
     items:[
-      {name:"Apples (x6)",      price:{gp:0,sp:0,cp:2},stock:20,desc:"Crisp seasonal fruit."},
-      {name:"Carrots (bunch)",  price:{gp:0,sp:0,cp:1},stock:15,desc:"Fresh vegetables."},
-      {name:"Grapes (bunch)",   price:{gp:0,sp:0,cp:3},stock:10,desc:"Sweet grapes."},
-      {name:"Mixed Vegetables", price:{gp:0,sp:0,cp:2},stock:20,desc:"Seasonal assortment."},
-      {name:"Wild Berries",     price:{gp:0,sp:0,cp:2},stock:12,desc:"Forest-gathered."},
-      {name:"Exotic Fruits",    price:{gp:0,sp:0,cp:5},stock:5, desc:"Imported from distant lands."},
-      {name:"Fresh Herbs",      price:{gp:0,sp:0,cp:1},stock:15,desc:"Parsley, thyme, rosemary."}
+      {name:"Apples (x6)",      price:{gp:0,sp:0,cp:2},stock:20, rarity:"Common",   desc:"Crisp seasonal fruit."},
+      {name:"Carrots (bunch)",  price:{gp:0,sp:0,cp:1},stock:15, rarity:"Common",   desc:"Fresh vegetables."},
+      {name:"Grapes (bunch)",   price:{gp:0,sp:0,cp:3},stock:10, rarity:"Common",   desc:"Sweet grapes."},
+      {name:"Mixed Vegetables", price:{gp:0,sp:0,cp:2},stock:20, rarity:"Common",   desc:"Seasonal assortment."},
+      {name:"Wild Berries",     price:{gp:0,sp:0,cp:2},stock:12, rarity:"Common",   desc:"Forest-gathered."},
+      {name:"Exotic Fruits",    price:{gp:0,sp:0,cp:5},stock:5,  rarity:"Uncommon", desc:"Imported from distant lands."},
+      {name:"Fresh Herbs",      price:{gp:0,sp:0,cp:1},stock:15, rarity:"Common",   desc:"Parsley, thyme, rosemary."}
     ]
   },
   "Sales | Cheese, Eggs & Dairy": {
-    icon:"🧀",theme:"theme-dairy",description:"Aged cheeses, fresh eggs and dairy products.",sellMultiplier:0.4,
+    icon:"🧀",theme:"theme-dairy",description:"Aged cheeses, fresh eggs and dairy products.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Aged Cheese",   price:{gp:0,sp:0,cp:5},stock:10,desc:"Hard cheese."},
-      {name:"Fresh Cheese",  price:{gp:0,sp:0,cp:3},stock:8, desc:"Mild and creamy."},
-      {name:"Eggs (dozen)",  price:{gp:0,sp:0,cp:3},stock:15,desc:"Fresh hen eggs."},
-      {name:"Butter (block)",price:{gp:0,sp:0,cp:3},stock:8, desc:"Salted farm butter."},
-      {name:"Milk (jug)",    price:{gp:0,sp:0,cp:2},stock:10,desc:"Fresh morning milk."},
-      {name:"Heavy Cream",   price:{gp:0,sp:0,cp:3},stock:6, desc:"For sauces and desserts."},
-      {name:"Travel Cheese", price:{gp:0,sp:0,cp:8},stock:8, desc:"Wax-coated, long-lasting."}
+      {name:"Aged Cheese",   price:{gp:0,sp:0,cp:5},stock:10, rarity:"Common", desc:"Hard cheese."},
+      {name:"Fresh Cheese",  price:{gp:0,sp:0,cp:3},stock:8,  rarity:"Common", desc:"Mild and creamy."},
+      {name:"Eggs (dozen)",  price:{gp:0,sp:0,cp:3},stock:15, rarity:"Common", desc:"Fresh hen eggs."},
+      {name:"Butter (block)",price:{gp:0,sp:0,cp:3},stock:8,  rarity:"Common", desc:"Salted farm butter."},
+      {name:"Milk (jug)",    price:{gp:0,sp:0,cp:2},stock:10, rarity:"Common", desc:"Fresh morning milk."},
+      {name:"Heavy Cream",   price:{gp:0,sp:0,cp:3},stock:6,  rarity:"Common", desc:"For sauces and desserts."},
+      {name:"Travel Cheese", price:{gp:0,sp:0,cp:8},stock:8,  rarity:"Common", desc:"Wax-coated, long-lasting."}
     ]
   },
   "Sales | Grains & Flours": {
-    icon:"🌾",theme:"theme-grains",description:"Grains, flours and cereals for cooking.",sellMultiplier:0.4,
+    icon:"🌾",theme:"theme-grains",description:"Grains, flours and cereals for cooking.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Flour (5lb bag)",price:{gp:0,sp:0,cp:5},stock:10,desc:"Standard wheat flour."},
-      {name:"Oats (bag)",     price:{gp:0,sp:0,cp:3},stock:12,desc:"For porridge or horses."},
-      {name:"Rice (5lb bag)", price:{gp:0,sp:0,cp:8},stock:8, desc:"Imported from the south."},
-      {name:"Barley (bag)",   price:{gp:0,sp:0,cp:4},stock:10,desc:"For beer or soup."},
-      {name:"Salt (packet)",  price:{gp:0,sp:0,cp:5},stock:20,desc:"Sea or mine salt."},
-      {name:"Sugar (packet)", price:{gp:0,sp:0,cp:5},stock:10,desc:"Rare refined sugar."},
-      {name:"Yeast",          price:{gp:0,sp:0,cp:3},stock:8, desc:"For bread and beer."}
+      {name:"Flour (5lb bag)",price:{gp:0,sp:0,cp:5},stock:10, rarity:"Common", desc:"Standard wheat flour."},
+      {name:"Oats (bag)",     price:{gp:0,sp:0,cp:3},stock:12, rarity:"Common", desc:"For porridge or horses."},
+      {name:"Rice (5lb bag)", price:{gp:0,sp:0,cp:8},stock:8,  rarity:"Common", desc:"Imported from the south."},
+      {name:"Barley (bag)",   price:{gp:0,sp:0,cp:4},stock:10, rarity:"Common", desc:"For beer or soup."},
+      {name:"Salt (packet)",  price:{gp:0,sp:0,cp:5},stock:20, rarity:"Common", desc:"Sea or mine salt."},
+      {name:"Sugar (packet)", price:{gp:0,sp:0,cp:5},stock:10, rarity:"Common", desc:"Rare refined sugar."},
+      {name:"Yeast",          price:{gp:0,sp:0,cp:3},stock:8,  rarity:"Common", desc:"For bread and beer."}
     ]
   },
   "Sales | Honey & Sweets": {
-    icon:"🍯",theme:"theme-honey",description:"Artisan honey, jams and confections.",sellMultiplier:0.4,
+    icon:"🍯",theme:"theme-honey",description:"Artisan honey, jams and confections.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Wild Honey (jar)",price:{gp:0,sp:0,cp:8},stock:8, desc:"Wildflower honey."},
-      {name:"Clover Honey",    price:{gp:0,sp:0,cp:6},stock:6, desc:"Mild and light."},
-      {name:"Berry Jam",       price:{gp:0,sp:0,cp:5},stock:8, desc:"Sweetened wild berries."},
-      {name:"Honey Candy",     price:{gp:0,sp:0,cp:2},stock:20,desc:"Sweet treats."},
-      {name:"Nougat",          price:{gp:0,sp:0,cp:4},stock:8, desc:"Honey, sugar and nuts."},
-      {name:"Maple Syrup",     price:{gp:0,sp:0,cp:10},stock:4,desc:"Imported from the north."},
-      {name:"Beeswax",         price:{gp:0,sp:0,cp:3},stock:6, desc:"For candles or sealing wax."}
+      {name:"Wild Honey (jar)",price:{gp:0,sp:0,cp:8}, stock:8,  rarity:"Common",   desc:"Wildflower honey."},
+      {name:"Clover Honey",    price:{gp:0,sp:0,cp:6}, stock:6,  rarity:"Common",   desc:"Mild and light."},
+      {name:"Berry Jam",       price:{gp:0,sp:0,cp:5}, stock:8,  rarity:"Common",   desc:"Sweetened wild berries."},
+      {name:"Honey Candy",     price:{gp:0,sp:0,cp:2}, stock:20, rarity:"Common",   desc:"Sweet treats."},
+      {name:"Nougat",          price:{gp:0,sp:0,cp:4}, stock:8,  rarity:"Common",   desc:"Honey, sugar and nuts."},
+      {name:"Maple Syrup",     price:{gp:0,sp:0,cp:10},stock:4,  rarity:"Uncommon", desc:"Imported from the north."},
+      {name:"Beeswax",         price:{gp:0,sp:0,cp:3}, stock:6,  rarity:"Common",   desc:"For candles or sealing wax."}
     ]
   },
   "Sales | Pottery": {
-    icon:"🏺",theme:"theme-pottery",description:"Ceramics, pottery and clay utensils.",sellMultiplier:0.4,
+    icon:"🏺",theme:"theme-pottery",description:"Ceramics, pottery and clay utensils.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Clay Pot",        price:{gp:0,sp:0,cp:3},stock:10,desc:"For storing food."},
-      {name:"Ceramic Pitcher", price:{gp:0,sp:0,cp:5},stock:8, desc:"For water or wine."},
-      {name:"Terracotta Bowl", price:{gp:0,sp:0,cp:2},stock:15,desc:"Common tableware."},
-      {name:"Amphora",         price:{gp:0,sp:0,cp:10},stock:5,desc:"Large storage jar."},
-      {name:"Clay Flask",      price:{gp:0,sp:0,cp:5},stock:12,desc:"Small watertight container."},
-      {name:"Faience Tiles",   price:{gp:0,sp:0,cp:8},stock:6, desc:"Wall decoration."},
-      {name:"Decorative Vase", price:{gp:0,sp:8,cp:0},stock:4, desc:"Hand-painted."}
+      {name:"Clay Pot",        price:{gp:0,sp:0,cp:3}, stock:10, rarity:"Common",   desc:"For storing food."},
+      {name:"Ceramic Pitcher", price:{gp:0,sp:0,cp:5}, stock:8,  rarity:"Common",   desc:"For water or wine."},
+      {name:"Terracotta Bowl", price:{gp:0,sp:0,cp:2}, stock:15, rarity:"Common",   desc:"Common tableware."},
+      {name:"Amphora",         price:{gp:0,sp:0,cp:10},stock:5,  rarity:"Common",   desc:"Large storage jar."},
+      {name:"Clay Flask",      price:{gp:0,sp:0,cp:5}, stock:12, rarity:"Common",   desc:"Small watertight container."},
+      {name:"Faience Tiles",   price:{gp:0,sp:0,cp:8}, stock:6,  rarity:"Common",   desc:"Wall decoration."},
+      {name:"Decorative Vase", price:{gp:0,sp:8,cp:0}, stock:4,  rarity:"Uncommon", desc:"Hand-painted."}
     ]
   },
   "Sales | Candles, Oils & Lanterns": {
-    icon:"🕯️",theme:"theme-candles",description:"Lights, oils and illumination equipment.",sellMultiplier:0.4,
+    icon:"🕯️",theme:"theme-candles",description:"Lights, oils and illumination equipment.",sellMultiplier:0.4,isOpen:true,
     items:[
-      {name:"Candle",         price:{gp:0,sp:0,cp:1},stock:30,desc:"Lights 5ft, 1 hour."},
-      {name:"Candles (x10)",  price:{gp:0,sp:0,cp:8},stock:15,desc:"Economy pack."},
-      {name:"Common Lantern", price:{gp:0,sp:0,cp:15},stock:4,desc:"Lights 30ft, 6h per oil."},
-      {name:"Hooded Lantern", price:{gp:0,sp:0,cp:15},stock:3,desc:"Directional light."},
-      {name:"Oil (flask)",    price:{gp:0,sp:0,cp:1},stock:20,desc:"For lantern, 6 hours."},
-      {name:"Torch",          price:{gp:0,sp:0,cp:1},stock:25,desc:"Lights 20ft, 1 hour."},
-      {name:"Scented Candle", price:{gp:0,sp:0,cp:5},stock:6, desc:"Pleasant scent, 4 hours."},
-      {name:"Wick and Wax",   price:{gp:0,sp:0,cp:3},stock:10,desc:"For making candles."}
+      {name:"Candle",         price:{gp:0,sp:0,cp:1}, stock:30, rarity:"Common", desc:"Lights 5ft, 1 hour."},
+      {name:"Candles (x10)",  price:{gp:0,sp:0,cp:8}, stock:15, rarity:"Common", desc:"Economy pack."},
+      {name:"Common Lantern", price:{gp:0,sp:0,cp:15},stock:4,  rarity:"Common", desc:"Lights 30ft, 6h per oil."},
+      {name:"Hooded Lantern", price:{gp:0,sp:0,cp:15},stock:3,  rarity:"Common", desc:"Directional light."},
+      {name:"Oil (flask)",    price:{gp:0,sp:0,cp:1}, stock:20, rarity:"Common", desc:"For lantern, 6 hours."},
+      {name:"Torch",          price:{gp:0,sp:0,cp:1}, stock:25, rarity:"Common", desc:"Lights 20ft, 1 hour."},
+      {name:"Scented Candle", price:{gp:0,sp:0,cp:5}, stock:6,  rarity:"Common", desc:"Pleasant scent, 4 hours."},
+      {name:"Wick and Wax",   price:{gp:0,sp:0,cp:3}, stock:10, rarity:"Common", desc:"For making candles."}
     ]
   },
   "Sales | Livestock": {
-    icon:"🐄",theme:"theme-livestock",description:"Farm animals, mounts and beasts of burden.",sellMultiplier:0.5,
+    icon:"🐄",theme:"theme-livestock",description:"Farm animals, mounts and beasts of burden.",sellMultiplier:0.5,isOpen:true,
     items:[
-      {name:"Chicken",     price:{gp:0,sp:0,cp:2}, stock:10,desc:"Farm poultry."},
-      {name:"Pig",         price:{gp:0,sp:0,cp:12},stock:4, desc:"Good for charcuterie."},
-      {name:"Goat",        price:{gp:0,sp:5,cp:0}, stock:3, desc:"Milk and meat."},
-      {name:"Sheep",       price:{gp:0,sp:8,cp:0}, stock:3, desc:"Wool and meat."},
-      {name:"Dairy Cow",   price:{gp:0,sp:15,cp:0},stock:2, desc:"Produces 4L of milk/day."},
-      {name:"Draft Horse", price:{gp:0,sp:20,cp:0},stock:2, desc:"For carts and plowing."},
-      {name:"Riding Horse",price:{gp:0,sp:20,cp:0},stock:2, desc:"Standard mount."},
-      {name:"Mule",        price:{gp:0,sp:12,cp:0},stock:3, desc:"Sturdy pack animal."},
-      {name:"Animal Feed", price:{gp:0,sp:0,cp:3}, stock:15,desc:"Bag of hay or grain."}
+      {name:"Chicken",     price:{gp:0,sp:0,cp:2}, stock:10, rarity:"Common", desc:"Farm poultry."},
+      {name:"Pig",         price:{gp:0,sp:0,cp:12},stock:4,  rarity:"Common", desc:"Good for charcuterie."},
+      {name:"Goat",        price:{gp:0,sp:5,cp:0}, stock:3,  rarity:"Common", desc:"Milk and meat."},
+      {name:"Sheep",       price:{gp:0,sp:8,cp:0}, stock:3,  rarity:"Common", desc:"Wool and meat."},
+      {name:"Dairy Cow",   price:{gp:0,sp:15,cp:0},stock:2,  rarity:"Common", desc:"Produces 4L of milk/day."},
+      {name:"Draft Horse", price:{gp:0,sp:20,cp:0},stock:2,  rarity:"Common", desc:"For carts and plowing."},
+      {name:"Riding Horse",price:{gp:0,sp:20,cp:0},stock:2,  rarity:"Common", desc:"Standard mount."},
+      {name:"Mule",        price:{gp:0,sp:12,cp:0},stock:3,  rarity:"Common", desc:"Sturdy pack animal."},
+      {name:"Animal Feed", price:{gp:0,sp:0,cp:3}, stock:15, rarity:"Common", desc:"Bag of hay or grain."}
     ]
   }
 };
@@ -1388,12 +1428,14 @@ function snapshotToShops(data) {
       theme: s.theme || "theme-weapons",
       description: s.description || "",
       sellMultiplier: s.sellMultiplier || 0.5,
+      isOpen: s.isOpen !== false,
       items: s.items
         ? Object.values(s.items).map(i => ({
-            name:  i.name  || "",
-            desc:  i.desc  || "",
-            price: i.price || {cp:0,sp:0,gp:0},
-            stock: i.stock !== undefined ? Number(i.stock) : 0
+            name:   i.name   || "",
+            desc:   i.desc   || "",
+            price:  i.price  || {cp:0,sp:0,gp:0},
+            stock:  i.stock  !== undefined ? Number(i.stock) : 0,
+            rarity: i.rarity || "Common"
           }))
         : []
     };
@@ -1603,7 +1645,11 @@ function renderTabs() {
       const shop = SHOPS[name];
       const btn = document.createElement("button");
       btn.className = "shop-tab" + (name === activeShop ? " active" : "");
-      btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + name.replace("Sales | ", "");
+      const hasOutOfStock = shop.items.some(i => i.stock === 0);
+      const closedDot  = !shop.isOpen   ? '<span class="tab-dot-closed" title="Shop closed"></span>' : '';
+      const stockDot   = shop.isOpen && hasOutOfStock ? '<span class="tab-dot-stock" title="Out of stock items"></span>' : '';
+      const lockIcon   = !shop.isOpen   ? '🔒 ' : '';
+      btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + lockIcon + name.replace("Sales | ", "") + closedDot + stockDot;
       btn.onclick = () => { activeShop = name; setTheme(name); renderTabs(); renderShop(); updateWalletDisplay(); };
       c.appendChild(btn);
     });
@@ -1629,28 +1675,56 @@ function renderShop() {
   document.getElementById("shop-subtitle").textContent = category;
   document.getElementById("shop-name").textContent = shortName;
   document.getElementById("shop-desc").textContent = shop.description;
+  const gmToggleBtn = gmMode
+    ? (shop.isOpen
+        ? '<button class="shop-badge gm-toggle-open" onclick="toggleShopOpen()">🔒 Close Shop</button>'
+        : '<button class="shop-badge gm-toggle-close" onclick="toggleShopOpen()">🔓 Open Shop</button>')
+    : '';
+  const closedBadge = !shop.isOpen ? '<span class="shop-badge closed-badge">🔒 Closed</span>' : '';
   document.getElementById("shop-meta").innerHTML =
+    closedBadge +
     '<span class="shop-badge highlight">↩ Buyback ' + Math.round(shop.sellMultiplier*100) + '%</span>' +
-    '<span class="shop-badge">' + shop.items.length + ' items</span>';
+    '<span class="shop-badge">' + shop.items.length + ' items</span>' +
+    gmToggleBtn;
+
+  document.title = shortName + " — The Merchant's Guild";
 
   const grid = document.getElementById("items-grid");
   grid.innerHTML = "";
+
+  if (!shop.isOpen) {
+    const overlay = document.createElement("div");
+    overlay.className = "shop-closed-overlay";
+    overlay.innerHTML =
+      '<div class="closed-icon">🔒</div>' +
+      '<h3>Shop Temporarily Closed</h3>' +
+      '<p>The merchant is unavailable. Come back later.</p>';
+    grid.appendChild(overlay);
+    return;
+  }
+
   shop.items.forEach((item, idx) => {
     const inStock = item.stock > 0;
+    const rarity  = item.rarity || "Common";
     const card = document.createElement("div");
     card.className = "item-card" + (!inStock ? " out-of-stock" : "");
+    card.dataset.rarity = rarity;
 
     let stockClass = "stock-badge normal", stockText = "× " + item.stock;
     if (!inStock) { stockClass = "stock-badge out"; stockText = "Out of Stock"; }
     else if (item.stock <= 2) { stockClass = "stock-badge low"; stockText = "⚠ " + item.stock + " left"; }
 
+    const rarityClass = rarity.replace(" ", "");
     card.innerHTML =
       '<div class="item-name">' + item.name + '</div>' +
       '<div class="item-desc">' + (item.desc || "") + '</div>' +
       '<div class="item-footer">' +
         '<div class="item-footer-left">' +
           '<div class="price-row">' + fmtPriceHTML(item.price) + '</div>' +
-          '<span class="' + stockClass + '">' + stockText + '</span>' +
+          '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:4px;">' +
+            '<span class="' + stockClass + '">' + stockText + '</span>' +
+            '<span class="rarity-badge ' + rarityClass + '">' + rarity + '</span>' +
+          '</div>' +
         '</div>' +
         '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">' +
           '<button class="item-edit-btn" onclick="openEditItemModal(' + idx + ')">✏ Edit</button>' +
@@ -1904,12 +1978,13 @@ function openAddItemModal() {
   gmEditingShop = activeShop;
   gmEditingIdx  = null;
   document.getElementById("gm-edit-title").textContent = "➕ Add — " + activeShop.replace("Sales | ","");
-  document.getElementById("gm-item-name").value  = "";
-  document.getElementById("gm-item-desc").value  = "";
-  document.getElementById("gm-price-cp").value   = 0;
-  document.getElementById("gm-price-sp").value   = 0;
-  document.getElementById("gm-price-gp").value   = 0;
-  document.getElementById("gm-item-stock").value = 1;
+  document.getElementById("gm-item-name").value    = "";
+  document.getElementById("gm-item-desc").value    = "";
+  document.getElementById("gm-price-cp").value     = 0;
+  document.getElementById("gm-price-sp").value     = 0;
+  document.getElementById("gm-price-gp").value     = 0;
+  document.getElementById("gm-item-stock").value   = 1;
+  document.getElementById("gm-item-rarity").value  = "Common";
   document.getElementById("gm-edit-delete").style.display = "none";
   document.getElementById("gm-edit-modal").classList.add("open");
   setTimeout(() => document.getElementById("gm-item-name").focus(), 100);
@@ -1921,12 +1996,13 @@ function openEditItemModal(idx) {
   gmEditingIdx  = idx;
   const item = SHOPS[activeShop].items[idx];
   document.getElementById("gm-edit-title").textContent = "✏️ Edit — " + item.name;
-  document.getElementById("gm-item-name").value  = item.name;
-  document.getElementById("gm-item-desc").value  = item.desc;
-  document.getElementById("gm-price-cp").value   = item.price.cp || 0;
-  document.getElementById("gm-price-sp").value   = item.price.sp || 0;
-  document.getElementById("gm-price-gp").value   = item.price.gp || 0;
-  document.getElementById("gm-item-stock").value = item.stock;
+  document.getElementById("gm-item-name").value   = item.name;
+  document.getElementById("gm-item-desc").value   = item.desc;
+  document.getElementById("gm-price-cp").value    = item.price.cp || 0;
+  document.getElementById("gm-price-sp").value    = item.price.sp || 0;
+  document.getElementById("gm-price-gp").value    = item.price.gp || 0;
+  document.getElementById("gm-item-stock").value  = item.stock;
+  document.getElementById("gm-item-rarity").value = item.rarity || "Common";
   document.getElementById("gm-edit-delete").style.display = "block";
   document.getElementById("gm-edit-modal").classList.add("open");
 }
@@ -1944,9 +2020,10 @@ function saveGMItem() {
   const cp    = parseInt(document.getElementById("gm-price-cp").value) || 0;
   const sp    = parseInt(document.getElementById("gm-price-sp").value) || 0;
   const gp    = parseInt(document.getElementById("gm-price-gp").value) || 0;
-  const stock = parseInt(document.getElementById("gm-item-stock").value) || 0;
+  const stock  = parseInt(document.getElementById("gm-item-stock").value)  || 0;
+  const rarity = document.getElementById("gm-item-rarity").value || "Common";
   if (!name) { showToast("⚠️ Le nom est requis!", "error"); return; }
-  const newItem = { name, desc, price:{cp,sp,gp}, stock };
+  const newItem = { name, desc, price:{cp,sp,gp}, stock, rarity };
   if (gmEditingIdx === null) {
     SHOPS[gmEditingShop].items.push(newItem);
     showToast("✅ Item added: " + name, "gm");
@@ -1957,6 +2034,19 @@ function saveGMItem() {
   fbSaveShopItems(gmEditingShop);
   closeGMEditModal();
   renderShop();
+}
+
+function toggleShopOpen() {
+  if (!gmMode || !activeShop) return;
+  const newState = !SHOPS[activeShop].isOpen;
+  SHOPS[activeShop].isOpen = newState;
+  suppressFirebaseUpdate = true;
+  db.ref("shops/" + activeShop + "/isOpen").set(newState).then(() => {
+    suppressFirebaseUpdate = false;
+  });
+  renderTabs();
+  renderShop();
+  showToast(newState ? "🔓 Shop is now open." : "🔒 Shop is now closed.", "gm");
 }
 
 function deleteGMItem() {
@@ -1976,6 +2066,11 @@ function deleteGMItem() {
 updateWalletDisplay();
 loadPlayerName();
 renderHistory();
+
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  closeModal(); closeWalletModal(); closeGMLogin(); closeGMEditModal(); closeHistoryModal(); closeSellModal();
+});
 
 ["buy-modal","wallet-modal","gm-login-modal","gm-edit-modal","history-modal","sell-modal"].forEach(id => {
   document.getElementById(id).addEventListener("click", e => {
