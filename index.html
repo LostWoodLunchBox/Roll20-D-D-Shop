@@ -854,7 +854,6 @@ function renderShop() {
   const myCp = walletInCp();
   shop.items.forEach((item, idx) => {
     const itemCp   = priceInCp(item.price);
-    const canAfford = myCp >= itemCp;
     const inStock   = item.stock > 0;
     const card = document.createElement("div");
     card.className = "item-card" + (!inStock ? " out-of-stock" : "");
@@ -866,8 +865,8 @@ function renderShop() {
       '<div class="item-bottom"><span class="' + sc + '">' + st + '</span>' +
       '<div style="display:flex;gap:4px;align-items:center;">' +
       '<button class="item-edit-btn" onclick="openEditItemModal(' + idx + ')">✏️ Éditer</button>' +
-      '<button class="buy-btn"' + ((!inStock||!canAfford)?' disabled':'') + ' onclick="openBuyModal(' + idx + ')">' +
-      (!inStock ? "Out of Stock" : !canAfford ? "Not enough gold" : "Buy") + '</button>' +
+      '<button class="buy-btn"' + (!inStock?' disabled':'') + ' onclick="openBuyModal(' + idx + ')">' +
+      (!inStock ? "Out of Stock" : "Buy") + '</button>' +
       '</div></div>';
     grid.appendChild(card);
   });
