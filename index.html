@@ -260,12 +260,13 @@
     body.gm-active .gm-fab { display: flex; }
 
     .item-edit-btn {
-      display: none; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3);
-      color: #b8860b; padding: 3px 8px; border-radius: 4px; font-family: 'Cinzel', serif;
-      font-size: 9px; cursor: pointer; transition: all 0.2s;
+      display: none; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.35);
+      color: #c8a000; padding: 0; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+      width: 30px; height: 30px; font-size: 13px; flex-shrink: 0;
+      align-items: center; justify-content: center;
     }
-    .item-edit-btn:hover { background: rgba(255,215,0,0.25); color: #ffd700; }
-    body.gm-active .item-edit-btn { display: inline-block; }
+    .item-edit-btn:hover { background: rgba(255,215,0,0.25); color: #ffd700; border-color: rgba(255,215,0,0.6); }
+    body.gm-active .item-edit-btn { display: flex; }
 
     .firebase-status { font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 1px; padding: 2px 6px; border-radius: 4px; }
     .firebase-status.connecting { color: rgba(255,200,0,0.6); }
@@ -517,22 +518,29 @@
     .tab-dot-stock  { width:7px; height:7px; border-radius:50%; background:#ff8800; margin-left:auto; flex-shrink:0; }
 
     /* ── BUY BUTTON ── */
+    /* ── CARD ACTION ROW ── */
+    .card-actions {
+      display: flex; align-items: center; gap: 6px; margin-top: 10px;
+      padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.12);
+    }
+    .card-actions-left { display: flex; gap: 5px; align-items: center; }
     .buy-btn {
-      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1px;
-      padding: 6px 16px;
-      background: linear-gradient(160deg, var(--header-from) 0%, var(--header-to) 100%);
-      color: var(--accent2); border: 1px solid var(--accent);
-      border-radius: 5px; cursor: pointer; transition: all 0.2s;
-      white-space: nowrap; flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+      font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      padding: 0 18px; height: 34px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--header-from) 100%);
+      color: #fff; border: 1px solid var(--accent);
+      border-radius: 6px; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap; margin-left: auto; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1);
+      display: flex; align-items: center; gap: 5px;
     }
     .buy-btn:hover:not(:disabled) {
-      background: var(--accent); color: #fff;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.4), 0 0 8px rgba(255,255,255,0.08);
+      filter: brightness(1.2);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.45), 0 0 10px rgba(255,255,255,0.07);
       transform: translateY(-1px);
     }
-    .buy-btn:active:not(:disabled) { transform: translateY(0); }
-    .buy-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .buy-btn:active:not(:disabled) { transform: translateY(0); filter: brightness(0.95); }
+    .buy-btn:disabled { opacity: 0.28; cursor: not-allowed; background: rgba(0,0,0,0.2); border-color: rgba(0,0,0,0.2); }
 
     /* ── MODALS ── */
     .modal-overlay {
@@ -702,14 +710,14 @@
 
     /* ── SELL BUTTON ON CARDS ── */
     .sell-btn {
-      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.5px;
-      padding: 4px 9px;
-      background: transparent;
-      color: var(--price); border: 1px solid var(--border);
-      border-radius: 5px; cursor: pointer; transition: all 0.2s;
-      white-space: nowrap; flex-shrink: 0;
+      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.8px; font-weight: 600;
+      padding: 0 12px; height: 30px;
+      background: rgba(180,100,0,0.15);
+      color: #d48830; border: 1px solid rgba(180,100,0,0.45);
+      border-radius: 6px; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px;
     }
-    .sell-btn:hover { background: rgba(0,0,0,0.06); border-color: var(--price); }
+    .sell-btn:hover { background: rgba(180,100,0,0.28); color: #f0a840; border-color: rgba(180,100,0,0.7); }
 
     /* ── SELL MODAL ── */
     .sell-price-info {
@@ -1718,20 +1726,19 @@ function renderShop() {
     card.innerHTML =
       '<div class="item-name">' + item.name + '</div>' +
       '<div class="item-desc">' + (item.desc || "") + '</div>' +
-      '<div class="item-footer">' +
-        '<div class="item-footer-left">' +
-          '<div class="price-row">' + fmtPriceHTML(item.price) + '</div>' +
-          '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:4px;">' +
-            '<span class="' + stockClass + '">' + stockText + '</span>' +
-            '<span class="rarity-badge ' + rarityClass + '">' + rarity + '</span>' +
-          '</div>' +
+      '<div class="price-row" style="margin-top:6px;">' + fmtPriceHTML(item.price) + '</div>' +
+      '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:5px;">' +
+        '<span class="' + stockClass + '">' + stockText + '</span>' +
+        '<span class="rarity-badge ' + rarityClass + '">' + rarity + '</span>' +
+      '</div>' +
+      '<div class="card-actions">' +
+        '<div class="card-actions-left">' +
+          '<button class="item-edit-btn" onclick="openEditItemModal(' + idx + ')" title="Edit item">✏</button>' +
+          '<button class="sell-btn" onclick="openSellModal(' + idx + ')">↩ Sell</button>' +
         '</div>' +
-        '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">' +
-          '<button class="item-edit-btn" onclick="openEditItemModal(' + idx + ')">✏ Edit</button>' +
-          '<button class="sell-btn" onclick="openSellModal(' + idx + ')" title="Sell this item back">↩ Sell</button>' +
-          '<button class="buy-btn"' + (!inStock ? ' disabled' : '') + ' onclick="openBuyModal(' + idx + ')">' +
-          (!inStock ? "Sold Out" : "Buy →") + '</button>' +
-        '</div>' +
+        '<button class="buy-btn"' + (!inStock ? ' disabled' : '') + ' onclick="openBuyModal(' + idx + ')">' +
+          (!inStock ? '✕ Sold Out' : 'Buy →') +
+        '</button>' +
       '</div>';
     grid.appendChild(card);
   });
