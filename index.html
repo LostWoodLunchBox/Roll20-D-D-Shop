@@ -18,6 +18,14 @@
       min-height: 100vh;
       font-family: 'Crimson Text', Georgia, serif;
       transition: background 0.4s, color 0.4s;
+      background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.03) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(255,255,255,0.02) 0%, transparent 60%);
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 0h80v80H0z' fill='none'/%3E%3Ccircle cx='40' cy='40' r='0.5' fill='rgba(255,255,255,0.04)'/%3E%3Ccircle cx='0' cy='0' r='0.5' fill='rgba(255,255,255,0.04)'/%3E%3Ccircle cx='80' cy='80' r='0.5' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");
     }
 
     /* ── THEMES PAR MAGASIN ── */
@@ -45,165 +53,442 @@
     body.theme-candles    { --bg:#0a0a00; --bg2:#181400; --accent:#f9a825; --accent2:#ffe082; --header-from:#181400; --header-to:#100e00; --card:#fffde7; --card-hover:#fff9c4; --border:#7a6200; --text:#181400; --price:#e65100; --tab-active-from:#504000; --tab-active-to:#382c00; }
     body.theme-livestock  { --bg:#0a1400; --bg2:#101e05; --accent:#4e7c32; --accent2:#a5c880; --header-from:#101e05; --header-to:#081202; --card:#f1f8e9; --card-hover:#deefd0; --border:#2e5c1a; --text:#101e05; --price:#2e5c1a; --tab-active-from:#1e3e10; --tab-active-to:#122808; }
 
+    /* ── HEADER ── */
     header {
-      background: linear-gradient(135deg, var(--header-from) 0%, var(--header-to) 100%);
-      border-bottom: 3px solid var(--accent);
-      padding: 18px 28px;
+      background: linear-gradient(160deg, var(--header-from) 0%, var(--header-to) 100%);
+      border-bottom: 2px solid var(--accent);
+      padding: 14px 28px;
       display: flex; align-items: center; justify-content: space-between;
       position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.8);
       transition: all 0.4s;
     }
-    /* Bordure dorée quand le mode MJ est actif */
-    body.gm-active header { border-bottom: 3px solid #ffd700; box-shadow: 0 4px 24px rgba(255,215,0,0.35); }
+    header::after {
+      content: "";
+      position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+      opacity: 0.4;
+    }
+    body.gm-active header { border-bottom: 2px solid #ffd700; box-shadow: 0 4px 28px rgba(255,215,0,0.3); }
 
-    .header-title { font-family: 'Cinzel', serif; color: var(--accent2); font-size: 22px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-    .header-title span { font-size: 11px; display: block; letter-spacing: 4px; font-weight: 400; margin-top: 2px; opacity: 0.7; color: var(--accent2); }
+    .header-title { font-family: 'Cinzel', serif; color: var(--accent2); font-size: 20px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 30px rgba(255,255,255,0.15); }
+    .header-title span { font-size: 10px; display: block; letter-spacing: 4px; font-weight: 400; margin-top: 2px; opacity: 0.55; color: var(--accent2); }
     .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
     .header-top-row { display: flex; gap: 10px; align-items: center; }
-    .wallet-display { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .coin { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 5px 10px; min-width: 55px; }
-    .coin-amount { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; line-height: 1; }
-    .coin-label  { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; opacity: 0.75; }
-    .coin.pp { color: #e8e8ff; } .coin.gp { color: #ffd700; } .coin.sp { color: #d0d0d0; } .coin.cp { color: #cd7f32; }
-    .conversion-note { color: rgba(255,255,255,0.35); font-size: 10px; font-style: italic; text-align: right; }
-    .wallet-edit-btn { background: transparent; border: 1px solid var(--accent2); color: var(--accent2); padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 11px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; }
-    .wallet-edit-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-    /* Bouton Mode MJ */
-    .gm-toggle-btn {
-      background: transparent; border: 1px solid rgba(255,215,0,0.4); color: rgba(255,215,0,0.7);
-      padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 11px;
+    /* ── COINS ── */
+    .wallet-display { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .coin {
+      display: flex; flex-direction: column; align-items: center;
+      background: rgba(0,0,0,0.35);
+      border-radius: 8px; padding: 5px 10px; min-width: 52px;
+      position: relative; overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .coin::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .coin-amount { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; line-height: 1; }
+    .coin-label  { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; opacity: 0.65; }
+    .coin.pp { color: #d0d8ff; border: 1px solid rgba(180,180,255,0.3); }
+    .coin.gp { color: #ffd700; border: 1px solid rgba(255,215,0,0.35); box-shadow: 0 0 10px rgba(255,215,0,0.08); }
+    .coin.sp { color: #d8d8d8; border: 1px solid rgba(210,210,210,0.3); }
+    .coin.cp { color: #e09050; border: 1px solid rgba(205,127,50,0.3); }
+    .conversion-note { color: rgba(255,255,255,0.3); font-size: 10px; font-style: italic; text-align: right; }
+    .wallet-edit-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5);
+      padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 10px;
       cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
     }
-    .gm-toggle-btn:hover { background: rgba(255,215,0,0.1); border-color: #ffd700; color: #ffd700; }
-    body.gm-active .gm-toggle-btn { background: rgba(255,215,0,0.15); border-color: #ffd700; color: #ffd700; }
+    .wallet-edit-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); border-color: rgba(255,255,255,0.4); }
 
-    /* Badge MJ actif */
+    .gm-toggle-btn {
+      background: transparent; border: 1px solid rgba(255,215,0,0.35); color: rgba(255,215,0,0.6);
+      padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 10px;
+      cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+    }
+    .gm-toggle-btn:hover { background: rgba(255,215,0,0.08); border-color: #ffd700; color: #ffd700; }
+    body.gm-active .gm-toggle-btn { background: rgba(255,215,0,0.12); border-color: #ffd700; color: #ffd700; }
+
     .gm-badge { display: none; background: #ffd700; color: #1a1000; font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
     body.gm-active .gm-badge { display: inline-block; }
     body.gm-active #roll20-export-btn { display: inline-block !important; }
     body.gm-active #reset-defaults-btn { display: inline-block !important; }
 
-    /* Bouton flottant MJ: ajouter un item */
     .gm-fab {
       display: none; position: fixed; bottom: 30px; right: 30px; z-index: 150;
-      background: #ffd700; color: #1a1000; border: none; border-radius: 50%;
+      background: linear-gradient(135deg, #ffd700, #c8a800); color: #1a1000; border: none; border-radius: 50%;
       width: 52px; height: 52px; font-size: 26px; cursor: pointer;
       box-shadow: 0 4px 20px rgba(255,215,0,0.5); transition: all 0.2s;
       align-items: center; justify-content: center;
     }
-    .gm-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(255,215,0,0.7); }
+    .gm-fab:hover { transform: scale(1.12) rotate(5deg); box-shadow: 0 6px 28px rgba(255,215,0,0.7); }
     body.gm-active .gm-fab { display: flex; }
 
-    /* Bouton éditer sur les cartes */
     .item-edit-btn {
-      display: none; background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.4);
-      color: #b8860b; padding: 4px 10px; border-radius: 4px; font-family: 'Cinzel', serif;
-      font-size: 10px; cursor: pointer; transition: all 0.2s; margin-left: 4px;
+      display: none; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3);
+      color: #b8860b; padding: 3px 8px; border-radius: 4px; font-family: 'Cinzel', serif;
+      font-size: 9px; cursor: pointer; transition: all 0.2s;
     }
-    .item-edit-btn:hover { background: rgba(255,215,0,0.3); color: #ffd700; }
+    .item-edit-btn:hover { background: rgba(255,215,0,0.25); color: #ffd700; }
     body.gm-active .item-edit-btn { display: inline-block; }
 
-    /* Indicateur Firebase */
     .firebase-status { font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 1px; padding: 2px 6px; border-radius: 4px; }
     .firebase-status.connecting { color: rgba(255,200,0,0.6); }
     .firebase-status.connected  { color: rgba(100,255,100,0.6); }
     .firebase-status.error      { color: rgba(255,100,100,0.6); }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
+    .container { max-width: 1260px; margin: 0 auto; padding: 24px 20px; }
 
-    /* ── SIDEBAR + MAIN LAYOUT ── */
-    .layout { display: flex; gap: 20px; }
+    /* ── LAYOUT ── */
+    .layout { display: flex; gap: 22px; }
+
+    /* ── SIDEBAR ── */
     .sidebar {
-      width: 240px; flex-shrink: 0;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px; padding: 12px 8px;
-      height: fit-content; position: sticky; top: 90px;
+      width: 230px; flex-shrink: 0;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 10px 6px;
+      height: fit-content; position: sticky; top: 80px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
     }
-    .sidebar-title { font-family: 'Cinzel', serif; color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; padding: 4px 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 8px; }
-    .shop-tab {
+    .sidebar-title {
+      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.35); font-size: 9px;
+      letter-spacing: 3px; text-transform: uppercase;
+      padding: 4px 10px 8px; margin-bottom: 4px;
       display: flex; align-items: center; gap: 8px;
-      width: 100%; padding: 8px 10px; border: none; border-radius: 6px;
-      background: transparent; color: rgba(255,255,255,0.55);
+    }
+    .sidebar-title::before, .sidebar-title::after {
+      content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.1);
+    }
+    .sidebar-category {
+      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.25); font-size: 8px;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 10px 12px 4px;
+    }
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 8px; }
+    .shop-tab {
+      display: flex; align-items: center; gap: 9px;
+      width: 100%; padding: 7px 10px; border: none; border-radius: 7px;
+      background: transparent; color: rgba(255,255,255,0.45);
       font-family: 'Crimson Text', serif; font-size: 14px;
       cursor: pointer; transition: all 0.15s; text-align: left;
     }
-    .shop-tab:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
-    .shop-tab.active { background: linear-gradient(135deg, var(--tab-active-from), var(--tab-active-to)); color: var(--accent2); border: 1px solid var(--accent); font-weight: 600; }
-    .shop-tab .tab-icon { font-size: 16px; flex-shrink: 0; }
+    .shop-tab:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); transform: translateX(2px); }
+    .shop-tab.active {
+      background: linear-gradient(135deg, var(--tab-active-from), var(--tab-active-to));
+      color: var(--accent2); border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 8px rgba(0,0,0,0.3);
+      font-weight: 600; transform: translateX(0);
+    }
+    .shop-tab .tab-icon { font-size: 15px; flex-shrink: 0; width: 20px; text-align: center; }
+
+    /* ── MAIN CONTENT ── */
+    .main-content { flex: 1; min-width: 0; }
 
     /* ── SHOP PANEL ── */
-    .main-content { flex: 1; min-width: 0; }
-    .shop-panel { background: var(--card); border-radius: 10px; border: 2px solid var(--border); box-shadow: 0 8px 30px rgba(0,0,0,0.5); overflow: hidden; transition: all 0.3s; }
-    .shop-header { background: linear-gradient(135deg, var(--header-from), var(--header-to)); padding: 18px 24px; border-bottom: 2px solid var(--accent); display: flex; align-items: center; justify-content: space-between; }
-    .shop-name { font-family: 'Cinzel', serif; font-size: 19px; color: var(--accent2); font-weight: 700; }
-    .shop-desc { font-style: italic; color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 3px; }
-    .shop-meta { text-align: right; color: rgba(255,255,255,0.5); font-size: 11px; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+    .shop-panel {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      overflow: hidden; transition: all 0.35s;
+    }
 
-    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; background: rgba(0,0,0,0.1); }
-    .item-card { background: var(--card); padding: 16px 18px; transition: background 0.15s; }
-    .item-card:hover { background: var(--card-hover); }
-    .item-card.out-of-stock { opacity: 0.5; }
-    .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-    .item-name { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
-    .item-price { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--price); white-space: nowrap; margin-left: 10px; }
-    .item-desc { font-size: 12px; color: var(--text); opacity: 0.7; font-style: italic; margin-bottom: 10px; line-height: 1.4; }
-    .item-bottom { display: flex; align-items: center; justify-content: space-between; }
-    .item-stock { font-size: 11px; color: var(--text); opacity: 0.6; }
-    .item-stock.low { color: var(--price); opacity: 1; font-weight: 600; }
-    .item-stock.out { opacity: 0.4; font-style: italic; }
-    .buy-btn { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1px; padding: 5px 14px; background: linear-gradient(135deg, var(--header-from), var(--header-to)); color: var(--accent2); border: 1px solid var(--accent); border-radius: 4px; cursor: pointer; transition: all 0.2s; }
-    .buy-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
-    .buy-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    /* ── SHOP BANNER ── */
+    .shop-banner {
+      background: linear-gradient(160deg, var(--header-from) 0%, var(--header-to) 100%);
+      padding: 0;
+      border-bottom: 1px solid var(--accent);
+      position: relative; overflow: hidden;
+    }
+    .shop-banner::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .shop-banner-inner {
+      padding: 20px 28px;
+      display: flex; align-items: center; gap: 20px;
+      position: relative; z-index: 1;
+    }
+    .shop-emblem {
+      width: 70px; height: 70px; flex-shrink: 0;
+      background: radial-gradient(circle at 40% 35%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.3) 100%);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .shop-banner-text { flex: 1; }
+    .shop-name {
+      font-family: 'Cinzel', serif; font-size: 20px; color: var(--accent2);
+      font-weight: 700; letter-spacing: 1px;
+      text-shadow: 0 0 30px rgba(255,255,255,0.1);
+    }
+    .shop-subtitle {
+      font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--accent); opacity: 0.7; margin-top: 2px;
+    }
+    .shop-desc { font-style: italic; color: rgba(255,255,255,0.55); font-size: 13px; margin-top: 6px; line-height: 1.5; }
+    .shop-meta-badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .shop-badge {
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px;
+      padding: 2px 10px; border-radius: 20px;
+      background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.5);
+    }
+    .shop-badge.highlight { border-color: var(--accent); color: var(--accent2); }
+
+    /* ── ORNAMENT DIVIDER ── */
+    .shop-ornament {
+      text-align: center; padding: 8px;
+      background: linear-gradient(90deg, var(--header-to), rgba(0,0,0,0.15), var(--header-to));
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 10px; color: var(--accent); opacity: 0.6; letter-spacing: 6px;
+    }
+
+    /* ── ITEMS GRID ── */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 0;
+      background: rgba(0,0,0,0.08);
+    }
+
+    /* ── ITEM CARD ── */
+    .item-card {
+      background: var(--card);
+      padding: 16px 18px 14px;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+      border-right: 1px solid rgba(0,0,0,0.1);
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      position: relative;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .item-card::before {
+      content: "";
+      position: absolute; top: 0; left: 18px; right: 18px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      opacity: 0.5;
+    }
+    .item-card:hover {
+      background: var(--card-hover);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 2px 12px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .item-card.out-of-stock { opacity: 0.45; filter: grayscale(0.3); }
+
+    .item-name {
+      font-family: 'Cinzel', serif; font-size: 12.5px; font-weight: 600;
+      color: var(--text); line-height: 1.3;
+    }
+    .item-desc {
+      font-size: 12.5px; color: var(--text); opacity: 0.65;
+      font-style: italic; line-height: 1.45; flex: 1;
+    }
+    .item-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 4px; gap: 8px;
+    }
+    .item-footer-left { display: flex; flex-direction: column; gap: 4px; }
+
+    /* ── PRICE BADGES ── */
+    .price-row { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+    .price-badge {
+      font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700;
+      padding: 2px 7px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px;
+      letter-spacing: 0.5px;
+    }
+    .price-badge.gp {
+      background: linear-gradient(135deg, #3d2e00, #2a1e00);
+      color: #ffd700; border: 1px solid rgba(255,215,0,0.4);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,215,0,0.1);
+    }
+    .price-badge.sp {
+      background: linear-gradient(135deg, #1e1e2a, #141420);
+      color: #d0d0e0; border: 1px solid rgba(200,200,220,0.35);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+    .price-badge.cp {
+      background: linear-gradient(135deg, #2a1500, #1e0e00);
+      color: #e09050; border: 1px solid rgba(205,127,50,0.35);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+    .price-badge.pp {
+      background: linear-gradient(135deg, #1a1a2e, #0d0d20);
+      color: #c0c8ff; border: 1px solid rgba(180,180,255,0.35);
+    }
+    .price-badge .coin-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .price-badge.gp .coin-dot { background: #ffd700; box-shadow: 0 0 4px rgba(255,215,0,0.6); }
+    .price-badge.sp .coin-dot { background: #c0c0c0; }
+    .price-badge.cp .coin-dot { background: #cd7f32; }
+    .price-badge.pp .coin-dot { background: #a0a8f0; }
+    .price-free { font-family: 'Cinzel', serif; font-size: 10px; color: var(--text); opacity: 0.4; font-style: italic; }
+
+    /* ── STOCK BADGE ── */
+    .stock-badge {
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.5px;
+      padding: 2px 7px; border-radius: 10px; display: inline-block;
+    }
+    .stock-badge.normal { background: rgba(0,0,0,0.1); color: var(--text); opacity: 0.55; border: 1px solid rgba(0,0,0,0.12); }
+    .stock-badge.low { background: rgba(180,60,0,0.15); color: #c04000; border: 1px solid rgba(180,60,0,0.3); font-weight: 700; }
+    .stock-badge.out { background: rgba(0,0,0,0.08); color: var(--text); opacity: 0.35; border: 1px solid rgba(0,0,0,0.08); font-style: italic; }
+
+    /* ── BUY BUTTON ── */
+    .buy-btn {
+      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1px;
+      padding: 6px 16px;
+      background: linear-gradient(160deg, var(--header-from) 0%, var(--header-to) 100%);
+      color: var(--accent2); border: 1px solid var(--accent);
+      border-radius: 5px; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .buy-btn:hover:not(:disabled) {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.4), 0 0 8px rgba(255,255,255,0.08);
+      transform: translateY(-1px);
+    }
+    .buy-btn:active:not(:disabled) { transform: translateY(0); }
+    .buy-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
     /* ── MODALS ── */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
+      z-index: 200; align-items: center; justify-content: center;
+    }
     .modal-overlay.open { display: flex; }
-    .modal { background: var(--card); border: 2px solid var(--border); border-radius: 10px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px; max-width: 420px; width: 90%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.04);
+      max-height: 90vh; overflow-y: auto;
+    }
     .modal.wide { max-width: 480px; }
-    .modal h2 { font-family: 'Cinzel', serif; color: var(--price); font-size: 17px; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    .modal-item-name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--text); margin: 14px 0 3px; }
-    .modal-price { color: var(--price); font-size: 13px; margin-bottom: 14px; }
-    .modal label { display: block; font-size: 12px; color: var(--text); margin-bottom: 5px; font-weight: 600; opacity: 0.8; }
-    .modal input[type=number], .modal input[type=text], .modal input[type=password] { width: 100%; padding: 9px 12px; border: 2px solid var(--border); border-radius: 6px; font-family: 'Cinzel', serif; font-size: 14px; background: var(--card-hover); color: var(--text); margin-bottom: 12px; }
-    .modal textarea { width: 100%; padding: 9px 12px; border: 2px solid var(--border); border-radius: 6px; font-family: 'Crimson Text', serif; font-size: 13px; background: var(--card-hover); color: var(--text); margin-bottom: 12px; resize: vertical; min-height: 60px; }
-    .modal-total { font-family: 'Cinzel', serif; font-size: 12px; color: var(--price); margin-bottom: 8px; padding: 10px; background: rgba(0,0,0,0.06); border-radius: 6px; text-align: center; line-height: 1.8; }
+    .modal h2 {
+      font-family: 'Cinzel', serif; color: var(--price); font-size: 16px;
+      margin-bottom: 12px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .modal-item-name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--text); margin: 14px 0 3px; font-weight: 600; }
+    .modal-price { margin-bottom: 14px; display: flex; gap: 5px; flex-wrap: wrap; }
+    .modal label { display: block; font-size: 11px; color: var(--text); margin-bottom: 5px; font-weight: 600; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }
+    .modal input[type=number], .modal input[type=text], .modal input[type=password] {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: 6px; font-family: 'Cinzel', serif; font-size: 14px;
+      background: var(--card-hover); color: var(--text); margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+    .modal input:focus { outline: none; border-color: var(--accent); }
+    .modal textarea {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: 6px; font-family: 'Crimson Text', serif; font-size: 13px;
+      background: var(--card-hover); color: var(--text); margin-bottom: 14px;
+      resize: vertical; min-height: 60px;
+    }
+    .modal-total {
+      font-family: 'Cinzel', serif; font-size: 12px; color: var(--price);
+      margin-bottom: 10px; padding: 12px;
+      background: rgba(0,0,0,0.08); border-radius: 6px;
+      text-align: center; line-height: 2;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
     .modal-warning { color: #c62828; font-size: 12px; font-style: italic; margin-bottom: 10px; display: none; }
-    .modal-buttons { display: flex; gap: 10px; margin-top: 4px; }
-    .btn-confirm { flex: 1; padding: 11px; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px; background: linear-gradient(135deg, var(--header-from), var(--header-to)); color: var(--accent2); border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .modal-buttons { display: flex; gap: 10px; margin-top: 6px; }
+    .btn-confirm {
+      flex: 1; padding: 11px; font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 1px;
+      background: linear-gradient(160deg, var(--header-from), var(--header-to));
+      color: var(--accent2); border: 1px solid var(--accent);
+      border-radius: 6px; cursor: pointer; transition: all 0.2s;
+    }
     .btn-confirm:hover:not(:disabled) { background: var(--accent); color: #fff; }
-    .btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-cancel { padding: 11px 18px; font-family: 'Cinzel', serif; font-size: 12px; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; opacity: 0.7; }
+    .btn-confirm:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-cancel {
+      padding: 11px 18px; font-family: 'Cinzel', serif; font-size: 11px;
+      background: transparent; color: var(--text); border: 1px solid var(--border);
+      border-radius: 6px; cursor: pointer; opacity: 0.65; transition: opacity 0.2s;
+    }
     .btn-cancel:hover { opacity: 1; }
-    .btn-danger { padding: 11px 18px; font-family: 'Cinzel', serif; font-size: 12px; background: transparent; color: #c62828; border: 1px solid #c62828; border-radius: 6px; cursor: pointer; opacity: 0.8; }
+    .btn-danger {
+      padding: 11px 18px; font-family: 'Cinzel', serif; font-size: 11px;
+      background: transparent; color: #c62828; border: 1px solid rgba(198,40,40,0.5);
+      border-radius: 6px; cursor: pointer; opacity: 0.8; transition: all 0.2s;
+    }
     .btn-danger:hover { opacity: 1; background: rgba(198,40,40,0.1); }
-    .command-box { background: #0d0d0d; border: 1px solid #333; border-radius: 5px; padding: 9px 12px; font-family: monospace; font-size: 11px; color: #00ff88; word-break: break-all; margin: 7px 0 14px; }
+    .command-box {
+      background: #080808; border: 1px solid #222; border-radius: 6px;
+      padding: 10px 14px; font-family: monospace; font-size: 11px;
+      color: #00e87a; word-break: break-all; margin: 8px 0 14px;
+      line-height: 1.6;
+    }
     .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 8px; }
-    .wallet-field label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
-    .wallet-field input { width: 100%; padding: 7px 10px; border: 2px solid var(--border); border-radius: 5px; font-family: 'Cinzel', serif; font-size: 15px; background: var(--card-hover); color: var(--text); }
-    .price-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-    .price-field label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 3px; }
-    .price-field input { width: 100%; padding: 7px 8px; border: 2px solid var(--border); border-radius: 5px; font-family: 'Cinzel', serif; font-size: 14px; background: var(--card-hover); color: var(--text); margin-bottom: 0; }
-    .conversion-info { background: rgba(0,0,0,0.06); border: 1px solid var(--border); border-radius: 5px; padding: 7px 10px; margin-bottom: 14px; font-size: 11px; color: var(--text); text-align: center; line-height: 1.8; opacity: 0.8; }
-    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a2e1a; border: 1px solid #4caf50; color: #a5d6a7; padding: 12px 22px; border-radius: 8px; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px; z-index: 300; transition: transform 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+    .wallet-field label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+    .wallet-field input { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Cinzel', serif; font-size: 15px; background: var(--card-hover); color: var(--text); }
+    .price-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .price-field label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 4px; }
+    .price-field input { width: 100%; padding: 7px 8px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Cinzel', serif; font-size: 14px; background: var(--card-hover); color: var(--text); margin-bottom: 0; }
+    .conversion-info {
+      background: rgba(0,0,0,0.06); border: 1px solid var(--border);
+      border-radius: 6px; padding: 8px 12px; margin-bottom: 14px;
+      font-size: 11px; color: var(--text); text-align: center; line-height: 1.9; opacity: 0.75;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #0f1f0f; border: 1px solid #4caf50; color: #a5d6a7;
+      padding: 12px 24px; border-radius: 8px; font-family: 'Cinzel', serif;
+      font-size: 12px; letter-spacing: 1px; z-index: 300;
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.7);
+    }
     .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.error { background: #2e1a1a; border-color: #f44336; color: #ef9a9a; }
-    .toast.gm    { background: #2a2000; border-color: #ffd700; color: #ffd700; }
-    .history-section { margin-top: 24px; }
-    .history-title { font-family: 'Cinzel', serif; color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .history-list { display: flex; flex-direction: column; gap: 6px; }
-    .history-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.65); }
+    .toast.error { background: #1f0f0f; border-color: #f44336; color: #ef9a9a; }
+    .toast.gm    { background: #1f1800; border-color: #ffd700; color: #ffd700; }
+
+    /* ── HISTORY ── */
+    .history-section { margin-top: 26px; }
+    .history-title {
+      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.4);
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .history-title::after { content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+    .history-list { display: flex; flex-direction: column; gap: 5px; }
+    .history-item {
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 7px; padding: 9px 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; color: rgba(255,255,255,0.55);
+      transition: background 0.15s;
+    }
+    .history-item:hover { background: rgba(255,255,255,0.04); }
     .hi-name { font-family: 'Cinzel', serif; font-size: 12px; }
     .hi-cost { color: #ef9a9a; font-weight: 600; }
-    .clear-history { background: transparent; border: 1px solid rgba(200,50,50,0.4); color: rgba(200,50,50,0.6); padding: 5px 12px; border-radius: 4px; font-family: 'Cinzel', serif; font-size: 10px; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
-    .clear-history:hover { background: rgba(200,50,50,0.1); color: #ef5350; }
-    .empty-history { color: rgba(255,255,255,0.25); font-style: italic; font-size: 12px; text-align: center; padding: 16px; }
+    .clear-history {
+      background: transparent; border: 1px solid rgba(200,50,50,0.3);
+      color: rgba(200,50,50,0.5); padding: 5px 14px; border-radius: 5px;
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px;
+      cursor: pointer; margin-top: 10px; transition: all 0.2s;
+    }
+    .clear-history:hover { background: rgba(200,50,50,0.08); color: #ef5350; border-color: rgba(200,50,50,0.6); }
+    .empty-history { color: rgba(255,255,255,0.2); font-style: italic; font-size: 13px; text-align: center; padding: 20px; }
 
     /* ── GM LOGIN MODAL ── */
-    .gm-modal { background: #1a1500 !important; border: 2px solid #ffd700 !important; }
-    .gm-modal h2 { color: #ffd700 !important; border-bottom-color: rgba(255,215,0,0.3) !important; }
+    .gm-modal { background: #12100a !important; border-color: rgba(255,215,0,0.4) !important; }
+    .gm-modal h2 { color: #ffd700 !important; border-bottom-color: rgba(255,215,0,0.2) !important; }
     .gm-modal label { color: #ffe082 !important; opacity: 1 !important; }
     .gm-error { color: #ef5350; font-size: 12px; margin-bottom: 10px; display: none; }
     .google-signin-btn {
@@ -211,18 +496,23 @@
       width: 100%; padding: 12px 16px; border-radius: 8px;
       background: #fff; color: #3c4043; border: 1px solid #dadce0;
       font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 1px;
-      cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 10px rgba(0,0,0,0.4);
       margin-bottom: 12px;
     }
-    .google-signin-btn:hover { background: #f8f8f8; box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
+    .google-signin-btn:hover { background: #f8f8f8; box-shadow: 0 4px 18px rgba(0,0,0,0.5); }
 
-    @media (max-width: 700px) {
+    /* ── RESPONSIVE ── */
+    @media (max-width: 750px) {
       .layout { flex-direction: column; }
-      .sidebar { width: 100%; position: static; display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; }
-      .sidebar-title { display: none; }
-      .shop-tab { width: auto; flex: 1; min-width: 120px; font-size: 12px; padding: 6px 8px; }
-      header { flex-direction: column; gap: 12px; }
+      .sidebar { width: 100%; position: static; display: flex; flex-wrap: wrap; gap: 3px; padding: 8px; border-radius: 10px; }
+      .sidebar-title, .sidebar-category, .sidebar-divider { display: none; }
+      .shop-tab { width: auto; flex: 1; min-width: 110px; font-size: 12px; padding: 6px 8px; justify-content: center; }
+      .shop-tab .tab-icon { display: none; }
+      header { flex-direction: column; gap: 10px; padding: 12px 16px; }
       .wallet-display { justify-content: center; }
+      .shop-emblem { width: 50px; height: 50px; font-size: 22px; }
+      .shop-name { font-size: 16px; }
+      .items-grid { grid-template-columns: 1fr; }
       .gm-fab { bottom: 16px; right: 16px; }
     }
   </style>
@@ -263,12 +553,17 @@
     </div>
     <div class="main-content">
       <div class="shop-panel" id="shop-panel">
-        <div class="shop-header">
-          <div>
-            <div class="shop-name" id="shop-name"></div>
-            <div class="shop-desc" id="shop-desc"></div>
+        <div class="shop-banner" id="shop-banner">
+          <div class="shop-banner-inner">
+            <div class="shop-emblem" id="shop-emblem"></div>
+            <div class="shop-banner-text">
+              <div class="shop-subtitle" id="shop-subtitle"></div>
+              <div class="shop-name" id="shop-name"></div>
+              <div class="shop-desc" id="shop-desc"></div>
+              <div class="shop-meta-badges" id="shop-meta"></div>
+            </div>
           </div>
-          <div class="shop-meta" id="shop-meta"></div>
+          <div class="shop-ornament" id="shop-ornament">✦ &nbsp; &nbsp; ✦ &nbsp; &nbsp; ✦</div>
         </div>
         <div class="items-grid" id="items-grid"></div>
       </div>
@@ -930,46 +1225,99 @@ function setTheme(shopName) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// PRICE HTML BADGES
+// ═══════════════════════════════════════════════════════════════
+function fmtPriceHTML(p) {
+  const parts = [];
+  if (p.pp && p.pp > 0) parts.push('<span class="price-badge pp"><span class="coin-dot"></span>' + p.pp + ' PP</span>');
+  if (p.gp && p.gp > 0) parts.push('<span class="price-badge gp"><span class="coin-dot"></span>' + p.gp + ' GP</span>');
+  if (p.sp && p.sp > 0) parts.push('<span class="price-badge sp"><span class="coin-dot"></span>' + p.sp + ' SP</span>');
+  if (p.cp && p.cp > 0) parts.push('<span class="price-badge cp"><span class="coin-dot"></span>' + p.cp + ' CP</span>');
+  return parts.length ? parts.join('') : '<span class="price-free">Free</span>';
+}
+
+// ═══════════════════════════════════════════════════════════════
 // TABS & SHOP
 // ═══════════════════════════════════════════════════════════════
 function renderTabs() {
   const c = document.getElementById("shop-tabs");
   c.innerHTML = "";
-  Object.keys(SHOPS).forEach(name => {
-    const shop = SHOPS[name];
-    const btn = document.createElement("button");
-    btn.className = "shop-tab" + (name === activeShop ? " active" : "");
-    btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + name.replace("Sales | ", "");
-    btn.onclick = () => { activeShop = name; setTheme(name); renderTabs(); renderShop(); updateWalletDisplay(); };
-    c.appendChild(btn);
+
+  const categories = [
+    { label: "Combat", prefix: ["Simple Weapons","Martial Weapons","Archery & Ranged"] },
+    { label: "Magic & Gear", prefix: ["Potions & Elixirs","Tomes & Scrolls","Wands & Staff"] },
+    { label: "Armor", prefix: ["Heavy Armors","Medium Armors","Light Armors"] },
+    { label: "Equipment", prefix: ["Adventuring Gear","Tools & Kits","Tailor","Musical Instruments","Perfumes & Jewels"] },
+    { label: "Market", prefix: ["Herbs & Spices","Bakery","Butcher","Fishmonger","Fruits & Veggies","Cheese, Eggs & Dairy","Grains & Flours","Honey & Sweets","Pottery","Candles, Oils & Lanterns","Livestock"] }
+  ];
+
+  const allNames = Object.keys(SHOPS);
+
+  categories.forEach((cat, ci) => {
+    if (ci > 0) {
+      const div = document.createElement("div"); div.className = "sidebar-divider"; c.appendChild(div);
+    }
+    const lbl = document.createElement("div"); lbl.className = "sidebar-category"; lbl.textContent = cat.label; c.appendChild(lbl);
+
+    cat.prefix.forEach(suffix => {
+      const name = allNames.find(n => n.endsWith(suffix) || n === suffix || n.replace("Sales | ", "") === suffix);
+      if (!name || !SHOPS[name]) return;
+      const shop = SHOPS[name];
+      const btn = document.createElement("button");
+      btn.className = "shop-tab" + (name === activeShop ? " active" : "");
+      btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + name.replace("Sales | ", "");
+      btn.onclick = () => { activeShop = name; setTheme(name); renderTabs(); renderShop(); updateWalletDisplay(); };
+      c.appendChild(btn);
+    });
+  });
+
+  // Fallback: any shop not in categories
+  allNames.forEach(name => {
+    if (!c.querySelector('[data-shop="' + name + '"]')) {
+      // already rendered if matched above; skip duplicates via text content check
+    }
   });
 }
 
 function renderShop() {
   if (!SHOPS[activeShop]) return;
   const shop = SHOPS[activeShop];
-  document.getElementById("shop-name").textContent = shop.icon + " " + activeShop;
+  const shortName = activeShop.replace("Sales | ", "");
+  const category = activeShop.startsWith("Sales | ") ? "The Merchant's Guild" : "Market District";
+
+  document.getElementById("shop-emblem").textContent = shop.icon;
+  document.getElementById("shop-subtitle").textContent = category;
+  document.getElementById("shop-name").textContent = shortName;
   document.getElementById("shop-desc").textContent = shop.description;
-  document.getElementById("shop-meta").innerHTML = "Buyback: " + Math.round(shop.sellMultiplier*100) + "% of price<br>" + shop.items.length + " items";
+  document.getElementById("shop-meta").innerHTML =
+    '<span class="shop-badge highlight">↩ Buyback ' + Math.round(shop.sellMultiplier*100) + '%</span>' +
+    '<span class="shop-badge">' + shop.items.length + ' items</span>';
+
   const grid = document.getElementById("items-grid");
   grid.innerHTML = "";
-  const myCp = walletInCp();
   shop.items.forEach((item, idx) => {
-    const itemCp   = priceInCp(item.price);
-    const inStock   = item.stock > 0;
+    const inStock = item.stock > 0;
     const card = document.createElement("div");
     card.className = "item-card" + (!inStock ? " out-of-stock" : "");
-    let sc = "item-stock", st = "En stock : " + item.stock;
-    if (!inStock) { sc += " out"; st = "Out of Stock"; } else if (item.stock <= 2) sc += " low";
+
+    let stockClass = "stock-badge normal", stockText = "× " + item.stock;
+    if (!inStock) { stockClass = "stock-badge out"; stockText = "Out of Stock"; }
+    else if (item.stock <= 2) { stockClass = "stock-badge low"; stockText = "⚠ " + item.stock + " left"; }
+
     card.innerHTML =
-      '<div class="item-top"><div class="item-name">' + item.name + '</div><div class="item-price">' + fmtPrice(item.price) + '</div></div>' +
-      '<div class="item-desc">' + item.desc + '</div>' +
-      '<div class="item-bottom"><span class="' + sc + '">' + st + '</span>' +
-      '<div style="display:flex;gap:4px;align-items:center;">' +
-      '<button class="item-edit-btn" onclick="openEditItemModal(' + idx + ')">✏️ Éditer</button>' +
-      '<button class="buy-btn"' + (!inStock?' disabled':'') + ' onclick="openBuyModal(' + idx + ')">' +
-      (!inStock ? "Out of Stock" : "Buy") + '</button>' +
-      '</div></div>';
+      '<div class="item-name">' + item.name + '</div>' +
+      '<div class="item-desc">' + (item.desc || "") + '</div>' +
+      '<div class="item-footer">' +
+        '<div class="item-footer-left">' +
+          '<div class="price-row">' + fmtPriceHTML(item.price) + '</div>' +
+          '<span class="' + stockClass + '">' + stockText + '</span>' +
+        '</div>' +
+        '<div style="display:flex;gap:5px;align-items:center;">' +
+          '<button class="item-edit-btn" onclick="openEditItemModal(' + idx + ')">✏ Edit</button>' +
+          '<button class="buy-btn"' + (!inStock ? ' disabled' : '') + ' onclick="openBuyModal(' + idx + ')">' +
+          (!inStock ? "Sold Out" : "Buy →") + '</button>' +
+        '</div>' +
+      '</div>';
     grid.appendChild(card);
   });
 }
@@ -981,7 +1329,7 @@ function openBuyModal(idx) {
   const item = SHOPS[activeShop].items[idx];
   pendingItem = { item, idx };
   document.getElementById("modal-item-name").textContent = item.name;
-  document.getElementById("modal-item-price").textContent = fmtPrice(item.price) + " / unité";
+  document.getElementById("modal-item-price").innerHTML = fmtPriceHTML(item.price) + '<span style="font-size:11px;opacity:0.5;margin-left:6px;font-family:\'Cinzel\',serif;">/ unit</span>';
   document.getElementById("modal-qty").value = 1;
   document.getElementById("modal-qty").max = item.stock;
   updateModalTotal();
