@@ -148,42 +148,54 @@
     /* ── SIDEBAR ── */
     .sidebar {
       width: 230px; flex-shrink: 0;
-      background: rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 12px; padding: 10px 6px;
       height: fit-content; position: sticky; top: 80px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
     }
     .sidebar-title {
-      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.35); font-size: 9px;
+      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.6); font-size: 9px;
       letter-spacing: 3px; text-transform: uppercase;
       padding: 4px 10px 8px; margin-bottom: 4px;
       display: flex; align-items: center; gap: 8px;
     }
     .sidebar-title::before, .sidebar-title::after {
-      content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.1);
+      content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.15);
     }
     .sidebar-category {
-      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.25); font-size: 8px;
+      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.5); font-size: 8px;
       letter-spacing: 2px; text-transform: uppercase;
       padding: 10px 12px 4px;
     }
-    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 8px; }
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 6px 8px; }
     .shop-tab {
       display: flex; align-items: center; gap: 9px;
       width: 100%; padding: 7px 10px; border: none; border-radius: 7px;
-      background: transparent; color: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.75);
       font-family: 'Crimson Text', serif; font-size: 14px;
       cursor: pointer; transition: all 0.15s; text-align: left;
+      border-left: 2px solid transparent;
+      margin-bottom: 1px;
     }
-    .shop-tab:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); transform: translateX(2px); }
+    .shop-tab:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border-left-color: rgba(255,255,255,0.3);
+      transform: translateX(2px);
+    }
     .shop-tab.active {
       background: linear-gradient(135deg, var(--tab-active-from), var(--tab-active-to));
-      color: var(--accent2); border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 8px rgba(0,0,0,0.3);
+      color: var(--accent2); border: 1px solid rgba(255,255,255,0.12);
+      border-left: 3px solid var(--accent);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 10px rgba(0,0,0,0.4);
       font-weight: 600; transform: translateX(0);
     }
-    .shop-tab .tab-icon { font-size: 15px; flex-shrink: 0; width: 20px; text-align: center; }
+    .shop-tab .tab-icon {
+      font-size: 16px; flex-shrink: 0; width: 22px; text-align: center;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+    }
 
     /* ── MAIN CONTENT ── */
     .main-content { flex: 1; min-width: 0; }
@@ -283,12 +295,12 @@
     .item-card.out-of-stock { opacity: 0.45; filter: grayscale(0.3); }
 
     .item-name {
-      font-family: 'Cinzel', serif; font-size: 12.5px; font-weight: 600;
+      font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700;
       color: var(--text); line-height: 1.3;
     }
     .item-desc {
-      font-size: 12.5px; color: var(--text); opacity: 0.65;
-      font-style: italic; line-height: 1.45; flex: 1;
+      font-size: 13px; color: var(--text); opacity: 0.85;
+      font-style: italic; line-height: 1.5; flex: 1;
     }
     .item-footer {
       display: flex; align-items: center; justify-content: space-between;
@@ -336,9 +348,9 @@
       font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.5px;
       padding: 2px 7px; border-radius: 10px; display: inline-block;
     }
-    .stock-badge.normal { background: rgba(0,0,0,0.1); color: var(--text); opacity: 0.55; border: 1px solid rgba(0,0,0,0.12); }
-    .stock-badge.low { background: rgba(180,60,0,0.15); color: #c04000; border: 1px solid rgba(180,60,0,0.3); font-weight: 700; }
-    .stock-badge.out { background: rgba(0,0,0,0.08); color: var(--text); opacity: 0.35; border: 1px solid rgba(0,0,0,0.08); font-style: italic; }
+    .stock-badge.normal { background: rgba(0,0,0,0.12); color: var(--text); opacity: 0.8; border: 1px solid rgba(0,0,0,0.2); }
+    .stock-badge.low { background: rgba(180,60,0,0.2); color: #a03000; border: 1px solid rgba(180,60,0,0.45); font-weight: 700; }
+    .stock-badge.out { background: rgba(0,0,0,0.08); color: var(--text); opacity: 0.5; border: 1px solid rgba(0,0,0,0.12); font-style: italic; }
 
     /* ── BUY BUTTON ── */
     .buy-btn {
