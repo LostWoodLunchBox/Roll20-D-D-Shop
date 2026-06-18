@@ -77,6 +77,24 @@
     .header-top-row { display: flex; gap: 10px; align-items: center; }
 
     /* ── COINS ── */
+    /* ── PLAYER NAME ── */
+    .player-name-wrap { display: flex; align-items: center; gap: 6px; }
+    .player-name-display {
+      font-family: 'Cinzel', serif; font-size: 11px; color: rgba(255,255,255,0.7);
+      letter-spacing: 1px; cursor: pointer; padding: 3px 8px;
+      border-radius: 5px; border: 1px solid transparent;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .player-name-display:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; }
+    .player-name-display.empty { color: rgba(255,255,255,0.3); font-style: italic; }
+    .player-name-input {
+      font-family: 'Cinzel', serif; font-size: 11px; background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 3px 8px;
+      border-radius: 5px; width: 130px; outline: none; letter-spacing: 1px;
+      display: none;
+    }
+    .player-name-input:focus { border-color: rgba(255,255,255,0.5); }
+
     .wallet-display { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .coin {
       display: flex; flex-direction: column; align-items: center;
@@ -626,6 +644,58 @@
     }
     .google-signin-btn:hover { background: #f8f8f8; box-shadow: 0 4px 18px rgba(0,0,0,0.5); }
 
+    /* ── SEARCH BAR ── */
+    .shop-search-wrap {
+      padding: 10px 28px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 100%);
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .shop-search {
+      width: 100%; padding: 8px 14px 8px 36px;
+      font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.5px;
+      background: rgba(0,0,0,0.2); color: var(--text);
+      border: 1px solid rgba(0,0,0,0.2); border-radius: 7px;
+      outline: none; transition: all 0.2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.35)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: 12px center;
+    }
+    .shop-search:focus { border-color: var(--accent); background-color: rgba(0,0,0,0.1); box-shadow: 0 0 0 2px rgba(0,0,0,0.08); }
+    .shop-search::placeholder { color: rgba(0,0,0,0.35); font-style: italic; }
+    .search-no-results {
+      text-align: center; padding: 40px 20px; grid-column: 1/-1;
+      font-family: 'Crimson Text', serif; font-size: 15px;
+      color: var(--text); opacity: 0.4; font-style: italic;
+    }
+
+    /* ── SELL BUTTON ON CARDS ── */
+    .sell-btn {
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.5px;
+      padding: 4px 9px;
+      background: transparent;
+      color: var(--price); border: 1px solid var(--border);
+      border-radius: 5px; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .sell-btn:hover { background: rgba(0,0,0,0.06); border-color: var(--price); }
+
+    /* ── SELL MODAL ── */
+    .sell-price-info {
+      background: rgba(0,0,0,0.06); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px; margin: 14px 0;
+    }
+    .sell-price-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px; font-size: 12px; color: var(--text); opacity: 0.7;
+    }
+    .sell-price-row:last-child { margin-bottom: 0; }
+    .sell-price-row strong { font-family: 'Cinzel', serif; font-size: 13px; opacity: 1; color: var(--price); }
+    .sell-rate-badge {
+      display: inline-block; font-family: 'Cinzel', serif; font-size: 9px;
+      padding: 2px 7px; border-radius: 10px; letter-spacing: 1px;
+      background: rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.12);
+      color: var(--text); opacity: 0.6;
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 750px) {
       .layout { flex-direction: column; }
@@ -657,6 +727,10 @@
         <div class="coin sp"><span class="coin-amount" id="wallet-sp">0</span><span class="coin-label">SP</span></div>
         <div class="coin cp"><span class="coin-amount" id="wallet-cp">0</span><span class="coin-label">CP</span></div>
         <button class="wallet-edit-btn" onclick="openWalletModal()">✏ Edit</button>
+        <div class="player-name-wrap">
+          <span class="player-name-display empty" id="player-name-display" onclick="editPlayerName()" title="Click to set your character name">⚔ Character</span>
+          <input class="player-name-input" id="player-name-input" type="text" maxlength="24" placeholder="Character name…" onblur="savePlayerName()" onkeydown="if(event.key==='Enter')savePlayerName()">
+        </div>
       </div>
       <button class="history-btn" onclick="openHistoryModal()">📜 History</button>
       <button class="gm-toggle-btn" onclick="handleGMButton()">🔒 GM</button>
@@ -690,6 +764,9 @@
             </div>
           </div>
           <div class="shop-ornament" id="shop-ornament">✦ &nbsp; &nbsp; ✦ &nbsp; &nbsp; ✦</div>
+        </div>
+        <div class="shop-search-wrap">
+          <input class="shop-search" id="shop-search" type="text" placeholder="Search items…" oninput="filterItems()">
         </div>
         <div class="items-grid" id="items-grid"></div>
       </div>
@@ -774,6 +851,23 @@
       <button class="btn-confirm" onclick="saveGMItem()">Save</button>
       <button class="btn-danger" id="gm-edit-delete" onclick="deleteGMItem()" style="display:none;">Delete</button>
       <button class="btn-cancel" onclick="closeGMEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SELL MODAL -->
+<div class="modal-overlay" id="sell-modal">
+  <div class="modal">
+    <h2>💰 Sell Item</h2>
+    <div class="modal-item-name" id="sell-item-name"></div>
+    <div class="sell-price-info" id="sell-price-info"></div>
+    <label>Quantity</label>
+    <input type="number" id="sell-qty" min="1" value="1" oninput="updateSellTotal()">
+    <p style="font-size:11px;opacity:0.7;margin-bottom:5px;">Roll20 command to paste in chat:</p>
+    <div class="command-box" id="sell-command"></div>
+    <div class="modal-buttons">
+      <button class="btn-confirm" id="btn-sell-confirm" onclick="confirmSell()">Confirm & Copy</button>
+      <button class="btn-cancel" onclick="closeSellModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -1364,6 +1458,110 @@ function setTheme(shopName) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// PLAYER NAME
+// ═══════════════════════════════════════════════════════════════
+var playerName = localStorage.getItem("playerName") || "";
+function loadPlayerName() {
+  const disp = document.getElementById("player-name-display");
+  const inp  = document.getElementById("player-name-input");
+  if (!disp || !inp) return;
+  if (playerName) {
+    disp.textContent = "⚔ " + playerName;
+    disp.classList.remove("empty");
+  } else {
+    disp.textContent = "⚔ Character";
+    disp.classList.add("empty");
+  }
+  inp.value = playerName;
+}
+function editPlayerName() {
+  const disp = document.getElementById("player-name-display");
+  const inp  = document.getElementById("player-name-input");
+  disp.style.display = "none";
+  inp.style.display  = "block";
+  inp.focus(); inp.select();
+}
+function savePlayerName() {
+  const inp  = document.getElementById("player-name-input");
+  const disp = document.getElementById("player-name-display");
+  playerName = inp.value.trim();
+  localStorage.setItem("playerName", playerName);
+  inp.style.display  = "none";
+  disp.style.display = "";
+  loadPlayerName();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SEARCH / FILTER
+// ═══════════════════════════════════════════════════════════════
+function filterItems() {
+  const q = (document.getElementById("shop-search").value || "").toLowerCase().trim();
+  const cards = document.querySelectorAll("#items-grid .item-card");
+  let visible = 0;
+  cards.forEach(card => {
+    const name = (card.querySelector(".item-name")  || {}).textContent || "";
+    const desc = (card.querySelector(".item-desc")  || {}).textContent || "";
+    const match = !q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
+    card.style.display = match ? "" : "none";
+    if (match) visible++;
+  });
+  // show/hide no-results message
+  let noRes = document.getElementById("search-no-results");
+  if (!visible && q) {
+    if (!noRes) {
+      noRes = document.createElement("div");
+      noRes.id = "search-no-results";
+      noRes.className = "search-no-results";
+      document.getElementById("items-grid").appendChild(noRes);
+    }
+    noRes.textContent = "No items match "" + q + """;
+    noRes.style.display = "";
+  } else if (noRes) {
+    noRes.style.display = "none";
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SELL MODAL
+// ═══════════════════════════════════════════════════════════════
+var pendingSell = null;
+function openSellModal(idx) {
+  const shop = SHOPS[activeShop];
+  const item = shop.items[idx];
+  pendingSell = { item, idx };
+  const sellCp = Math.floor(priceInCp(item.price) * shop.sellMultiplier);
+  document.getElementById("sell-item-name").textContent = item.name;
+  document.getElementById("sell-qty").value = 1;
+  document.getElementById("sell-qty").max = 999;
+  document.getElementById("sell-price-info").innerHTML =
+    '<div class="sell-price-row"><span>Buy price</span><span>' + fmtPriceHTML(item.price) + '</span></div>' +
+    '<div class="sell-price-row"><span>Buyback rate</span><span class="sell-rate-badge">' + Math.round(shop.sellMultiplier*100) + '%</span></div>' +
+    '<div class="sell-price-row"><span>You receive</span><strong>' + fmtCp(sellCp) + ' / unit</strong></div>';
+  updateSellTotal();
+  document.getElementById("sell-modal").classList.add("open");
+}
+function closeSellModal() {
+  document.getElementById("sell-modal").classList.remove("open");
+  pendingSell = null;
+}
+function updateSellTotal() {
+  if (!pendingSell) return;
+  const qty = parseInt(document.getElementById("sell-qty").value) || 1;
+  const shop = SHOPS[activeShop];
+  const sellCp = Math.floor(priceInCp(pendingSell.item.price) * shop.sellMultiplier) * qty;
+  const cmd = "!shop-sell " + activeShop.replace(/\|/g, "%7C") + "~~" + pendingSell.item.name + "~~" + qty;
+  document.getElementById("sell-command").textContent = cmd;
+}
+function confirmSell() {
+  if (!pendingSell) return;
+  const qty = parseInt(document.getElementById("sell-qty").value) || 1;
+  const cmd = document.getElementById("sell-command").textContent;
+  navigator.clipboard.writeText(cmd).catch(()=>{});
+  closeSellModal();
+  showToast("✓ Command copied — paste in Roll20 chat!");
+}
+
+// ═══════════════════════════════════════════════════════════════
 // PRICE HTML BADGES
 // ═══════════════════════════════════════════════════════════════
 function fmtPriceHTML(p) {
@@ -1420,6 +1618,8 @@ function renderTabs() {
 
 function renderShop() {
   if (!SHOPS[activeShop]) return;
+  const search = document.getElementById("shop-search");
+  if (search) search.value = "";
   const shop = SHOPS[activeShop];
   const shortName = activeShop.replace("Sales | ", "");
   const category = activeShop.startsWith("Sales | ") ? "The Merchant's Guild" : "Market District";
@@ -1451,8 +1651,9 @@ function renderShop() {
           '<div class="price-row">' + fmtPriceHTML(item.price) + '</div>' +
           '<span class="' + stockClass + '">' + stockText + '</span>' +
         '</div>' +
-        '<div style="display:flex;gap:5px;align-items:center;">' +
+        '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">' +
           '<button class="item-edit-btn" onclick="openEditItemModal(' + idx + ')">✏ Edit</button>' +
+          '<button class="sell-btn" onclick="openSellModal(' + idx + ')" title="Sell this item back">↩ Sell</button>' +
           '<button class="buy-btn"' + (!inStock ? ' disabled' : '') + ' onclick="openBuyModal(' + idx + ')">' +
           (!inStock ? "Sold Out" : "Buy →") + '</button>' +
         '</div>' +
@@ -1772,9 +1973,10 @@ function deleteGMItem() {
 // INIT
 // ═══════════════════════════════════════════════════════════════
 updateWalletDisplay();
+loadPlayerName();
 renderHistory();
 
-["buy-modal","wallet-modal","gm-login-modal","gm-edit-modal","history-modal"].forEach(id => {
+["buy-modal","wallet-modal","gm-login-modal","gm-edit-modal","history-modal","sell-modal"].forEach(id => {
   document.getElementById(id).addEventListener("click", e => {
     if (e.target !== document.getElementById(id)) return;
     if (id === "buy-modal") closeModal();
@@ -1782,6 +1984,7 @@ renderHistory();
     else if (id === "gm-login-modal") closeGMLogin();
     else if (id === "gm-edit-modal") closeGMEditModal();
     else if (id === "history-modal") closeHistoryModal();
+    else if (id === "sell-modal") closeSellModal();
   });
 });
 </script>
