@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Merchant's Guild — D&D 5e</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+  <link rel="manifest" href="data:application/json,{%22name%22:%22The%20Merchant%27s%20Guild%22,%22short_name%22:%22MG%20Shop%22,%22display%22:%22standalone%22,%22background_color%22:%22%231a0a00%22,%22theme_color%22:%22%23c0392b%22,%22start_url%22:%22./%22}">
+  <meta name="theme-color" content="#c0392b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Merchant's Guild">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <!-- Firebase SDK (compat) -->
@@ -341,6 +346,17 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.6);
       overflow: hidden; transition: all 0.35s;
     }
+    .shop-panel.fading { opacity: 0; transform: translateY(4px); }
+    .shop-panel { transition: opacity 0.18s ease, transform 0.18s ease, border 0.35s, box-shadow 0.35s; }
+
+    /* ── GM RESTOCK BUTTON ── */
+    .gm-restock-btn {
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px; font-weight: 700;
+      padding: 3px 10px; border-radius: 10px; border: none; cursor: pointer;
+      background: rgba(0,120,180,0.3); color: #70c8ff;
+      border: 1px solid rgba(0,120,180,0.5); transition: all 0.2s;
+    }
+    .gm-restock-btn:hover { background: rgba(0,120,180,0.5); color: #a0e0ff; }
 
     /* ── SHOP BANNER ── */
     .shop-banner {
@@ -423,7 +439,8 @@
     }
     .item-card:hover {
       background: var(--card-hover);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 2px 12px rgba(0,0,0,0.2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 6px 24px rgba(0,0,0,0.28);
+      transform: translateY(-2px);
       z-index: 1;
     }
     .item-card.out-of-stock { opacity: 0.45; filter: grayscale(0.3); }
@@ -934,7 +951,10 @@
     <div class="history-modal-body" id="history-modal-body"></div>
     <div class="history-modal-footer">
       <div class="history-total" id="history-total"></div>
-      <button class="clear-history" onclick="clearHistory()">🗑 Clear History</button>
+      <div style="display:flex;gap:8px;">
+        <button class="clear-history" style="background:rgba(88,101,242,0.25);color:#8da0ff;border-color:rgba(88,101,242,0.4);" onclick="exportDiscord()">💬 Discord</button>
+        <button class="clear-history" onclick="clearHistory()">🗑 Clear</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1464,6 +1484,11 @@ db.ref("shops").on("value", snapshot => {
   }
   setFirebaseStatus("connected", "Connected");
   SHOPS = snapshotToShops(data);
+  const urlParam = new URLSearchParams(window.location.search).get("shop");
+  if (urlParam && !activeShop) {
+    const matched = Object.keys(SHOPS).find(n => n.replace("Sales | ","") === urlParam || n === urlParam);
+    if (matched) activeShop = matched;
+  }
   if (!activeShop || !SHOPS[activeShop]) activeShop = Object.keys(SHOPS)[0];
   setTheme(activeShop);
   renderTabs();
@@ -1494,13 +1519,40 @@ function fbSaveShopItems(shopName) {
 // ═══════════════════════════════════════════════════════════════
 // WALLET
 // ═══════════════════════════════════════════════════════════════
+function animateCount(el, target) {
+  const start = parseInt(el.textContent) || 0;
+  if (start === target) return;
+  const steps = Math.min(Math.abs(target - start), 12);
+  let step = 0;
+  const timer = setInterval(() => {
+    step++;
+    el.textContent = step >= steps ? target : Math.round(start + (target - start) * (step / steps));
+    if (step >= steps) clearInterval(timer);
+  }, 100 / steps);
+}
+
 function updateWalletDisplay() {
   const w = getWallet(activeShop);
-  document.getElementById("wallet-pp").textContent = w.pp;
-  document.getElementById("wallet-gp").textContent = w.gp;
-  document.getElementById("wallet-sp").textContent = w.sp;
-  document.getElementById("wallet-cp").textContent = w.cp;
+  animateCount(document.getElementById("wallet-pp"), w.pp);
+  animateCount(document.getElementById("wallet-gp"), w.gp);
+  animateCount(document.getElementById("wallet-sp"), w.sp);
+  animateCount(document.getElementById("wallet-cp"), w.cp);
   saveWallets();
+}
+
+function switchShop(name) {
+  if (name === activeShop) return;
+  const panel = document.getElementById("shop-panel");
+  panel.classList.add("fading");
+  setTimeout(() => {
+    activeShop = name;
+    setTheme(name);
+    try { window.history.replaceState({}, "", "?shop=" + encodeURIComponent(name.replace("Sales | ", ""))); } catch(e) {}
+    renderTabs();
+    renderShop();
+    updateWalletDisplay();
+    panel.classList.remove("fading");
+  }, 180);
 }
 
 function setTheme(shopName) {
@@ -1658,7 +1710,7 @@ function renderTabs() {
       const stockDot   = shop.isOpen && hasOutOfStock ? '<span class="tab-dot-stock" title="Out of stock items"></span>' : '';
       const lockIcon   = !shop.isOpen   ? '🔒 ' : '';
       btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + lockIcon + name.replace("Sales | ", "") + closedDot + stockDot;
-      btn.onclick = () => { activeShop = name; setTheme(name); renderTabs(); renderShop(); updateWalletDisplay(); };
+      btn.onclick = () => switchShop(name);
       c.appendChild(btn);
     });
   });
@@ -1688,12 +1740,13 @@ function renderShop() {
         ? '<button class="shop-badge gm-toggle-open" onclick="toggleShopOpen()">🔒 Close Shop</button>'
         : '<button class="shop-badge gm-toggle-close" onclick="toggleShopOpen()">🔓 Open Shop</button>')
     : '';
+  const gmRestockBtn = gmMode ? '<button class="gm-restock-btn" onclick="restockAll()">↺ Restock All</button>' : '';
   const closedBadge = !shop.isOpen ? '<span class="shop-badge closed-badge">🔒 Closed</span>' : '';
   document.getElementById("shop-meta").innerHTML =
     closedBadge +
     '<span class="shop-badge highlight">↩ Buyback ' + Math.round(shop.sellMultiplier*100) + '%</span>' +
     '<span class="shop-badge">' + shop.items.length + ' items</span>' +
-    gmToggleBtn;
+    gmToggleBtn + gmRestockBtn;
 
   document.title = shortName + " — The Merchant's Guild";
 
@@ -2041,6 +2094,31 @@ function saveGMItem() {
   fbSaveShopItems(gmEditingShop);
   closeGMEditModal();
   renderShop();
+}
+
+function restockAll() {
+  if (!gmMode || !activeShop) return;
+  const defaults = DEFAULT_SHOPS[activeShop];
+  if (!defaults) { showToast("⚠ No defaults found for this shop.", "error"); return; }
+  SHOPS[activeShop].items.forEach((item, idx) => {
+    const def = defaults.items[idx];
+    if (def) item.stock = def.stock;
+  });
+  fbSaveShopItems(activeShop);
+  renderShop();
+  showToast("↺ All items restocked!", "gm");
+}
+
+function exportDiscord() {
+  if (!history.length) { showToast("No history to export."); return; }
+  const lines = ["**📜 Purchase History — The Merchant's Guild**", ""];
+  history.forEach(h => {
+    lines.push("• **" + h.name + "** ×" + h.qty + " — " + fmtCp(h.totalCp) + " *(" + h.shop.replace("Sales | ","") + " @ " + h.time + ")*");
+  });
+  const total = history.reduce((s, h) => s + h.totalCp, 0);
+  lines.push("", "**Total spent:** " + fmtCp(total));
+  navigator.clipboard.writeText(lines.join("\n")).catch(() => {});
+  showToast("💬 Discord format copied!");
 }
 
 function toggleShopOpen() {
