@@ -394,111 +394,158 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 // DONNÉES PAR DÉFAUT (pour initialiser Firebase au premier lancement)
 // ═══════════════════════════════════════════════════════════════
 const DEFAULT_SHOPS = {
+  // ══════════════════════════════════════════════════════
+  //  WEAPONS
+  // ══════════════════════════════════════════════════════
+  "Sales | Simple Weapons": {
+    icon:"🗡️",theme:"theme-weapons",description:"Simple weapons for any adventurer.",sellMultiplier:0.5,
+    items:[
+      {name:"Club",          price:{gp:0,sp:1,cp:0}, stock:8,  desc:"1d4 bludgeoning. Light."},
+      {name:"Dagger",        price:{gp:2,sp:0,cp:0}, stock:12, desc:"1d4 piercing. Finesse, Light, Thrown (20/60 ft)."},
+      {name:"Greatclub",     price:{gp:0,sp:2,cp:0}, stock:4,  desc:"1d8 bludgeoning. Two-Handed."},
+      {name:"Handaxe",       price:{gp:5,sp:0,cp:0}, stock:6,  desc:"1d6 slashing. Light, Thrown (20/60 ft)."},
+      {name:"Javelin",       price:{gp:0,sp:5,cp:0}, stock:8,  desc:"1d6 piercing. Thrown (30/120 ft)."},
+      {name:"Light Hammer",  price:{gp:2,sp:0,cp:0}, stock:6,  desc:"1d4 bludgeoning. Light, Thrown (20/60 ft)."},
+      {name:"Mace",          price:{gp:5,sp:0,cp:0}, stock:4,  desc:"1d6 bludgeoning."},
+      {name:"Quarterstaff",  price:{gp:0,sp:2,cp:0}, stock:6,  desc:"1d6 bludgeoning. Versatile (1d8)."},
+      {name:"Sickle",        price:{gp:1,sp:0,cp:0}, stock:4,  desc:"1d4 slashing. Light."},
+      {name:"Spear",         price:{gp:1,sp:0,cp:0}, stock:6,  desc:"1d6 piercing. Thrown (20/60 ft), Versatile (1d8)."}
+    ]
+  },
   "Sales | Martial Weapons": {
     icon:"⚔️",theme:"theme-weapons",description:"Forged blades and steel for warriors.",sellMultiplier:0.5,
     items:[
-      {name:"Club",price:{cp:1,sp:0,gp:0},stock:5,desc:"1d4 bludgeoning."},
-      {name:"Dagger",price:{cp:0,sp:8,gp:0},stock:12,desc:"1d4 piercing. Light, thrown."},
-      {name:"Handaxe",price:{cp:0,sp:0,gp:1},stock:4,desc:"1d6 slashing. Light, thrown."},
-      {name:"Mace",price:{cp:0,sp:0,gp:5},stock:3,desc:"1d6 bludgeoning."},
-      {name:"Quarterstaff",price:{cp:2,sp:0,gp:0},stock:4,desc:"1d6 bludgeoning. Versatile."},
-      {name:"Spear",price:{cp:0,sp:16,gp:0},stock:4,desc:"1d6 piercing. Thrown."},
-      {name:"Longsword",price:{cp:0,sp:0,gp:2},stock:2,desc:"1d8 slashing. Versatile."},
-      {name:"Battleaxe",price:{cp:0,sp:0,gp:3},stock:2,desc:"1d8 slashing. Versatile."},
-      {name:"Greatsword",price:{cp:0,sp:0,gp:5},stock:1,desc:"2d6 slashing. Heavy, two-handed."},
-      {name:"Shortsword",price:{cp:0,sp:0,gp:1},stock:3,desc:"1d6 piercing. Light, finesse."},
-      {name:"Warhammer",price:{cp:0,sp:0,gp:3},stock:2,desc:"1d8 bludgeoning. Versatile."},
-      {name:"Flail",price:{cp:0,sp:0,gp:2},stock:2,desc:"1d8 bludgeoning."}
+      {name:"Battleaxe",   price:{gp:10,sp:0,cp:0},stock:3,desc:"1d8 slashing. Versatile (1d10)."},
+      {name:"Flail",       price:{gp:10,sp:0,cp:0},stock:3,desc:"1d8 bludgeoning."},
+      {name:"Glaive",      price:{gp:20,sp:0,cp:0},stock:2,desc:"1d10 slashing. Heavy, Reach, Two-Handed."},
+      {name:"Greataxe",    price:{gp:30,sp:0,cp:0},stock:2,desc:"1d12 slashing. Heavy, Two-Handed."},
+      {name:"Greatsword",  price:{gp:50,sp:0,cp:0},stock:1,desc:"2d6 slashing. Heavy, Two-Handed."},
+      {name:"Halberd",     price:{gp:20,sp:0,cp:0},stock:2,desc:"1d10 slashing. Heavy, Reach, Two-Handed."},
+      {name:"Lance",       price:{gp:10,sp:0,cp:0},stock:2,desc:"1d10 piercing. Heavy, Reach. Requires mount."},
+      {name:"Longsword",   price:{gp:15,sp:0,cp:0},stock:3,desc:"1d8 slashing. Versatile (1d10)."},
+      {name:"Maul",        price:{gp:10,sp:0,cp:0},stock:2,desc:"2d6 bludgeoning. Heavy, Two-Handed."},
+      {name:"Morningstar", price:{gp:15,sp:0,cp:0},stock:3,desc:"1d8 piercing."},
+      {name:"Pike",        price:{gp:5,sp:0,cp:0}, stock:2,desc:"1d10 piercing. Heavy, Reach, Two-Handed."},
+      {name:"Rapier",      price:{gp:25,sp:0,cp:0},stock:2,desc:"1d8 piercing. Finesse."},
+      {name:"Scimitar",    price:{gp:25,sp:0,cp:0},stock:2,desc:"1d6 slashing. Finesse, Light."},
+      {name:"Shortsword",  price:{gp:10,sp:0,cp:0},stock:4,desc:"1d6 piercing. Finesse, Light."},
+      {name:"Trident",     price:{gp:5,sp:0,cp:0}, stock:3,desc:"1d6 piercing. Thrown (20/60 ft), Versatile (1d8)."},
+      {name:"War Pick",    price:{gp:5,sp:0,cp:0}, stock:3,desc:"1d8 piercing."},
+      {name:"Warhammer",   price:{gp:15,sp:0,cp:0},stock:3,desc:"1d8 bludgeoning. Versatile (1d10)."},
+      {name:"Whip",        price:{gp:2,sp:0,cp:0}, stock:3,desc:"1d4 slashing. Finesse, Reach."}
     ]
   },
-  "Sales | Archery & Traps": {
-    icon:"🏹",theme:"theme-archery",description:"Bows, crossbows and traps for hunters.",sellMultiplier:0.5,
+  "Sales | Archery & Ranged": {
+    icon:"🏹",theme:"theme-archery",description:"Ranged weapons, ammunition and traps.",sellMultiplier:0.5,
     items:[
-      {name:"Shortbow",price:{cp:0,sp:0,gp:1},stock:3,desc:"1d6 piercing. Range 80/320ft."},
-      {name:"Longbow",price:{cp:0,sp:0,gp:5},stock:2,desc:"1d8 piercing. Range 150/600ft."},
-      {name:"Light Crossbow",price:{cp:0,sp:0,gp:5},stock:2,desc:"1d8 piercing. Loading."},
-      {name:"Heavy Crossbow",price:{cp:0,sp:0,gp:25},stock:1,desc:"1d10 piercing. Range 100/400ft."},
-      {name:"Arrows (20)",price:{cp:0,sp:0,gp:1},stock:10,desc:"For bows."},
-      {name:"Bolts (20)",price:{cp:0,sp:0,gp:1},stock:10,desc:"For crossbows."},
-      {name:"Quiver",price:{cp:0,sp:0,gp:1},stock:5,desc:"Holds 20 ammunition."},
-      {name:"Bear Trap",price:{cp:0,sp:0,gp:2},stock:3,desc:"Immobilizes, 1d4 damage."},
-      {name:"Hunting Net",price:{cp:0,sp:0,gp:1},stock:4,desc:"Restrains a creature."},
-      {name:"Javelin",price:{cp:0,sp:10,gp:0},stock:6,desc:"1d6 piercing. Thrown 30/120ft."}
+      {name:"Shortbow",             price:{gp:25,sp:0,cp:0},stock:3, desc:"1d6 piercing. Range 80/320 ft. Two-Handed."},
+      {name:"Longbow",              price:{gp:50,sp:0,cp:0},stock:2, desc:"1d8 piercing. Range 150/600 ft. Heavy, Two-Handed."},
+      {name:"Light Crossbow",       price:{gp:25,sp:0,cp:0},stock:3, desc:"1d8 piercing. Range 80/320 ft. Loading, Two-Handed."},
+      {name:"Heavy Crossbow",       price:{gp:50,sp:0,cp:0},stock:1, desc:"1d10 piercing. Range 100/400 ft. Heavy, Loading."},
+      {name:"Hand Crossbow",        price:{gp:75,sp:0,cp:0},stock:2, desc:"1d6 piercing. Range 30/120 ft. Light, Loading."},
+      {name:"Sling",                price:{gp:0,sp:1,cp:0}, stock:5, desc:"1d4 bludgeoning. Range 30/120 ft."},
+      {name:"Dart",                 price:{gp:0,sp:0,cp:5}, stock:20,desc:"1d4 piercing. Range 20/60 ft. Finesse, Thrown."},
+      {name:"Net",                  price:{gp:1,sp:0,cp:0}, stock:4, desc:"Thrown (5/15 ft). Restrains Large or smaller creatures."},
+      {name:"Arrows (20)",          price:{gp:1,sp:0,cp:0}, stock:15,desc:"Ammunition for bows."},
+      {name:"Bolts (20)",           price:{gp:1,sp:0,cp:0}, stock:15,desc:"Ammunition for crossbows."},
+      {name:"Sling Bullets (20)",   price:{gp:0,sp:0,cp:4}, stock:10,desc:"Ammunition for slings."},
+      {name:"Blowgun Needles (50)", price:{gp:1,sp:0,cp:0}, stock:5, desc:"Ammunition for blowguns."},
+      {name:"Quiver",               price:{gp:1,sp:0,cp:0}, stock:8, desc:"Holds 20 arrows or bolts."},
+      {name:"Bear Trap",            price:{gp:2,sp:0,cp:0}, stock:3, desc:"Immobilizes a creature. DC 13 Str to escape."},
+      {name:"Hunting Net",          price:{gp:1,sp:0,cp:0}, stock:4, desc:"Thrown. Restrains a creature."}
     ]
   },
-  "Sales | Potions & Ingredients": {
+  "Sales | Potions & Elixirs": {
     icon:"⚗️",theme:"theme-potions",description:"Elixirs, potions and alchemical ingredients.",sellMultiplier:0.5,
     items:[
-      {name:"Healing Potion",price:{cp:0,sp:0,gp:50},stock:3,desc:"Regain 2d4+2 HP."},
-      {name:"Greater Healing Potion",price:{cp:0,sp:0,gp:100},stock:1,desc:"Regain 4d4+4 HP."},
-      {name:"Antitoxin",price:{cp:0,sp:0,gp:50},stock:2,desc:"Advantage on saves vs poison."},
-      {name:"Alchemist's Fire",price:{cp:0,sp:0,gp:5},stock:3,desc:"Fire damage on impact."},
-      {name:"Acid (vial)",price:{cp:0,sp:0,gp:25},stock:2,desc:"2d6 acid damage."},
-      {name:"Basic Poison",price:{cp:0,sp:0,gp:100},stock:1,desc:"1d4 poison on contact."},
-      {name:"Medicinal Herbs",price:{cp:0,sp:10,gp:0},stock:10,desc:"Healing component."},
-      {name:"Sulfur Powder",price:{cp:0,sp:5,gp:0},stock:8,desc:"Alchemical component."},
-      {name:"Empty Vial",price:{cp:0,sp:1,gp:0},stock:20,desc:"Glass container."},
-      {name:"Alchemist's Kit",price:{cp:0,sp:0,gp:50},stock:1,desc:"Tools for alchemy."}
+      {name:"Potion of Healing",          price:{gp:50,sp:0,cp:0},  stock:5, desc:"Regain 2d4+2 HP."},
+      {name:"Potion of Greater Healing",  price:{gp:100,sp:0,cp:0}, stock:2, desc:"Regain 4d4+4 HP."},
+      {name:"Potion of Superior Healing", price:{gp:500,sp:0,cp:0}, stock:1, desc:"Regain 8d4+8 HP."},
+      {name:"Antitoxin",                  price:{gp:50,sp:0,cp:0},  stock:3, desc:"Advantage on saves vs poison for 1 hour."},
+      {name:"Alchemist's Fire",           price:{gp:50,sp:0,cp:0},  stock:3, desc:"2d4 fire damage per turn until extinguished."},
+      {name:"Acid (vial)",                price:{gp:25,sp:0,cp:0},  stock:3, desc:"2d6 acid damage on impact."},
+      {name:"Holy Water (flask)",         price:{gp:25,sp:0,cp:0},  stock:3, desc:"2d6 radiant damage to undead and fiends."},
+      {name:"Basic Poison (vial)",        price:{gp:100,sp:0,cp:0}, stock:2, desc:"1d4 poison damage. Apply to a weapon."},
+      {name:"Potion of Climbing",         price:{gp:75,sp:0,cp:0},  stock:2, desc:"Climbing speed equals walking speed for 1 hour."},
+      {name:"Potion of Water Breathing",  price:{gp:180,sp:0,cp:0}, stock:1, desc:"Breathe underwater for 1 hour."},
+      {name:"Potion of Animal Friendship",price:{gp:100,sp:0,cp:0}, stock:1, desc:"Cast Animal Friendship for 1 hour."},
+      {name:"Potion of Heroism",          price:{gp:180,sp:0,cp:0}, stock:1, desc:"Gain 10 temp HP and Blessed for 1 hour."},
+      {name:"Potion of Invisibility",     price:{gp:180,sp:0,cp:0}, stock:1, desc:"Become invisible for 1 hour or until attack/spell."},
+      {name:"Healer's Kit",               price:{gp:5,sp:0,cp:0},   stock:3, desc:"10 uses. Stabilize a creature at 0 HP."},
+      {name:"Herbalism Kit",              price:{gp:5,sp:0,cp:0},   stock:2, desc:"Identify and apply herbal remedies."},
+      {name:"Alchemist's Supplies",       price:{gp:50,sp:0,cp:0},  stock:1, desc:"Tools for alchemical crafting."},
+      {name:"Vial (empty)",               price:{gp:1,sp:0,cp:0},   stock:20,desc:"Small glass container."}
     ]
   },
   "Sales | Tomes & Scrolls": {
     icon:"📚",theme:"theme-tomes",description:"Spellbooks, scrolls and arcane knowledge.",sellMultiplier:0.5,
     items:[
-      {name:"Blank Scroll",price:{cp:0,sp:1,gp:0},stock:20,desc:"For notes or spells."},
-      {name:"Blank Book",price:{cp:0,sp:0,gp:1},stock:5,desc:"100 pages, leather cover."},
-      {name:"Ink (bottle)",price:{cp:0,sp:0,gp:10},stock:5,desc:"Quality black ink."},
-      {name:"Writing Quill",price:{cp:2,sp:0,gp:0},stock:10,desc:"For writing and drawing."},
-      {name:"Spell Scroll Lv.1",price:{cp:0,sp:0,gp:25},stock:3,desc:"Contains a 1st-level spell."},
-      {name:"Spell Scroll Lv.2",price:{cp:0,sp:0,gp:75},stock:2,desc:"Contains a 2nd-level spell."},
-      {name:"Region Map",price:{cp:0,sp:0,gp:5},stock:4,desc:"Detailed map of the region."},
-      {name:"Blank Spellbook",price:{cp:0,sp:0,gp:50},stock:1,desc:"100 pages, for wizards."},
-      {name:"Spell Components",price:{cp:0,sp:0,gp:5},stock:5,desc:"Pouch of various components."}
+      {name:"Blank Book",          price:{gp:1,sp:0,cp:0},   stock:5,  desc:"100 pages, leather cover."},
+      {name:"Blank Spellbook",     price:{gp:50,sp:0,cp:0},  stock:2,  desc:"100 pages, for wizards."},
+      {name:"Parchment (sheet)",   price:{gp:0,sp:1,cp:0},   stock:20, desc:"Single writing sheet."},
+      {name:"Paper (sheet)",       price:{gp:0,sp:2,cp:0},   stock:20, desc:"High quality writing paper."},
+      {name:"Ink (1 oz. bottle)",  price:{gp:10,sp:0,cp:0},  stock:5,  desc:"Black writing ink."},
+      {name:"Ink Pen",             price:{gp:0,sp:0,cp:2},   stock:10, desc:"For writing."},
+      {name:"Spell Components Pouch",price:{gp:25,sp:0,cp:0},stock:3,  desc:"Replaces non-costly material components."},
+      {name:"Spell Scroll Lv.1",   price:{gp:25,sp:0,cp:0},  stock:3,  desc:"Contains one 1st-level spell."},
+      {name:"Spell Scroll Lv.2",   price:{gp:75,sp:0,cp:0},  stock:2,  desc:"Contains one 2nd-level spell."},
+      {name:"Spell Scroll Lv.3",   price:{gp:150,sp:0,cp:0}, stock:1,  desc:"Contains one 3rd-level spell."},
+      {name:"Region Map",          price:{gp:5,sp:0,cp:0},   stock:4,  desc:"Detailed map of the local region."},
+      {name:"Sealing Wax",         price:{gp:0,sp:5,cp:0},   stock:5,  desc:"For sealing letters and documents."},
+      {name:"Signet Ring",         price:{gp:5,sp:0,cp:0},   stock:3,  desc:"Personal seal ring."}
     ]
   },
   "Sales | Wands & Staff": {
     icon:"🪄",theme:"theme-wands",description:"Wands, staves and magical focii.",sellMultiplier:0.5,
     items:[
-      {name:"Walking Staff",price:{cp:0,sp:2,gp:0},stock:5,desc:"1d6 bludgeoning. Versatile."},
-      {name:"Arcane Focus",price:{cp:0,sp:0,gp:20},stock:3,desc:"Crystal, orb or wand."},
-      {name:"Holy Symbol",price:{cp:0,sp:0,gp:5},stock:3,desc:"Divine focus."},
-      {name:"Quarterstaff (reinforced)",price:{cp:0,sp:0,gp:10},stock:2,desc:"Metal-reinforced."},
-      {name:"Druidic Focus",price:{cp:0,sp:0,gp:5},stock:2,desc:"Mistletoe sprig or totem."},
-      {name:"Rare Components",price:{cp:0,sp:0,gp:50},stock:2,desc:"Materials for costly spells."}
+      {name:"Arcane Focus (Crystal)", price:{gp:10,sp:0,cp:0},stock:3,desc:"Spellcasting focus for wizards and sorcerers."},
+      {name:"Arcane Focus (Orb)",     price:{gp:20,sp:0,cp:0},stock:2,desc:"Spellcasting focus."},
+      {name:"Arcane Focus (Rod)",     price:{gp:10,sp:0,cp:0},stock:3,desc:"Spellcasting focus."},
+      {name:"Arcane Focus (Staff)",   price:{gp:5,sp:0,cp:0}, stock:3,desc:"1d6 bludgeoning. Spellcasting focus. Versatile (1d8)."},
+      {name:"Arcane Focus (Wand)",    price:{gp:10,sp:0,cp:0},stock:3,desc:"Spellcasting focus."},
+      {name:"Holy Symbol (Amulet)",   price:{gp:5,sp:0,cp:0}, stock:3,desc:"Divine spellcasting focus."},
+      {name:"Holy Symbol (Emblem)",   price:{gp:5,sp:0,cp:0}, stock:3,desc:"Worn on armor or shield."},
+      {name:"Holy Symbol (Reliquary)",price:{gp:5,sp:0,cp:0}, stock:2,desc:"Box containing holy relic."},
+      {name:"Druidic Focus (Sprig)",  price:{gp:1,sp:0,cp:0}, stock:4,desc:"Mistletoe or holly sprig. Druid focus."},
+      {name:"Druidic Focus (Staff)",  price:{gp:5,sp:0,cp:0}, stock:2,desc:"1d6 bludgeoning. Druid focus. Versatile (1d8)."},
+      {name:"Druidic Focus (Totem)",  price:{gp:1,sp:0,cp:0}, stock:3,desc:"Animal-shaped totem. Druid focus."},
+      {name:"Druidic Focus (Wand)",   price:{gp:10,sp:0,cp:0},stock:2,desc:"Yew wand. Druid focus."}
     ]
   },
   "Sales | Heavy Armors": {
     icon:"🛡️",theme:"theme-heavy",description:"Heavy armor for seasoned warriors.",sellMultiplier:0.5,
     items:[
-      {name:"Chain Mail",price:{cp:0,sp:0,gp:75},stock:2,desc:"AC 16. Stealth disadvantage."},
-      {name:"Breastplate",price:{cp:0,sp:0,gp:400},stock:1,desc:"AC 17. Stealth disadvantage."},
-      {name:"Plate Armor",price:{cp:0,sp:0,gp:1500},stock:1,desc:"AC 18. Stealth disadvantage."},
-      {name:"Ring Mail",price:{cp:0,sp:0,gp:30},stock:2,desc:"AC 14. Stealth disadvantage."},
-      {name:"Shield",price:{cp:0,sp:0,gp:10},stock:4,desc:"+2 AC."},
-      {name:"Plate Helm",price:{cp:0,sp:0,gp:15},stock:3,desc:"Head protection."},
-      {name:"Metal Gauntlets",price:{cp:0,sp:0,gp:10},stock:3,desc:"Hand protection."},
-      {name:"Metal Greaves",price:{cp:0,sp:0,gp:15},stock:2,desc:"Leg protection."}
+      {name:"Ring Mail",   price:{gp:30,sp:0,cp:0},   stock:2,desc:"AC 14. Stealth disadvantage. 40 lb."},
+      {name:"Chain Mail",  price:{gp:75,sp:0,cp:0},   stock:2,desc:"AC 16. Str 13 required. Stealth disadvantage. 55 lb."},
+      {name:"Splint",      price:{gp:200,sp:0,cp:0},  stock:1,desc:"AC 17. Str 15 required. Stealth disadvantage. 60 lb."},
+      {name:"Plate Armor", price:{gp:1500,sp:0,cp:0}, stock:1,desc:"AC 18. Str 15 required. Stealth disadvantage. 65 lb."},
+      {name:"Shield",      price:{gp:10,sp:0,cp:0},   stock:5,desc:"+2 AC. 6 lb."},
+      {name:"Helm",        price:{gp:10,sp:0,cp:0},   stock:4,desc:"Head protection."},
+      {name:"Gauntlets",   price:{gp:10,sp:0,cp:0},   stock:4,desc:"Hand protection."},
+      {name:"Greaves",     price:{gp:15,sp:0,cp:0},   stock:3,desc:"Leg protection."}
     ]
   },
   "Sales | Medium Armors": {
     icon:"🔰",theme:"theme-medium",description:"Balanced armor combining protection and mobility.",sellMultiplier:0.5,
     items:[
-      {name:"Studded Leather",price:{cp:0,sp:0,gp:45},stock:3,desc:"AC 12+Dex."},
-      {name:"Scale Mail",price:{cp:0,sp:0,gp:50},stock:2,desc:"AC 14+Dex(max2). Stealth disadvantage."},
-      {name:"Half Plate",price:{cp:0,sp:0,gp:750},stock:1,desc:"AC 15+Dex(max2). Stealth disadvantage."},
-      {name:"Bronze Breastplate",price:{cp:0,sp:0,gp:200},stock:1,desc:"AC 15+Dex(max2)."},
-      {name:"Wooden Shield",price:{cp:0,sp:0,gp:5},stock:5,desc:"+2 AC. Lighter option."},
-      {name:"Leather Armor",price:{cp:0,sp:0,gp:25},stock:3,desc:"AC 13+Dex. Light."}
+      {name:"Hide Armor",   price:{gp:10,sp:0,cp:0},  stock:3,desc:"AC 12+Dex(max2). 12 lb."},
+      {name:"Chain Shirt",  price:{gp:50,sp:0,cp:0},  stock:3,desc:"AC 13+Dex(max2). 20 lb."},
+      {name:"Scale Mail",   price:{gp:50,sp:0,cp:0},  stock:2,desc:"AC 14+Dex(max2). Stealth disadvantage. 45 lb."},
+      {name:"Breastplate",  price:{gp:400,sp:0,cp:0}, stock:1,desc:"AC 14+Dex(max2). 20 lb."},
+      {name:"Half Plate",   price:{gp:750,sp:0,cp:0}, stock:1,desc:"AC 15+Dex(max2). Stealth disadvantage. 40 lb."}
     ]
   },
   "Sales | Light Armors": {
     icon:"🥋",theme:"theme-light",description:"Light protection for rogues and rangers.",sellMultiplier:0.5,
     items:[
-      {name:"Padded Armor",price:{cp:0,sp:0,gp:5},stock:4,desc:"AC 11+Dex. Stealth disadvantage."},
-      {name:"Leather Armor",price:{cp:0,sp:0,gp:10},stock:5,desc:"AC 11+Dex."},
-      {name:"Chain Shirt",price:{cp:0,sp:0,gp:50},stock:2,desc:"AC 13+Dex(max2). Concealable."},
-      {name:"Common Clothes",price:{cp:0,sp:10,gp:0},stock:10,desc:"Ordinary outfit."},
-      {name:"Traveler's Clothes",price:{cp:0,sp:0,gp:2},stock:5,desc:"Practical for adventuring."},
-      {name:"Hooded Cloak",price:{cp:0,sp:0,gp:1},stock:6,desc:"Aids in stealth."}
+      {name:"Padded Armor",    price:{gp:5,sp:0,cp:0}, stock:4,desc:"AC 11+Dex. Stealth disadvantage. 8 lb."},
+      {name:"Leather Armor",   price:{gp:10,sp:0,cp:0},stock:5,desc:"AC 11+Dex. 10 lb."},
+      {name:"Studded Leather", price:{gp:45,sp:0,cp:0},stock:3,desc:"AC 12+Dex. 13 lb."},
+      {name:"Common Clothes",  price:{gp:0,sp:5,cp:0}, stock:10,desc:"Ordinary outfit. 3 lb."},
+      {name:"Traveler's Clothes",price:{gp:2,sp:0,cp:0},stock:6,desc:"Practical for adventuring. 4 lb."},
+      {name:"Fine Clothes",    price:{gp:15,sp:0,cp:0},stock:3,desc:"Elegant noble attire. 6 lb."},
+      {name:"Robes",           price:{gp:1,sp:0,cp:0}, stock:4,desc:"Long flowing robes. 4 lb."},
+      {name:"Costume",         price:{gp:5,sp:0,cp:0}, stock:3,desc:"Disguise outfit. 4 lb."}
     ]
   },
   "Sales | Tailor": {
@@ -540,19 +587,74 @@ const DEFAULT_SHOPS = {
       {name:"Gold Pendant",price:{cp:0,sp:0,gp:20},stock:2,desc:"Decorative pendant."}
     ]
   },
-  "Sales | Rations and Outdoors": {
-    icon:"🎒",theme:"theme-rations",description:"Adventuring gear and travel supplies.",sellMultiplier:0.5,
+  "Sales | Adventuring Gear": {
+    icon:"🎒",theme:"theme-rations",description:"Essential supplies and equipment for any expedition.",sellMultiplier:0.5,
     items:[
-      {name:"Rations (1 day)",price:{cp:0,sp:10,gp:0},stock:30,desc:"Dry food for 1 day."},
-      {name:"Backpack",price:{cp:0,sp:0,gp:2},stock:5,desc:"Standard capacity."},
-      {name:"Rope (50ft)",price:{cp:0,sp:0,gp:1},stock:8,desc:"Hempen rope."},
-      {name:"Torch",price:{cp:1,sp:0,gp:0},stock:30,desc:"Lights 20ft, 1 hour."},
-      {name:"Hooded Lantern",price:{cp:0,sp:0,gp:5},stock:3,desc:"Lights 30ft, directional."},
-      {name:"Oil (flask)",price:{cp:0,sp:1,gp:0},stock:15,desc:"For lantern, 6 hours."},
-      {name:"Flint and Steel",price:{cp:5,sp:0,gp:0},stock:10,desc:"For lighting fires."},
-      {name:"Wool Blanket",price:{cp:0,sp:10,gp:0},stock:8,desc:"Against the night cold."},
-      {name:"Grappling Hook",price:{cp:0,sp:0,gp:2},stock:3,desc:"For climbing."},
-      {name:"Survival Kit",price:{cp:0,sp:0,gp:5},stock:4,desc:"Essential adventurer tools."}
+      {name:"Backpack",            price:{gp:2,sp:0,cp:0},  stock:5, desc:"Holds 30 lb / 1 cu. ft."},
+      {name:"Bedroll",             price:{gp:1,sp:0,cp:0},  stock:6, desc:"Comfortable sleeping roll. 7 lb."},
+      {name:"Blanket",             price:{gp:0,sp:5,cp:0},  stock:8, desc:"Warm wool blanket. 3 lb."},
+      {name:"Rations (1 day)",     price:{gp:0,sp:5,cp:0},  stock:30,desc:"Dried food for one day. 2 lb."},
+      {name:"Waterskin",           price:{gp:0,sp:2,cp:0},  stock:10,desc:"Holds 4 pints of liquid. 5 lb full."},
+      {name:"Torch",               price:{gp:0,sp:0,cp:1},  stock:30,desc:"Bright light 20 ft, dim 40 ft. 1 hour."},
+      {name:"Tinderbox",           price:{gp:0,sp:5,cp:0},  stock:10,desc:"Strike to light a fire. 1 lb."},
+      {name:"Candle",              price:{gp:0,sp:0,cp:1},  stock:30,desc:"Bright light 5 ft, dim 10 ft. 1 hour."},
+      {name:"Lantern (Hooded)",    price:{gp:5,sp:0,cp:0},  stock:3, desc:"Bright light 30 ft, dim 60 ft. Directional."},
+      {name:"Lantern (Bullseye)",  price:{gp:10,sp:0,cp:0}, stock:2, desc:"Bright light 60 ft cone, dim 120 ft."},
+      {name:"Oil (flask)",         price:{gp:0,sp:1,cp:0},  stock:20,desc:"Lantern fuel for 6 hours. 1 lb."},
+      {name:"Rope, Hempen (50 ft)",price:{gp:1,sp:0,cp:0},  stock:8, desc:"Supports 3 creatures. AC 11, 6 HP."},
+      {name:"Rope, Silk (50 ft)",  price:{gp:10,sp:0,cp:0}, stock:3, desc:"Lighter and stronger. 5 lb."},
+      {name:"Grappling Hook",      price:{gp:2,sp:0,cp:0},  stock:4, desc:"For climbing and anchoring. 4 lb."},
+      {name:"Climber's Kit",       price:{gp:25,sp:0,cp:0}, stock:2, desc:"Pitons, boots, gloves and harness. 12 lb."},
+      {name:"Crowbar",             price:{gp:2,sp:0,cp:0},  stock:4, desc:"Advantage on Str checks to pry things open."},
+      {name:"Hammer",              price:{gp:1,sp:0,cp:0},  stock:5, desc:"For driving pitons. 3 lb."},
+      {name:"Piton",               price:{gp:0,sp:0,cp:5},  stock:20,desc:"Iron climbing spike. 1/4 lb."},
+      {name:"Shovel",              price:{gp:2,sp:0,cp:0},  stock:3, desc:"For digging. 5 lb."},
+      {name:"Pole (10 ft)",        price:{gp:0,sp:5,cp:0},  stock:5, desc:"Wooden pole. 7 lb."},
+      {name:"Chain (10 ft)",       price:{gp:5,sp:0,cp:0},  stock:3, desc:"Iron chain. 10 lb."},
+      {name:"Manacles",            price:{gp:2,sp:0,cp:0},  stock:3, desc:"Escape DC 20 Str or DC 17 Thieves' Tools."},
+      {name:"Lock",                price:{gp:10,sp:0,cp:0}, stock:3, desc:"DC 15 Thieves' Tools to open. With key."},
+      {name:"Tent (Two-Person)",   price:{gp:2,sp:0,cp:0},  stock:3, desc:"Portable shelter for two. 20 lb."},
+      {name:"Merchant's Scale",    price:{gp:5,sp:0,cp:0},  stock:2, desc:"Precise weight measurements. 3 lb."},
+      {name:"Mirror (Steel)",      price:{gp:5,sp:0,cp:0},  stock:3, desc:"Small hand mirror. 1/2 lb."},
+      {name:"Signal Whistle",      price:{gp:0,sp:0,cp:5},  stock:8, desc:"Audible up to 600 ft."},
+      {name:"Soap",                price:{gp:0,sp:0,cp:2},  stock:10,desc:"Keeps you presentable. 1/2 lb."},
+      {name:"Whetstone",           price:{gp:0,sp:0,cp:1},  stock:10,desc:"Sharpen bladed weapons. 1 lb."},
+      {name:"Hunting Trap",        price:{gp:5,sp:0,cp:0},  stock:3, desc:"DC 13 Str to escape. 25 lb."},
+      {name:"Spyglass",            price:{gp:1000,sp:0,cp:0},stock:1,desc:"Magnifies objects up to 8× at range. 1 lb."},
+      {name:"Magnifying Glass",    price:{gp:100,sp:0,cp:0},stock:1, desc:"Start fires in sunlight. Examine small objects."},
+      {name:"Hourglass",           price:{gp:25,sp:0,cp:0}, stock:2, desc:"Tracks time accurately. 1 lb."},
+      {name:"Pouch",               price:{gp:0,sp:5,cp:0},  stock:10,desc:"Holds 6 lb / 1/5 cu. ft."},
+      {name:"Sack",                price:{gp:0,sp:0,cp:1},  stock:10,desc:"Holds 30 lb / 1 cu. ft. 1/2 lb."},
+      {name:"Chest",               price:{gp:5,sp:0,cp:0},  stock:3, desc:"Holds 300 lb / 12 cu. ft. 25 lb."}
+    ]
+  },
+  "Sales | Tools & Kits": {
+    icon:"🔧",theme:"theme-tomes",description:"Artisan tools, kits and professional instruments.",sellMultiplier:0.5,
+    items:[
+      {name:"Thieves' Tools",        price:{gp:25,sp:0,cp:0},stock:2,desc:"Pick locks and disarm traps. 1 lb."},
+      {name:"Disguise Kit",          price:{gp:25,sp:0,cp:0},stock:2,desc:"Costumes and makeup for disguise. 3 lb."},
+      {name:"Forgery Kit",           price:{gp:15,sp:0,cp:0},stock:1,desc:"Duplicate documents and seals. 5 lb."},
+      {name:"Poisoner's Kit",        price:{gp:50,sp:0,cp:0},stock:1,desc:"Harvest and apply poisons. 2 lb."},
+      {name:"Navigator's Tools",     price:{gp:25,sp:0,cp:0},stock:1,desc:"Chart and follow courses. Includes charts. 2 lb."},
+      {name:"Smith's Tools",         price:{gp:20,sp:0,cp:0},stock:2,desc:"Craft and repair metal items. 8 lb."},
+      {name:"Carpenter's Tools",     price:{gp:8,sp:0,cp:0}, stock:2,desc:"Craft and repair wooden items. 6 lb."},
+      {name:"Leatherworker's Tools", price:{gp:5,sp:0,cp:0}, stock:2,desc:"Craft leather goods. 5 lb."},
+      {name:"Weaver's Tools",        price:{gp:1,sp:0,cp:0}, stock:3,desc:"Craft cloth items. 5 lb."},
+      {name:"Cook's Utensils",       price:{gp:1,sp:0,cp:0}, stock:3,desc:"Prepare meals. Includes pots and pans. 8 lb."},
+      {name:"Tinker's Tools",        price:{gp:50,sp:0,cp:0},stock:1,desc:"Craft and repair small devices. 10 lb."},
+      {name:"Woodcarver's Tools",    price:{gp:1,sp:0,cp:0}, stock:3,desc:"Craft wooden objects and ammunition. 5 lb."},
+      {name:"Mason's Tools",         price:{gp:10,sp:0,cp:0},stock:2,desc:"Craft stone items. 8 lb."},
+      {name:"Potter's Tools",        price:{gp:10,sp:0,cp:0},stock:2,desc:"Craft clay items. 3 lb."},
+      {name:"Glassblower's Tools",   price:{gp:30,sp:0,cp:0},stock:1,desc:"Craft glass items and vials. 5 lb."},
+      {name:"Jeweler's Tools",       price:{gp:25,sp:0,cp:0},stock:1,desc:"Identify and craft jewelry. 2 lb."},
+      {name:"Cobbler's Tools",       price:{gp:5,sp:0,cp:0}, stock:2,desc:"Craft and repair footwear. 5 lb."},
+      {name:"Brewer's Supplies",     price:{gp:20,sp:0,cp:0},stock:1,desc:"Brew ales and other beverages. 9 lb."},
+      {name:"Calligrapher's Supplies",price:{gp:10,sp:0,cp:0},stock:2,desc:"Artistic writing tools. 5 lb."},
+      {name:"Cartographer's Tools",  price:{gp:15,sp:0,cp:0},stock:1,desc:"Draft and read maps. 6 lb."},
+      {name:"Painter's Supplies",    price:{gp:10,sp:0,cp:0},stock:2,desc:"Pigments and brushes. 5 lb."},
+      {name:"Gaming Set (Dice)",     price:{gp:0,sp:1,cp:0}, stock:5,desc:"Set of dice for games of chance."},
+      {name:"Gaming Set (Cards)",    price:{gp:0,sp:5,cp:0}, stock:3,desc:"Deck of playing cards."},
+      {name:"Gaming Set (Chess)",    price:{gp:1,sp:0,cp:0}, stock:2,desc:"Strategy board game set. 1/2 lb."}
     ]
   },
   "Sales | Herbs & Spices": {
