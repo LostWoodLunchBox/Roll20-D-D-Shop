@@ -104,6 +104,119 @@
     }
     .wallet-edit-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); border-color: rgba(255,255,255,0.4); }
 
+    .history-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.65);
+      padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 10px;
+      cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+    }
+    .history-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.45); }
+
+    /* ── HISTORY MODAL ── */
+    .history-modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88); backdrop-filter: blur(5px);
+      z-index: 200; align-items: center; justify-content: center;
+    }
+    .history-modal-overlay.open { display: flex; }
+    .history-modal {
+      background: #0e0c09;
+      border: 1px solid rgba(255,215,0,0.25);
+      border-radius: 14px;
+      width: 90%; max-width: 720px; max-height: 85vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+    .history-modal-header {
+      padding: 20px 28px 16px;
+      border-bottom: 1px solid rgba(255,215,0,0.15);
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(160deg, #1a1500, #0e0c09);
+      flex-shrink: 0;
+    }
+    .history-modal-title {
+      font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700;
+      color: #ffd700; letter-spacing: 2px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .history-modal-title span { font-size: 11px; font-weight: 400; color: rgba(255,215,0,0.5); letter-spacing: 3px; display: block; margin-top: 2px; }
+    .history-modal-close {
+      background: transparent; border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.5); width: 32px; height: 32px; border-radius: 6px;
+      font-size: 16px; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .history-modal-close:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.35); }
+    .history-modal-body {
+      flex: 1; overflow-y: auto; padding: 0;
+    }
+    .history-modal-body::-webkit-scrollbar { width: 6px; }
+    .history-modal-body::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+    .history-modal-body::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.2); border-radius: 3px; }
+    .history-table {
+      width: 100%; border-collapse: collapse;
+    }
+    .history-table thead {
+      position: sticky; top: 0; z-index: 1;
+      background: #13100a;
+    }
+    .history-table thead th {
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px;
+      text-transform: uppercase; color: rgba(255,215,0,0.6);
+      padding: 12px 18px; text-align: left; font-weight: 600;
+      border-bottom: 1px solid rgba(255,215,0,0.15);
+    }
+    .history-table thead th:last-child { text-align: right; }
+    .history-table tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.12s;
+    }
+    .history-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+    .history-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+    .history-table tbody tr:nth-child(even):hover { background: rgba(255,255,255,0.05); }
+    .history-table td {
+      padding: 11px 18px; font-size: 13px; color: rgba(255,255,255,0.75);
+      font-family: 'Crimson Text', serif;
+    }
+    .history-table td.ht-time {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      color: rgba(255,255,255,0.35); white-space: nowrap;
+    }
+    .history-table td.ht-item {
+      font-family: 'Cinzel', serif; font-size: 12px;
+      color: rgba(255,255,255,0.9); font-weight: 600;
+    }
+    .history-table td.ht-shop {
+      font-size: 11px; color: rgba(255,255,255,0.4);
+      font-family: 'Cinzel', serif; letter-spacing: 0.5px;
+    }
+    .history-table td.ht-qty {
+      text-align: center; font-family: 'Cinzel', serif;
+      font-size: 12px; color: rgba(255,255,255,0.6);
+    }
+    .history-table td.ht-cost {
+      text-align: right; font-family: 'Cinzel', serif;
+      font-size: 12px; color: #ef9a9a; font-weight: 600;
+    }
+    .history-modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      background: #0e0c09;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .history-total {
+      font-family: 'Cinzel', serif; font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+    .history-total strong { color: #ef9a9a; }
+    .history-empty {
+      text-align: center; padding: 60px 20px;
+      color: rgba(255,255,255,0.2); font-style: italic;
+      font-family: 'Crimson Text', serif; font-size: 16px;
+    }
+    .history-empty-icon { font-size: 40px; display: block; margin-bottom: 12px; opacity: 0.3; }
+
     .gm-toggle-btn {
       background: transparent; border: 1px solid rgba(255,215,0,0.35); color: rgba(255,215,0,0.6);
       padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 10px;
@@ -164,9 +277,9 @@
       content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.15);
     }
     .sidebar-category {
-      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.5); font-size: 8px;
-      letter-spacing: 2px; text-transform: uppercase;
-      padding: 10px 12px 4px;
+      font-family: 'Cinzel', serif; color: rgba(255,255,255,0.85); font-size: 11px;
+      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      padding: 12px 12px 5px;
     }
     .sidebar-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 6px 8px; }
     .shop-tab {
@@ -545,6 +658,7 @@
         <div class="coin cp"><span class="coin-amount" id="wallet-cp">0</span><span class="coin-label">CP</span></div>
         <button class="wallet-edit-btn" onclick="openWalletModal()">✏ Edit</button>
       </div>
+      <button class="history-btn" onclick="openHistoryModal()">📜 History</button>
       <button class="gm-toggle-btn" onclick="handleGMButton()">🔒 GM</button>
     </div>
     <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;">
@@ -578,11 +692,6 @@
           <div class="shop-ornament" id="shop-ornament">✦ &nbsp; &nbsp; ✦ &nbsp; &nbsp; ✦</div>
         </div>
         <div class="items-grid" id="items-grid"></div>
-      </div>
-      <div class="history-section">
-        <div class="history-title">📜 Purchase History</div>
-        <div class="history-list" id="history-list"></div>
-        <button class="clear-history" onclick="clearHistory()">Clear History</button>
       </div>
     </div>
   </div>
@@ -665,6 +774,24 @@
       <button class="btn-confirm" onclick="saveGMItem()">Save</button>
       <button class="btn-danger" id="gm-edit-delete" onclick="deleteGMItem()" style="display:none;">Delete</button>
       <button class="btn-cancel" onclick="closeGMEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div class="history-modal-overlay" id="history-modal">
+  <div class="history-modal">
+    <div class="history-modal-header">
+      <div class="history-modal-title">
+        📜 Purchase History
+        <span>MERCHANT'S LEDGER</span>
+      </div>
+      <button class="history-modal-close" onclick="closeHistoryModal()">✕</button>
+    </div>
+    <div class="history-modal-body" id="history-modal-body"></div>
+    <div class="history-modal-footer">
+      <div class="history-total" id="history-total"></div>
+      <button class="clear-history" onclick="clearHistory()">🗑 Clear History</button>
     </div>
   </div>
 </div>
@@ -1398,12 +1525,51 @@ function closeWalletModal() { document.getElementById("wallet-modal").classList.
 // ═══════════════════════════════════════════════════════════════
 // HISTORIQUE
 // ═══════════════════════════════════════════════════════════════
-function renderHistory() {
-  const list = document.getElementById("history-list");
-  if (!history.length) { list.innerHTML = '<div class="empty-history">No purchases yet...</div>'; return; }
-  list.innerHTML = history.map(h => '<div class="history-item"><span class="hi-name">' + h.time + ' — ' + h.qty + '× ' + h.name + ' <span style="opacity:0.4;font-size:10px;">(' + h.shop.replace("Sales | ","") + ')</span></span><span class="hi-cost">−' + fmtCp(h.totalCp) + '</span></div>').join("");
+function openHistoryModal() {
+  renderHistory();
+  document.getElementById("history-modal").classList.add("open");
 }
-function clearHistory() { history = []; localStorage.removeItem("shopHistory3"); renderHistory(); }
+function closeHistoryModal() {
+  document.getElementById("history-modal").classList.remove("open");
+}
+function renderHistory() {
+  const body = document.getElementById("history-modal-body");
+  const totalEl = document.getElementById("history-total");
+  if (!body) return;
+  if (!history.length) {
+    body.innerHTML = '<div class="history-empty"><span class="history-empty-icon">📜</span>No purchases recorded yet.</div>';
+    if (totalEl) totalEl.innerHTML = "";
+    return;
+  }
+  const totalCp = history.reduce(function(s, h) { return s + h.totalCp; }, 0);
+  body.innerHTML =
+    '<table class="history-table">' +
+    '<thead><tr>' +
+      '<th>Time</th>' +
+      '<th>Item</th>' +
+      '<th>Shop</th>' +
+      '<th style="text-align:center">Qty</th>' +
+      '<th style="text-align:right">Cost</th>' +
+    '</tr></thead>' +
+    '<tbody>' +
+    history.map(function(h) {
+      return '<tr>' +
+        '<td class="ht-time">' + h.time + '</td>' +
+        '<td class="ht-item">' + h.name + '</td>' +
+        '<td class="ht-shop">' + h.shop.replace("Sales | ", "") + '</td>' +
+        '<td class="ht-qty">× ' + h.qty + '</td>' +
+        '<td class="ht-cost">− ' + fmtCp(h.totalCp) + '</td>' +
+      '</tr>';
+    }).join("") +
+    '</tbody></table>';
+  if (totalEl) totalEl.innerHTML = history.length + ' purchase' + (history.length > 1 ? 's' : '') + ' &nbsp;|&nbsp; Total spent: <strong>− ' + fmtCp(totalCp) + '</strong>';
+}
+function clearHistory() {
+  history = [];
+  localStorage.removeItem("shopHistory3");
+  renderHistory();
+  showToast("History cleared.");
+}
 
 // ═══════════════════════════════════════════════════════════════
 // TOAST
@@ -1608,13 +1774,14 @@ function deleteGMItem() {
 updateWalletDisplay();
 renderHistory();
 
-["buy-modal","wallet-modal","gm-login-modal","gm-edit-modal"].forEach(id => {
+["buy-modal","wallet-modal","gm-login-modal","gm-edit-modal","history-modal"].forEach(id => {
   document.getElementById(id).addEventListener("click", e => {
     if (e.target !== document.getElementById(id)) return;
     if (id === "buy-modal") closeModal();
     else if (id === "wallet-modal") closeWalletModal();
     else if (id === "gm-login-modal") closeGMLogin();
     else if (id === "gm-edit-modal") closeGMEditModal();
+    else if (id === "history-modal") closeHistoryModal();
   });
 });
 </script>
