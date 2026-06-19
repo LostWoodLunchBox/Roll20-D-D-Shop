@@ -2353,6 +2353,12 @@ document.addEventListener("keydown", e => {
     else if (id === "sell-modal") closeSellModal();
   });
 });
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
