@@ -532,18 +532,27 @@
 
     /* ── RARITY BADGES ── */
     .rarity-badge {
-      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px;
-      padding: 2px 7px; border-radius: 10px; text-transform: uppercase; font-weight: 700;
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1.5px;
+      padding: 3px 9px; border-radius: 4px; text-transform: uppercase; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 5px;
     }
-    .rarity-badge.Common    { background: rgba(157,157,157,0.12); color:#9d9d9d; border:1px solid rgba(157,157,157,0.25); }
-    .rarity-badge.Uncommon  { background: rgba(30,200,0,0.12);    color:#4dcc20; border:1px solid rgba(30,200,0,0.3); }
-    .rarity-badge.Rare      { background: rgba(0,100,220,0.15);   color:#5fa8ff; border:1px solid rgba(0,100,220,0.35); }
-    .rarity-badge.VeryRare  { background: rgba(163,53,238,0.15);  color:#c07aff; border:1px solid rgba(163,53,238,0.4); }
-    .rarity-badge.Legendary { background: rgba(255,128,0,0.15);   color:#ff9040; border:1px solid rgba(255,128,0,0.4); }
-    .item-card[data-rarity="Uncommon"]  { border-top: 2px solid rgba(30,200,0,0.45); }
-    .item-card[data-rarity="Rare"]      { border-top: 2px solid rgba(0,100,220,0.55); }
-    .item-card[data-rarity="Very Rare"] { border-top: 2px solid rgba(163,53,238,0.6); }
-    .item-card[data-rarity="Legendary"] { border-top: 2px solid rgba(255,128,0,0.7); box-shadow: 0 0 12px rgba(255,128,0,0.12); }
+    .rarity-badge::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+    }
+    .rarity-badge.Common    { background: rgba(140,140,140,0.18); color:#b8b8b8; border:1px solid rgba(180,180,180,0.35); }
+    .rarity-badge.Common::before { background: #b8b8b8; }
+    .rarity-badge.Uncommon  { background: rgba(0,180,30,0.18);    color:#1fff55; border:1px solid rgba(0,200,40,0.5); text-shadow: 0 0 8px rgba(0,220,50,0.4); }
+    .rarity-badge.Uncommon::before { background: #1fff55; box-shadow: 0 0 6px rgba(0,255,60,0.7); }
+    .rarity-badge.Rare      { background: rgba(0,90,255,0.18);    color:#5ab4ff; border:1px solid rgba(30,120,255,0.55); text-shadow: 0 0 8px rgba(50,130,255,0.4); }
+    .rarity-badge.Rare::before { background: #5ab4ff; box-shadow: 0 0 6px rgba(60,140,255,0.7); }
+    .rarity-badge.VeryRare  { background: rgba(150,0,255,0.18);   color:#d966ff; border:1px solid rgba(170,30,255,0.55); text-shadow: 0 0 8px rgba(180,0,255,0.4); }
+    .rarity-badge.VeryRare::before { background: #d966ff; box-shadow: 0 0 6px rgba(190,0,255,0.7); }
+    .rarity-badge.Legendary { background: rgba(255,140,0,0.18);   color:#ffb833; border:1px solid rgba(255,160,0,0.6); text-shadow: 0 0 8px rgba(255,160,0,0.5); }
+    .rarity-badge.Legendary::before { background: #ffb833; box-shadow: 0 0 6px rgba(255,160,0,0.8); }
+    .item-card[data-rarity="Uncommon"]  { border-top: 2px solid rgba(0,200,40,0.6); }
+    .item-card[data-rarity="Rare"]      { border-top: 2px solid rgba(30,120,255,0.7); }
+    .item-card[data-rarity="Very Rare"] { border-top: 2px solid rgba(170,30,255,0.75); box-shadow: 0 0 8px rgba(150,0,255,0.08); }
+    .item-card[data-rarity="Legendary"] { border-top: 2px solid rgba(255,160,0,0.85); box-shadow: 0 0 14px rgba(255,140,0,0.15); }
 
     /* ── SHOP CLOSED ── */
     .shop-closed-overlay {
@@ -733,33 +742,39 @@
 
     /* ── SEARCH BAR ── */
     .shop-search-wrap {
-      padding: 10px 28px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 100%);
-      border-bottom: 1px solid rgba(0,0,0,0.1);
+      padding: 12px 20px;
+      background: rgba(0,0,0,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       display: flex; gap: 8px; align-items: center;
     }
     .stock-filter-btn {
-      flex-shrink: 0; height: 36px; padding: 0 12px;
+      flex-shrink: 0; height: 38px; padding: 0 13px;
       font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1px;
-      background: rgba(0,0,0,0.15); color: var(--text); opacity: 0.6;
-      border: 1px solid rgba(0,0,0,0.2); border-radius: 7px;
+      background: rgba(255,255,255,0.07); color: var(--text); opacity: 0.75;
+      border: 1px solid rgba(255,255,255,0.18); border-radius: 7px;
       cursor: pointer; transition: all 0.2s; white-space: nowrap;
     }
+    .stock-filter-btn:hover { opacity: 1; background: rgba(255,255,255,0.12); }
     .stock-filter-btn.active {
       background: var(--accent); color: #fff; opacity: 1;
-      border-color: var(--accent); box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      border-color: var(--accent); box-shadow: 0 0 10px rgba(0,0,0,0.4);
     }
     .shop-search {
-      width: 100%; padding: 8px 14px 8px 36px;
+      width: 100%; padding: 9px 14px 9px 38px;
       font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.5px;
-      background: rgba(0,0,0,0.2); color: var(--text);
-      border: 1px solid rgba(0,0,0,0.2); border-radius: 7px;
-      outline: none; transition: all 0.2s;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.35)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: 12px center;
+      background: rgba(0,0,0,0.45); color: #f0e8d8;
+      border: 1px solid rgba(255,255,255,0.25); border-radius: 7px;
+      outline: none; transition: all 0.25s;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(255,232,180,0.5)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: 14px center;
     }
-    .shop-search:focus { border-color: var(--accent); background-color: rgba(0,0,0,0.1); box-shadow: 0 0 0 2px rgba(0,0,0,0.08); }
-    .shop-search::placeholder { color: rgba(0,0,0,0.35); font-style: italic; }
+    .shop-search:focus {
+      border-color: var(--accent);
+      background-color: rgba(0,0,0,0.55);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.3), 0 0 0 2px rgba(var(--accent-rgb,180,80,0),0.25), 0 0 12px rgba(0,0,0,0.2);
+    }
+    .shop-search::placeholder { color: rgba(240,232,216,0.35); font-style: italic; }
     .search-no-results {
       text-align: center; padding: 40px 20px; grid-column: 1/-1;
       font-family: 'Crimson Text', serif; font-size: 15px;
