@@ -629,7 +629,9 @@
       text-align: center; line-height: 2;
       border: 1px solid rgba(0,0,0,0.1);
     }
-    .modal-warning { color: #c62828; font-size: 12px; font-style: italic; margin-bottom: 10px; display: none; }
+    .modal-warning { font-size: 12px; font-style: italic; margin-bottom: 10px; display: none; }
+    .modal-warning.no-funds { color: #c62828; }
+    .modal-warning.no-budget { color: rgba(0,0,0,0.45); }
     .modal-buttons { display: flex; gap: 10px; margin-top: 6px; }
     .btn-confirm {
       flex: 1; padding: 11px; font-family: 'Cinzel', serif; font-size: 11px;
@@ -734,6 +736,18 @@
       padding: 10px 28px;
       background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 100%);
       border-bottom: 1px solid rgba(0,0,0,0.1);
+      display: flex; gap: 8px; align-items: center;
+    }
+    .stock-filter-btn {
+      flex-shrink: 0; height: 36px; padding: 0 12px;
+      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1px;
+      background: rgba(0,0,0,0.15); color: var(--text); opacity: 0.6;
+      border: 1px solid rgba(0,0,0,0.2); border-radius: 7px;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .stock-filter-btn.active {
+      background: var(--accent); color: #fff; opacity: 1;
+      border-color: var(--accent); box-shadow: 0 0 8px rgba(0,0,0,0.3);
     }
     .shop-search {
       width: 100%; padding: 8px 14px 8px 36px;
@@ -930,6 +944,7 @@
         </div>
         <div class="shop-search-wrap">
           <input class="shop-search" id="shop-search" type="text" placeholder="Search items…" oninput="filterItems()">
+          <button class="stock-filter-btn" id="stock-filter-btn" onclick="toggleStockFilter()">✓ In Stock</button>
         </div>
         <div class="items-grid" id="items-grid"></div>
       </div>
@@ -1730,27 +1745,37 @@ function savePlayerName() {
 // ═══════════════════════════════════════════════════════════════
 // SEARCH / FILTER
 // ═══════════════════════════════════════════════════════════════
+let showInStockOnly = false;
+
+function toggleStockFilter() {
+  showInStockOnly = !showInStockOnly;
+  const btn = document.getElementById("stock-filter-btn");
+  btn.classList.toggle("active", showInStockOnly);
+  filterItems();
+}
+
 function filterItems() {
   const q = (document.getElementById("shop-search").value || "").toLowerCase().trim();
   const cards = document.querySelectorAll("#items-grid .item-card");
   let visible = 0;
   cards.forEach(card => {
-    const name = (card.querySelector(".item-name")  || {}).textContent || "";
-    const desc = (card.querySelector(".item-desc")  || {}).textContent || "";
-    const match = !q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
-    card.style.display = match ? "" : "none";
-    if (match) visible++;
+    const name    = (card.querySelector(".item-name") || {}).textContent || "";
+    const desc    = (card.querySelector(".item-desc") || {}).textContent || "";
+    const inStock = !card.classList.contains("out-of-stock");
+    const matchQ  = !q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
+    const matchS  = !showInStockOnly || inStock;
+    card.style.display = (matchQ && matchS) ? "" : "none";
+    if (matchQ && matchS) visible++;
   });
-  // show/hide no-results message
   let noRes = document.getElementById("search-no-results");
-  if (!visible && q) {
+  if (!visible) {
     if (!noRes) {
       noRes = document.createElement("div");
       noRes.id = "search-no-results";
       noRes.className = "search-no-results";
       document.getElementById("items-grid").appendChild(noRes);
     }
-    noRes.textContent = 'No items match "' + q + '"';
+    noRes.textContent = showInStockOnly && !q ? "All items are sold out." : 'No items match "' + q + '"';
     noRes.style.display = "";
   } else if (noRes) {
     noRes.style.display = "none";
@@ -1956,11 +1981,26 @@ function updateModalTotal() {
   if (!pendingItem) return;
   const qty = parseInt(document.getElementById("modal-qty").value) || 1;
   const totalCp = priceInCp(pendingItem.item.price) * qty;
-  const hasFunds = walletInCp() >= totalCp;
+  const budget = walletInCp();
+  const hasFunds = budget >= totalCp;
+  const noBudget = budget === 0;
+  const warn = document.getElementById("modal-warning");
   document.getElementById("modal-total").innerHTML =
     "Total : <strong>" + fmtCp(totalCp) + "</strong>";
-  document.getElementById("modal-warning").style.display = hasFunds ? "none" : "block";
-  document.getElementById("btn-confirm").disabled = !hasFunds;
+  if (noBudget) {
+    warn.className = "modal-warning no-budget";
+    warn.textContent = "💰 Set your budget by clicking the wallet icon in the header.";
+    warn.style.display = "block";
+    document.getElementById("btn-confirm").disabled = false;
+  } else if (!hasFunds) {
+    warn.className = "modal-warning no-funds";
+    warn.textContent = "⚠️ Pas assez d'argent!";
+    warn.style.display = "block";
+    document.getElementById("btn-confirm").disabled = true;
+  } else {
+    warn.style.display = "none";
+    document.getElementById("btn-confirm").disabled = false;
+  }
   document.getElementById("modal-command").textContent = "!shop-buy " + activeShop.replace(/\|/g, "%7C") + "~~" + pendingItem.item.name + "~~" + qty;
 }
 
