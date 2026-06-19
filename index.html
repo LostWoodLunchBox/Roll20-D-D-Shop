@@ -819,6 +819,20 @@
     }
 
     /* ══════════════════════════════════════════════
+       TACTILE — petits écrans tactiles en paysage
+       (ROG Ally 1280×800, Steam Deck, etc.) — sidebar
+       reste verticale, on agrandit juste les cibles tactiles
+    ══════════════════════════════════════════════ */
+    @media (max-width: 1300px) and (pointer: coarse) {
+      .buy-btn  { min-height: 44px; font-size: 12px; padding: 0 14px; }
+      .sell-btn { min-height: 44px; font-size: 11px; }
+      .item-edit-btn { width: 36px; height: 36px; min-height: 36px; }
+      .shop-tab { min-height: 44px; }
+      .stock-filter-btn { min-height: 44px; }
+      .shop-search { min-height: 44px; }
+    }
+
+    /* ══════════════════════════════════════════════
        RESPONSIVE — iPad portrait (≤820px)
        Sidebar → barre horizontale scrollable
     ══════════════════════════════════════════════ */
