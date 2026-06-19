@@ -137,6 +137,14 @@
     }
     .history-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: var(--accent2); opacity: 1; }
 
+    .dark-mode-btn {
+      background: transparent; border: 1px solid var(--accent); color: var(--accent2);
+      padding: 5px 10px; border-radius: 6px; font-size: 13px;
+      cursor: pointer; transition: all 0.2s; opacity: 0.8; line-height: 1;
+    }
+    .dark-mode-btn:hover { background: rgba(255,255,255,0.08); opacity: 1; }
+    body.dark-mode .dark-mode-btn { background: rgba(255,255,255,0.12); border-color: #fff; color: #fff; opacity: 1; }
+
     /* ── HISTORY MODAL ── */
     .history-modal-overlay {
       display: none; position: fixed; inset: 0;
@@ -774,6 +782,46 @@
       box-shadow: inset 0 2px 6px rgba(0,0,0,0.3), 0 0 0 2px rgba(var(--accent-rgb,180,80,0),0.25), 0 0 12px rgba(0,0,0,0.2);
     }
     .shop-search::placeholder { color: rgba(240,232,216,0.35); font-style: italic; }
+
+    .sort-select {
+      flex-shrink: 0; height: 38px; padding: 0 10px;
+      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.5px;
+      background: rgba(0,0,0,0.45); color: #f0e8d8;
+      border: 1px solid rgba(255,255,255,0.25); border-radius: 7px;
+      cursor: pointer; outline: none; transition: all 0.2s;
+    }
+    .sort-select:focus, .sort-select:hover { border-color: var(--accent); }
+    .sort-select option { background: #1a1a1a; color: #f0e8d8; }
+
+    #fav-filter-btn.active {
+      background: #b8860b; color: #fff; opacity: 1;
+      border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.3);
+    }
+
+    .results-count {
+      padding: 6px 24px 0; font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 1px; color: var(--text); opacity: 0.5; text-transform: uppercase;
+    }
+
+    /* ── FAVORITE STAR ── */
+    .fav-star {
+      position: absolute; top: 10px; right: 10px; z-index: 2;
+      background: none; border: none; cursor: pointer; font-size: 16px;
+      color: rgba(0,0,0,0.2); transition: all 0.15s; line-height: 1; padding: 2px;
+    }
+    .fav-star:hover { color: #b8860b; transform: scale(1.15); }
+    .fav-star.active { color: #ffb300; text-shadow: 0 0 6px rgba(255,179,0,0.6); }
+
+    /* ── DARK READING MODE ── */
+    body.dark-mode .item-card,
+    body.dark-mode .item-card:hover { background: #1c1c22 !important; }
+    body.dark-mode .item-card:hover { background: #26262e !important; }
+    body.dark-mode .item-name,
+    body.dark-mode .item-desc,
+    body.dark-mode .results-count,
+    body.dark-mode .price-free { color: #e8e6ea !important; }
+    body.dark-mode .fav-star { color: rgba(255,255,255,0.25); }
+    body.dark-mode .stock-badge.normal { background: rgba(255,255,255,0.1); color: #e8e6ea; border-color: rgba(255,255,255,0.2); }
     .search-no-results {
       text-align: center; padding: 40px 20px; grid-column: 1/-1;
       font-family: 'Crimson Text', serif; font-size: 15px;
@@ -938,6 +986,7 @@
         </div>
       </div>
       <button class="history-btn" onclick="openHistoryModal()">📜 History</button>
+      <button class="dark-mode-btn" id="dark-mode-btn" onclick="toggleDarkMode()" title="Toggle dark reading mode">🌙</button>
       <button class="gm-toggle-btn" onclick="handleGMButton()">🔒 GM</button>
     </div>
     <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;">
@@ -971,9 +1020,19 @@
           <div class="shop-ornament" id="shop-ornament">✦ &nbsp; &nbsp; ✦ &nbsp; &nbsp; ✦</div>
         </div>
         <div class="shop-search-wrap">
-          <input class="shop-search" id="shop-search" type="text" placeholder="Search items…" oninput="filterItems()">
+          <input class="shop-search" id="shop-search" type="text" placeholder="Search items… ( / )" oninput="filterItems()">
+          <select class="sort-select" id="sort-select" onchange="setSortMode(this.value)">
+            <option value="default">Sort: Default</option>
+            <option value="name-asc">Name A→Z</option>
+            <option value="name-desc">Name Z→A</option>
+            <option value="price-asc">Price ↑</option>
+            <option value="price-desc">Price ↓</option>
+            <option value="rarity">Rarity</option>
+          </select>
+          <button class="stock-filter-btn" id="fav-filter-btn" onclick="toggleFavFilter()" title="Show favorites only">★ Favorites</button>
           <button class="stock-filter-btn" id="stock-filter-btn" onclick="toggleStockFilter()">✓ In Stock</button>
         </div>
+        <div class="results-count" id="results-count"></div>
         <div class="items-grid" id="items-grid"></div>
       </div>
     </div>
@@ -2201,6 +2260,9 @@ function savePlayerName() {
 // SEARCH / FILTER
 // ═══════════════════════════════════════════════════════════════
 let showInStockOnly = false;
+let showFavOnly = false;
+let currentSort = "default";
+let favorites = new Set(JSON.parse(localStorage.getItem("shopFavorites") || "[]"));
 
 function toggleStockFilter() {
   showInStockOnly = !showInStockOnly;
@@ -2209,18 +2271,84 @@ function toggleStockFilter() {
   filterItems();
 }
 
+function toggleFavFilter() {
+  showFavOnly = !showFavOnly;
+  document.getElementById("fav-filter-btn").classList.toggle("active", showFavOnly);
+  filterItems();
+}
+
+function favKey(shopName, itemName) { return shopName + "::" + itemName; }
+
+function toggleFavorite(idx, btnEl) {
+  const item = SHOPS[activeShop].items[idx];
+  const key = favKey(activeShop, item.name);
+  if (favorites.has(key)) favorites.delete(key);
+  else favorites.add(key);
+  localStorage.setItem("shopFavorites", JSON.stringify([...favorites]));
+  if (btnEl) {
+    btnEl.classList.toggle("active", favorites.has(key));
+    btnEl.closest(".item-card").dataset.favorite = favorites.has(key) ? "true" : "false";
+    btnEl.textContent = favorites.has(key) ? "★" : "☆";
+  }
+  if (showFavOnly) filterItems();
+}
+
+function setSortMode(mode) {
+  currentSort = mode;
+  renderShop();
+}
+
+function sortedIndices(items) {
+  const idxs = items.map((_, i) => i);
+  const rarityOrder = { "Common":0, "Uncommon":1, "Rare":2, "Very Rare":3, "VeryRare":3, "Legendary":4 };
+  switch (currentSort) {
+    case "name-asc":  idxs.sort((a,b) => items[a].name.localeCompare(items[b].name)); break;
+    case "name-desc": idxs.sort((a,b) => items[b].name.localeCompare(items[a].name)); break;
+    case "price-asc": idxs.sort((a,b) => priceInCp(items[a].price) - priceInCp(items[b].price)); break;
+    case "price-desc":idxs.sort((a,b) => priceInCp(items[b].price) - priceInCp(items[a].price)); break;
+    case "rarity":    idxs.sort((a,b) => (rarityOrder[items[a].rarity||"Common"]||0) - (rarityOrder[items[b].rarity||"Common"]||0)); break;
+  }
+  return idxs;
+}
+
+/* ── DARK READING MODE ── */
+function toggleDarkMode() {
+  const on = document.body.classList.toggle("dark-mode");
+  localStorage.setItem("darkMode", on ? "1" : "0");
+  document.getElementById("dark-mode-btn").textContent = on ? "☀" : "🌙";
+}
+if (localStorage.getItem("darkMode") === "1") {
+  document.body.classList.add("dark-mode");
+  document.getElementById("dark-mode-btn").textContent = "☀";
+}
+
+/* ── KEYBOARD SHORTCUT: focus search with "/" or Ctrl/Cmd+K ── */
+document.addEventListener("keydown", e => {
+  const tag = (document.activeElement && document.activeElement.tagName) || "";
+  const typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+  if ((e.key === "/" && !typing) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k")) {
+    e.preventDefault();
+    const search = document.getElementById("shop-search");
+    if (search) search.focus();
+  }
+});
+
 function filterItems() {
   const q = (document.getElementById("shop-search").value || "").toLowerCase().trim();
   const cards = document.querySelectorAll("#items-grid .item-card");
   let visible = 0;
+  const total = cards.length;
   cards.forEach(card => {
     const name    = (card.querySelector(".item-name") || {}).textContent || "";
     const desc    = (card.querySelector(".item-desc") || {}).textContent || "";
     const inStock = !card.classList.contains("out-of-stock");
+    const isFav   = card.dataset.favorite === "true";
     const matchQ  = !q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
     const matchS  = !showInStockOnly || inStock;
-    card.style.display = (matchQ && matchS) ? "" : "none";
-    if (matchQ && matchS) visible++;
+    const matchF  = !showFavOnly || isFav;
+    const show = matchQ && matchS && matchF;
+    card.style.display = show ? "" : "none";
+    if (show) visible++;
   });
   let noRes = document.getElementById("search-no-results");
   if (!visible) {
@@ -2230,11 +2358,14 @@ function filterItems() {
       noRes.className = "search-no-results";
       document.getElementById("items-grid").appendChild(noRes);
     }
-    noRes.textContent = showInStockOnly && !q ? "All items are sold out." : 'No items match "' + q + '"';
+    noRes.textContent = showFavOnly ? "No favorites yet — click ☆ on an item." :
+                         (showInStockOnly && !q ? "All items are sold out." : 'No items match "' + q + '"');
     noRes.style.display = "";
   } else if (noRes) {
     noRes.style.display = "none";
   }
+  const counter = document.getElementById("results-count");
+  if (counter) counter.textContent = visible === total ? total + " items" : visible + " / " + total + " items";
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2382,15 +2513,19 @@ function renderShop() {
       '<h3>Shop Temporarily Closed</h3>' +
       '<p>The merchant is unavailable. Come back later.</p>';
     grid.appendChild(overlay);
+    document.getElementById("results-count").textContent = "";
     return;
   }
 
-  shop.items.forEach((item, idx) => {
+  sortedIndices(shop.items).forEach(idx => {
+    const item = shop.items[idx];
     const inStock = item.stock > 0;
     const rarity  = item.rarity || "Common";
+    const isFav = favorites.has(favKey(activeShop, item.name));
     const card = document.createElement("div");
     card.className = "item-card" + (!inStock ? " out-of-stock" : "");
     card.dataset.rarity = rarity;
+    card.dataset.favorite = isFav ? "true" : "false";
 
     let stockClass = "stock-badge normal", stockText = "× " + item.stock;
     if (!inStock) { stockClass = "stock-badge out"; stockText = "Out of Stock"; }
@@ -2398,6 +2533,7 @@ function renderShop() {
 
     const rarityClass = rarity.replace(" ", "");
     card.innerHTML =
+      '<button class="fav-star' + (isFav ? " active" : "") + '" onclick="event.stopPropagation();toggleFavorite(' + idx + ',this)" title="Toggle favorite">' + (isFav ? "★" : "☆") + '</button>' +
       '<div class="item-name">' + item.name + '</div>' +
       '<div class="item-desc">' + (item.desc || "") + '</div>' +
       '<div class="price-row" style="margin-top:6px;">' + fmtPriceHTML(item.price) + '</div>' +
@@ -2416,6 +2552,7 @@ function renderShop() {
       '</div>';
     grid.appendChild(card);
   });
+  filterItems();
 }
 
 // ═══════════════════════════════════════════════════════════════
