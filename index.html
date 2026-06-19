@@ -1574,9 +1574,10 @@ function snapshotToShops(data) {
   const shops = {};
   Object.keys(data).forEach(key => {
     const s = data[key];
+    const def = DEFAULT_SHOPS[key] || {};
     shops[key] = {
-      icon: s.icon || "🏪",
-      theme: s.theme || "theme-weapons",
+      icon: s.icon || def.icon || "🏪",
+      theme: s.theme || def.theme || "theme-weapons",
       description: s.description || "",
       sellMultiplier: s.sellMultiplier || 0.5,
       isOpen: s.isOpen !== false,
