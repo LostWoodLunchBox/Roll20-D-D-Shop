@@ -824,11 +824,16 @@
       --card: #1c1c22;
       --card-hover: #26262e;
       --text: #e8e6ea;
+      --price: #ff8a80;
     }
     body.dark-mode .fav-star { color: rgba(255,255,255,0.25); }
     body.dark-mode .stock-badge.normal { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
-    body.dark-mode .modal-warning.no-budget { color: rgba(255,255,255,0.45); }
-    body.dark-mode .modal-total { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+    body.dark-mode .modal label { opacity: 0.85; }
+    body.dark-mode .modal-warning.no-budget { color: rgba(255,255,255,0.55); }
+    body.dark-mode .modal-total { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+    body.dark-mode .btn-confirm { color: #ffb3ab; border-color: #ff8a80; }
+    body.dark-mode .btn-confirm:hover:not(:disabled) { background: #ff5547; color: #1a1a1a; }
+    body.dark-mode .btn-cancel { opacity: 0.85; }
     .search-no-results {
       text-align: center; padding: 40px 20px; grid-column: 1/-1;
       font-family: 'Crimson Text', serif; font-size: 15px;
