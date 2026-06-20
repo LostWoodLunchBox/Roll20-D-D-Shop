@@ -103,31 +103,7 @@
     .player-name-input:focus { border-color: rgba(255,255,255,0.5); }
 
     .wallet-display { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .coin {
-      display: flex; flex-direction: column; align-items: center;
-      background: rgba(0,0,0,0.35);
-      border-radius: 8px; padding: 5px 10px; min-width: 52px;
-      position: relative; overflow: hidden;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .coin::before {
-      content: ""; position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
-      pointer-events: none;
-    }
-    .coin-amount { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; line-height: 1; }
-    .coin-label  { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; opacity: 0.65; }
-    .coin.pp { color: #d0d8ff; border: 1px solid rgba(180,180,255,0.3); }
-    .coin.gp { color: #ffd700; border: 1px solid rgba(255,215,0,0.35); box-shadow: 0 0 10px rgba(255,215,0,0.08); }
-    .coin.sp { color: #d8d8d8; border: 1px solid rgba(210,210,210,0.3); }
-    .coin.cp { color: #e09050; border: 1px solid rgba(205,127,50,0.3); }
     .conversion-note { color: rgba(255,255,255,0.3); font-size: 10px; font-style: italic; text-align: right; }
-    .wallet-edit-btn {
-      background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5);
-      padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 10px;
-      cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
-    }
-    .wallet-edit-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); border-color: rgba(255,255,255,0.4); }
 
     .history-btn {
       background: transparent; border: 1px solid var(--accent); color: var(--accent2);
@@ -652,9 +628,6 @@
       text-align: center; line-height: 2;
       border: 1px solid rgba(0,0,0,0.1);
     }
-    .modal-warning { font-size: 12px; font-style: italic; margin-bottom: 10px; display: none; }
-    .modal-warning.no-funds { color: #c62828; }
-    .modal-warning.no-budget { color: rgba(0,0,0,0.45); }
     .modal-buttons { display: flex; gap: 10px; margin-top: 6px; }
     .btn-confirm {
       flex: 1; padding: 11px; font-family: 'Cinzel', serif; font-size: 11px;
@@ -683,9 +656,6 @@
       color: #00e87a; word-break: break-all; margin: 8px 0 14px;
       line-height: 1.6;
     }
-    .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 8px; }
-    .wallet-field label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-    .wallet-field input { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Cinzel', serif; font-size: 15px; background: var(--card-hover); color: var(--text); }
     .price-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
     .price-field label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 4px; }
     .price-field input { width: 100%; padding: 7px 8px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Cinzel', serif; font-size: 14px; background: var(--card-hover); color: var(--text); margin-bottom: 0; }
@@ -836,7 +806,6 @@
     body.dark-mode .fav-star { color: rgba(255,255,255,0.25); }
     body.dark-mode .stock-badge.normal { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
     body.dark-mode .modal label { opacity: 0.85; }
-    body.dark-mode .modal-warning.no-budget { color: rgba(255,255,255,0.55); }
     body.dark-mode .modal-total { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
     body.dark-mode .btn-confirm { color: #ffb3ab; border-color: #ff8a80; }
     body.dark-mode .btn-confirm:hover:not(:disabled) { background: #ff5547; color: #1a1a1a; }
@@ -980,8 +949,6 @@
       .shop-tab { font-size: 0; padding: 10px 12px; }
       .shop-tab .tab-icon { font-size: 20px; }
       .header-title { font-size: 16px; }
-      .coin { min-width: 36px; }
-      .coin-amount { font-size: 16px; }
       .modal { padding: 20px 16px; }
     }
   </style>
@@ -996,11 +963,6 @@
   <div class="header-right">
     <div class="header-top-row">
       <div class="wallet-display">
-        <div class="coin pp"><span class="coin-amount" id="wallet-pp">0</span><span class="coin-label">PP</span></div>
-        <div class="coin gp"><span class="coin-amount" id="wallet-gp">0</span><span class="coin-label">GP</span></div>
-        <div class="coin sp"><span class="coin-amount" id="wallet-sp">0</span><span class="coin-label">SP</span></div>
-        <div class="coin cp"><span class="coin-amount" id="wallet-cp">0</span><span class="coin-label">CP</span></div>
-        <button class="wallet-edit-btn" onclick="openWalletModal()">✏ Edit</button>
         <div class="player-name-wrap">
           <span class="player-name-display empty" id="player-name-display" onclick="editPlayerName()" title="Click to set your character name">⚔ Character</span>
           <input class="player-name-input" id="player-name-input" type="text" maxlength="24" placeholder="Character name…" onblur="savePlayerName()" onkeydown="if(event.key==='Enter')savePlayerName()">
@@ -1075,31 +1037,11 @@
     <label>Quantity</label>
     <input type="number" id="modal-qty" min="1" value="1" oninput="updateModalTotal()">
     <div class="modal-total" id="modal-total"></div>
-    <div class="modal-warning" id="modal-warning">⚠️ Pas assez d'argent!</div>
     <p style="font-size:11px;opacity:0.7;margin-bottom:5px;">Commande Roll20 à coller dans le chat :</p>
     <div class="command-box" id="modal-command"></div>
     <div class="modal-buttons">
       <button class="btn-confirm" id="btn-confirm" onclick="confirmPurchase()">Confirm & Copy</button>
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- WALLET MODAL -->
-<div class="modal-overlay" id="wallet-modal">
-  <div class="modal">
-    <h2>💰 Edit Wallet</h2>
-    <p style="font-size:12px;opacity:0.7;margin-top:8px;margin-bottom:12px;">Entre les valeurs de ta fiche de personnage.</p>
-    <div class="conversion-info">📐 Base 20 &nbsp;|&nbsp; <strong>20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 1000 GP = 1 PP</strong></div>
-    <div class="wallet-grid">
-      <div class="wallet-field"><label style="color:#e8e8ff;">Platinum (PP)</label><input type="number" id="edit-pp" min="0" value="0"></div>
-      <div class="wallet-field"><label style="color:#ffd700;">Gold (GP)</label><input type="number" id="edit-gp" min="0" value="0"></div>
-      <div class="wallet-field"><label style="color:#d0d0d0;">Silver (SP)</label><input type="number" id="edit-sp" min="0" value="0"></div>
-      <div class="wallet-field"><label style="color:#cd7f32;">Copper (CP)</label><input type="number" id="edit-cp" min="0" value="0"></div>
-    </div>
-    <div class="modal-buttons">
-      <button class="btn-confirm" onclick="saveWallet()">Save</button>
-      <button class="btn-cancel" onclick="closeWalletModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -2121,7 +2063,6 @@ const THEME_ACCENT = {
 // ═══════════════════════════════════════════════════════════════
 let SHOPS = {};
 let suppressFirebaseUpdate = false; // empêche le listener d'écraser nos propres saves
-let wallets     = JSON.parse(localStorage.getItem("shopWallets") || "{}"); // portefeuille par magasin
 let history     = JSON.parse(localStorage.getItem("shopHistory3") || "[]");
 let activeShop  = "";
 let pendingItem = null;
@@ -2129,19 +2070,9 @@ let gmMode      = false;
 let gmEditingShop = null;
 let gmEditingIdx  = null;
 
-function getWallet(shopName) {
-  if (!wallets[shopName]) wallets[shopName] = { pp:0, gp:0, sp:0, cp:0 };
-  return wallets[shopName];
-}
-
-function saveWallets() {
-  localStorage.setItem("shopWallets", JSON.stringify(wallets));
-}
-
 // ═══════════════════════════════════════════════════════════════
 // CONVERSION BASE 20
 // ═══════════════════════════════════════════════════════════════
-function walletInCp() { const w = getWallet(activeShop); return w.pp*400000 + w.gp*400 + w.sp*20 + w.cp; }
 function priceInCp(p) { return (p.gp||0)*400 + (p.sp||0)*20 + (p.cp||0); }
 function cpToCoins(total) {
   let r = Math.round(total);
@@ -2257,26 +2188,6 @@ function fbSaveShopItems(shopName) {
 // ═══════════════════════════════════════════════════════════════
 // WALLET
 // ═══════════════════════════════════════════════════════════════
-function animateCount(el, target) {
-  const start = parseInt(el.textContent) || 0;
-  if (start === target) return;
-  const steps = Math.min(Math.abs(target - start), 12);
-  let step = 0;
-  const timer = setInterval(() => {
-    step++;
-    el.textContent = step >= steps ? target : Math.round(start + (target - start) * (step / steps));
-    if (step >= steps) clearInterval(timer);
-  }, 100 / steps);
-}
-
-function updateWalletDisplay() {
-  const w = getWallet(activeShop);
-  animateCount(document.getElementById("wallet-pp"), w.pp);
-  animateCount(document.getElementById("wallet-gp"), w.gp);
-  animateCount(document.getElementById("wallet-sp"), w.sp);
-  animateCount(document.getElementById("wallet-cp"), w.cp);
-  saveWallets();
-}
 
 function switchShop(name) {
   if (name === activeShop) return;
@@ -2289,7 +2200,6 @@ function switchShop(name) {
     try { window.history.replaceState({}, "", "?shop=" + encodeURIComponent(name.replace("Sales | ", ""))); } catch(e) {}
     renderTabs();
     renderShop();
-    updateWalletDisplay();
     panel.classList.remove("fading");
   }, 180);
 }
@@ -2661,26 +2571,8 @@ function updateModalTotal() {
   if (!pendingItem) return;
   const qty = parseInt(document.getElementById("modal-qty").value) || 1;
   const totalCp = priceInCp(pendingItem.item.price) * qty;
-  const budget = walletInCp();
-  const hasFunds = budget >= totalCp;
-  const noBudget = budget === 0;
-  const warn = document.getElementById("modal-warning");
   document.getElementById("modal-total").innerHTML =
     "Total : <strong>" + fmtCp(totalCp) + "</strong>";
-  if (noBudget) {
-    warn.className = "modal-warning no-budget";
-    warn.textContent = "💰 Set your budget by clicking the wallet icon in the header.";
-    warn.style.display = "block";
-    document.getElementById("btn-confirm").disabled = false;
-  } else if (!hasFunds) {
-    warn.className = "modal-warning no-funds";
-    warn.textContent = "⚠️ Pas assez d'argent!";
-    warn.style.display = "block";
-    document.getElementById("btn-confirm").disabled = true;
-  } else {
-    warn.style.display = "none";
-    document.getElementById("btn-confirm").disabled = false;
-  }
   document.getElementById("modal-command").textContent = "!shop-buy " + activeShop.replace(/\|/g, "%7C") + "~~" + pendingItem.item.name + "~~" + qty;
 }
 
@@ -2690,12 +2582,6 @@ function confirmPurchase() {
   const item  = pendingItem.item;
   const idx   = pendingItem.idx;
   const totalCp = priceInCp(item.price) * qty;
-  const budgetBefore = walletInCp();
-  // No budget set (0) = untracked spending; never push the wallet negative.
-  if (budgetBefore > 0) {
-    wallets[activeShop] = cpToCoins(Math.max(0, budgetBefore - totalCp));
-    updateWalletDisplay();
-  }
   SHOPS[activeShop].items[idx].stock -= qty;
   fbUpdateStock(activeShop, idx, SHOPS[activeShop].items[idx].stock);
   const cmd = "!shop-buy " + activeShop.replace(/\|/g, "%7C") + "~~" + item.name + "~~" + qty;
@@ -2708,22 +2594,6 @@ function confirmPurchase() {
 }
 
 function closeModal() { document.getElementById("buy-modal").classList.remove("open"); pendingItem = null; }
-
-// ═══════════════════════════════════════════════════════════════
-// WALLET MODAL
-// ═══════════════════════════════════════════════════════════════
-function openWalletModal() {
-  const w = getWallet(activeShop);
-  ["pp","gp","sp","cp"].forEach(k => document.getElementById("edit-"+k).value = w[k]);
-  // Affiche le nom du magasin dans le titre de la modale
-  document.querySelector("#wallet-modal h2").textContent = "💰 " + activeShop.replace("Sales | ","");
-  document.getElementById("wallet-modal").classList.add("open");
-}
-function saveWallet() {
-  wallets[activeShop] = { pp:parseInt(document.getElementById("edit-pp").value)||0, gp:parseInt(document.getElementById("edit-gp").value)||0, sp:parseInt(document.getElementById("edit-sp").value)||0, cp:parseInt(document.getElementById("edit-cp").value)||0 };
-  updateWalletDisplay(); closeWalletModal(); renderShop(); showToast("💰 Wallet updated!");
-}
-function closeWalletModal() { document.getElementById("wallet-modal").classList.remove("open"); }
 
 // ═══════════════════════════════════════════════════════════════
 // HISTORIQUE
@@ -3041,20 +2911,18 @@ function deleteGMItem() {
 // ═══════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════
-updateWalletDisplay();
 loadPlayerName();
 renderHistory();
 
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
-  closeModal(); closeWalletModal(); closeGMLogin(); closeGMEditModal(); closeHistoryModal(); closeSellModal();
+  closeModal(); closeGMLogin(); closeGMEditModal(); closeHistoryModal(); closeSellModal();
 });
 
-["buy-modal","wallet-modal","gm-login-modal","gm-edit-modal","history-modal","sell-modal"].forEach(id => {
+["buy-modal","gm-login-modal","gm-edit-modal","history-modal","sell-modal"].forEach(id => {
   document.getElementById(id).addEventListener("click", e => {
     if (e.target !== document.getElementById(id)) return;
     if (id === "buy-modal") closeModal();
-    else if (id === "wallet-modal") closeWalletModal();
     else if (id === "gm-login-modal") closeGMLogin();
     else if (id === "gm-edit-modal") closeGMEditModal();
     else if (id === "history-modal") closeHistoryModal();
