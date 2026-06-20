@@ -472,6 +472,10 @@
     }
 
     /* ── ITEM CARD ── */
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     .item-card {
       background: var(--card);
       padding: 16px 18px 14px;
@@ -480,6 +484,7 @@
       border-bottom: 1px solid rgba(0,0,0,0.1);
       position: relative;
       display: flex; flex-direction: column; gap: 6px;
+      animation: cardFadeIn 0.32s ease backwards;
     }
     .item-card::before {
       content: "";
@@ -614,23 +619,35 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.45), 0 0 10px rgba(255,255,255,0.07);
       transform: translateY(-1px);
     }
+    /* ── PRESS FEEDBACK ── */
+    .buy-btn:active:not(:disabled), .sell-btn:active, .btn-confirm:active:not(:disabled),
+    .btn-cancel:active, .btn-danger:active, .history-btn:active, .gm-toggle-btn:active,
+    .dark-mode-btn:active, .stock-filter-btn:active, .item-edit-btn:active,
+    .history-copy-btn:active, .fav-star:active, .shop-tab:active {
+      transform: scale(0.94) !important;
+      transition: transform 0.08s ease !important;
+    }
     .buy-btn:active:not(:disabled) { transform: translateY(0); filter: brightness(0.95); }
     .buy-btn:disabled { opacity: 0.28; cursor: not-allowed; background: rgba(0,0,0,0.2); border-color: rgba(0,0,0,0.2); }
 
     /* ── MODALS ── */
     .modal-overlay {
-      display: none; position: fixed; inset: 0;
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
       background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
-      z-index: 200; align-items: center; justify-content: center;
+      z-index: 200; opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
     }
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
     .modal {
       background: var(--card); border: 1px solid var(--border);
       border-radius: 12px; padding: 28px; max-width: 420px; width: 90%;
       box-shadow: 0 30px 80px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.04);
       max-height: 90vh; overflow-y: auto;
+      transform: scale(0.93) translateY(12px); opacity: 0;
+      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), opacity 0.2s ease;
     }
     .modal.wide { max-width: 480px; }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); opacity: 1; }
     .modal h2 {
       font-family: 'Cinzel', serif; color: var(--price); font-size: 16px;
       margin-bottom: 12px; padding-bottom: 10px;
@@ -2628,7 +2645,7 @@ function renderShop() {
     return;
   }
 
-  sortedIndices(shop.items).forEach(idx => {
+  sortedIndices(shop.items).forEach((idx, pos) => {
     const item = shop.items[idx];
     const inStock = item.stock > 0;
     const rarity  = item.rarity || "Common";
@@ -2637,6 +2654,7 @@ function renderShop() {
     card.className = "item-card" + (!inStock ? " out-of-stock" : "");
     card.dataset.rarity = rarity;
     card.dataset.favorite = isFav ? "true" : "false";
+    card.style.animationDelay = (Math.min(pos, 14) * 0.025) + "s";
 
     let stockClass = "stock-badge normal", stockText = "× " + item.stock;
     if (!inStock) { stockClass = "stock-badge out"; stockText = "Out of Stock"; }
