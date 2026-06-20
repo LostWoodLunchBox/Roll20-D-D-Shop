@@ -2226,11 +2226,22 @@ db.ref("shops").on("value", snapshot => {
 });
 
 function fbUpdateStock(shopName, idx, newStock) {
-  db.ref("shops/" + shopName + "/items/" + idx + "/stock").set(newStock).catch(console.error);
+  return db.ref("shops/" + shopName + "/items/" + idx + "/stock").set(newStock).catch(console.error);
 }
 
 function fbSaveTreasury(shopName) {
-  db.ref("shops/" + shopName + "/treasury").set(SHOPS[shopName].treasury).catch(console.error);
+  return db.ref("shops/" + shopName + "/treasury").set(SHOPS[shopName].treasury).catch(console.error);
+}
+
+// Wraps a stock + treasury update so the Firebase listener can't clobber our
+// local SHOPS mutation with a stale snapshot mid-transaction (the listener
+// fires as soon as ANY child write lands, even before the second write completes).
+function fbSaveStockAndTreasury(shopName, idx, newStock) {
+  suppressFirebaseUpdate = true;
+  return Promise.all([
+    fbUpdateStock(shopName, idx, newStock),
+    fbSaveTreasury(shopName)
+  ]).finally(() => { suppressFirebaseUpdate = false; });
 }
 
 function fbSaveShopItems(shopName) {
@@ -2461,9 +2472,8 @@ function confirmSell() {
   }
 
   shop.items[idx].stock += qty;
-  fbUpdateStock(activeShop, idx, shop.items[idx].stock);
   shop.treasury = treasury - sellCp;
-  fbSaveTreasury(activeShop);
+  fbSaveStockAndTreasury(activeShop, idx, shop.items[idx].stock);
 
   const cmd = document.getElementById("sell-command").textContent;
   navigator.clipboard.writeText(cmd).catch(()=>{});
@@ -2655,9 +2665,8 @@ function confirmPurchase() {
   const idx   = pendingItem.idx;
   const totalCp = priceInCp(item.price) * qty;
   SHOPS[activeShop].items[idx].stock -= qty;
-  fbUpdateStock(activeShop, idx, SHOPS[activeShop].items[idx].stock);
   SHOPS[activeShop].treasury = (SHOPS[activeShop].treasury !== undefined ? SHOPS[activeShop].treasury : 40000) + totalCp;
-  fbSaveTreasury(activeShop);
+  fbSaveStockAndTreasury(activeShop, idx, SHOPS[activeShop].items[idx].stock);
   const cmd = "!shop-buy " + activeShop.replace(/\|/g, "%7C") + "~~" + item.name + "~~" + qty;
   navigator.clipboard.writeText(cmd).catch(()=>{});
   history.unshift({ name:item.name, qty, totalCp, shop:activeShop, cmd, time:new Date().toLocaleTimeString("fr-CA",{hour:"2-digit",minute:"2-digit"}) });
