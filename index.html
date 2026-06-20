@@ -2263,7 +2263,8 @@ function switchShop(name) {
 
 function setTheme(shopName) {
   if (!SHOPS[shopName]) return;
-  document.body.className = SHOPS[shopName].theme + (gmMode ? " gm-active" : "");
+  const wasDark = document.body.classList.contains("dark-mode");
+  document.body.className = SHOPS[shopName].theme + (gmMode ? " gm-active" : "") + (wasDark ? " dark-mode" : "");
 }
 
 // ═══════════════════════════════════════════════════════════════
