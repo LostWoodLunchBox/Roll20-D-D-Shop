@@ -1216,7 +1216,7 @@ const DEFAULT_SHOPS = {
   //  WEAPONS
   // ══════════════════════════════════════════════════════
   "Sales | Simple Weapons": {
-    icon:"🗡️",theme:"theme-weapons",description:"Simple weapons for any adventurer.",sellMultiplier:0.5,isOpen:true,
+    icon:"🗡️",theme:"theme-weapons",description:"Simple weapons for any adventurer.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Club",price:{gp:0,sp:0,cp:11},  stock:8,  rarity:"Common",   desc:"1d4 bludgeoning. Light."},
       {name:"Dagger",price:{gp:0,sp:0,cp:7},  stock:12, rarity:"Common",   desc:"1d4 piercing. Finesse, Light, Thrown (20/60 ft)."},
@@ -1236,7 +1236,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Martial Weapons": {
-    icon:"⚔️",theme:"theme-weapons",description:"Forged blades and steel for warriors.",sellMultiplier:0.5,isOpen:true,
+    icon:"⚔️",theme:"theme-weapons",description:"Forged blades and steel for warriors.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Battleaxe",price:{gp:0,sp:0,cp:7},  stock:3, rarity:"Common",   desc:"1d8 slashing. Versatile (1d10)."},
       {name:"Flail",price:{gp:0,sp:0,cp:3},  stock:3, rarity:"Common",   desc:"1d8 bludgeoning."},
@@ -1265,7 +1265,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Archery & Ranged": {
-    icon:"🏹",theme:"theme-archery",description:"Ranged weapons, ammunition and traps.",sellMultiplier:0.5,isOpen:true,
+    icon:"🏹",theme:"theme-archery",description:"Ranged weapons, ammunition and traps.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Shortbow",price:{gp:0,sp:0,cp:11},  stock:3,  rarity:"Common",   desc:"1d6 piercing. Range 80/320 ft. Two-Handed."},
       {name:"Longbow",price:{gp:0,sp:1,cp:0}, stock:2,  rarity:"Uncommon", desc:"1d8 piercing. Range 150/600 ft. Heavy, Two-Handed."},
@@ -1288,7 +1288,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Potions & Elixirs": {
-    icon:"⚗️",theme:"theme-potions",description:"Elixirs, potions and alchemical ingredients.",sellMultiplier:0.5,isOpen:true,
+    icon:"⚗️",theme:"theme-potions",description:"Elixirs, potions and alchemical ingredients.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Potion of Healing",price:{gp:0,sp:12,cp:0},stock:5,  rarity:"Uncommon",  desc:"Regain 2d4+2 HP."},
       {name:"Potion of Greater Healing",price:{gp:5,sp:0,cp:0},stock:2,  rarity:"Rare",      desc:"Regain 4d4+4 HP."},
@@ -1325,7 +1325,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Tomes & Scrolls": {
-    icon:"📚",theme:"theme-tomes",description:"Spellbooks, scrolls and arcane knowledge.",sellMultiplier:0.5,isOpen:true,
+    icon:"📚",theme:"theme-tomes",description:"Spellbooks, scrolls and arcane knowledge.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Blank Book",price:{gp:0,sp:0,cp:8}, stock:5,  rarity:"Common",   desc:"100 pages, leather cover."},
       {name:"Blank Spellbook",price:{gp:0,sp:0,cp:12},stock:2,  rarity:"Common",   desc:"100 pages, for wizards."},
@@ -1343,7 +1343,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Wands & Staff": {
-    icon:"🪄",theme:"theme-wands",description:"Wands, staves and magical focii.",sellMultiplier:0.5,isOpen:true,
+    icon:"🪄",theme:"theme-wands",description:"Wands, staves and magical focii.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Arcane Focus (Crystal)",price:{gp:0,sp:0,cp:4},stock:3, rarity:"Common", desc:"Spellcasting focus for wizards and sorcerers."},
       {name:"Arcane Focus (Orb)",price:{gp:0,sp:0,cp:5},stock:2, rarity:"Common", desc:"Spellcasting focus."},
@@ -1362,7 +1362,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Heavy Armors": {
-    icon:"🛡️",theme:"theme-heavy",description:"Heavy armor for seasoned warriors.",sellMultiplier:0.5,isOpen:true,
+    icon:"🛡️",theme:"theme-heavy",description:"Heavy armor for seasoned warriors.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Ring Mail",price:{gp:0,sp:0,cp:2},stock:2, rarity:"Common",   desc:"AC 14. Stealth disadvantage. 40 lb."},
       {name:"Chain Mail",price:{gp:0,sp:0,cp:6},stock:2, rarity:"Common",   desc:"AC 16. Str 13 required. Stealth disadvantage. 55 lb."},
@@ -1378,7 +1378,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Medium Armors": {
-    icon:"🔰",theme:"theme-medium",description:"Balanced armor combining protection and mobility.",sellMultiplier:0.5,isOpen:true,
+    icon:"🔰",theme:"theme-medium",description:"Balanced armor combining protection and mobility.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Hide Armor",price:{gp:0,sp:0,cp:17}, stock:3, rarity:"Common",   desc:"AC 12+Dex(max2). 12 lb."},
       {name:"Chain Shirt",price:{gp:0,sp:0,cp:12}, stock:3, rarity:"Common",   desc:"AC 13+Dex(max2). 20 lb."},
@@ -1391,7 +1391,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Light Armors": {
-    icon:"🥋",theme:"theme-light",description:"Light protection for rogues and rangers.",sellMultiplier:0.5,isOpen:true,
+    icon:"🥋",theme:"theme-light",description:"Light protection for rogues and rangers.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Padded Armor",price:{gp:0,sp:0,cp:7}, stock:4,  rarity:"Common", desc:"AC 11+Dex. Stealth disadvantage. 8 lb."},
       {name:"Leather Armor",price:{gp:0,sp:0,cp:9}, stock:5,  rarity:"Common", desc:"AC 11+Dex. 10 lb."},
@@ -1408,7 +1408,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Tailor": {
-    icon:"🧵",theme:"theme-tailor",description:"Custom-made clothing and outfits for all occasions.",sellMultiplier:0.4,isOpen:true,
+    icon:"🧵",theme:"theme-tailor",description:"Custom-made clothing and outfits for all occasions.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Linen Undertunic",price:{gp:0,sp:0,cp:6}, stock:8, rarity:"Common",   desc:"Simple linen undergarment."},
       {name:"Wool Tunic",price:{gp:0,sp:0,cp:5}, stock:8, rarity:"Common",   desc:"Sturdy everyday wool tunic."},
@@ -1451,7 +1451,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Musical Instruments": {
-    icon:"🎵",theme:"theme-music",description:"Instruments for bards and traveling musicians.",sellMultiplier:0.4,isOpen:true,
+    icon:"🎵",theme:"theme-music",description:"Instruments for bards and traveling musicians.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Bone Whistle",price:{gp:0,sp:0,cp:7}, stock:8, rarity:"Common",   desc:"Simple whistle carved from bone."},
       {name:"Reed Pipe",price:{gp:0,sp:0,cp:9}, stock:8, rarity:"Common",   desc:"Hollowed reed pipe with finger holes."},
@@ -1494,7 +1494,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Perfumes & Jewels": {
-    icon:"💎",theme:"theme-jewels",description:"Precious jewelry and exotic perfumes.",sellMultiplier:0.6,isOpen:true,
+    icon:"💎",theme:"theme-jewels",description:"Precious jewelry and exotic perfumes.",sellMultiplier:0.6,isOpen:true,treasury:40000,
     items:[
       {name:"Bronze Ring",price:{gp:0,sp:0,cp:7}, stock:8, rarity:"Common",   desc:"Simple cast bronze ring."},
       {name:"Copper Ring",price:{gp:0,sp:0,cp:1}, stock:8, rarity:"Common",   desc:"Plain copper band."},
@@ -1537,7 +1537,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Adventuring Gear": {
-    icon:"🎒",theme:"theme-rations",description:"Essential supplies and equipment for any expedition.",sellMultiplier:0.5,isOpen:true,
+    icon:"🎒",theme:"theme-rations",description:"Essential supplies and equipment for any expedition.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Backpack",price:{gp:0,sp:0,cp:8},stock:5,  rarity:"Common",   desc:"Holds 30 lb / 1 cu. ft."},
       {name:"Bedroll",price:{gp:0,sp:0,cp:4}, stock:6,  rarity:"Common",   desc:"Comfortable sleeping roll. 7 lb."},
@@ -1578,7 +1578,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Tools & Kits": {
-    icon:"🔧",theme:"theme-tomes",description:"Artisan tools, kits and professional instruments.",sellMultiplier:0.5,isOpen:true,
+    icon:"🔧",theme:"theme-tomes",description:"Artisan tools, kits and professional instruments.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Thieves' Tools",price:{gp:0,sp:19,cp:0},stock:2, rarity:"Uncommon", desc:"Pick locks and disarm traps. 1 lb."},
       {name:"Disguise Kit",price:{gp:0,sp:19,cp:0},stock:2, rarity:"Uncommon", desc:"Costumes and makeup for disguise. 3 lb."},
@@ -1607,7 +1607,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Herbs & Spices": {
-    icon:"🌿",theme:"theme-herbs",description:"Aromatic herbs, spices and medicinal plants.",sellMultiplier:0.5,isOpen:true,
+    icon:"🌿",theme:"theme-herbs",description:"Aromatic herbs, spices and medicinal plants.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Parsley",price:{gp:0,sp:0,cp:8}, stock:20, rarity:"Common",   desc:"Common culinary herb."},
       {name:"Sage",price:{gp:0,sp:0,cp:8}, stock:18, rarity:"Common",   desc:"Aromatic cooking herb."},
@@ -1650,7 +1650,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Bakery": {
-    icon:"🥖",theme:"theme-bakery",description:"Fresh bread, pastries and oven-baked goods.",sellMultiplier:0.3,isOpen:true,
+    icon:"🥖",theme:"theme-bakery",description:"Fresh bread, pastries and oven-baked goods.",sellMultiplier:0.3,isOpen:true,treasury:40000,
     items:[
       {name:"Barley Bread",price:{gp:0,sp:0,cp:19}, stock:20, rarity:"Common",   desc:"Coarse common bread."},
       {name:"Rye Bread",price:{gp:0,sp:0,cp:16}, stock:18, rarity:"Common",   desc:"Dense and filling."},
@@ -1693,7 +1693,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Butcher": {
-    icon:"🥩",theme:"theme-butcher",description:"Fresh meats, charcuterie and game.",sellMultiplier:0.4,isOpen:true,
+    icon:"🥩",theme:"theme-butcher",description:"Fresh meats, charcuterie and game.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Salt Pork",price:{gp:0,sp:0,cp:4}, stock:15, rarity:"Common",   desc:"Preserved salted pork."},
       {name:"Fresh Pork",price:{gp:0,sp:0,cp:1}, stock:12, rarity:"Common",   desc:"Fresh pork cuts."},
@@ -1736,7 +1736,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Fishmonger": {
-    icon:"🐟",theme:"theme-poisson",description:"Fresh fish, seafood and aquatic products.",sellMultiplier:0.4,isOpen:true,
+    icon:"🐟",theme:"theme-poisson",description:"Fresh fish, seafood and aquatic products.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Herring",price:{gp:0,sp:0,cp:13}, stock:20, rarity:"Common",   desc:"Common saltwater fish."},
       {name:"Cod",price:{gp:0,sp:0,cp:10}, stock:15, rarity:"Common",   desc:"Meaty white fish."},
@@ -1779,7 +1779,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Fruits & Veggies": {
-    icon:"🍎",theme:"theme-fruits",description:"Fresh fruits and seasonal vegetables from the market.",sellMultiplier:0.3,isOpen:true,
+    icon:"🍎",theme:"theme-fruits",description:"Fresh fruits and seasonal vegetables from the market.",sellMultiplier:0.3,isOpen:true,treasury:40000,
     items:[
       {name:"Cabbage",price:{gp:0,sp:0,cp:5}, stock:20, rarity:"Common",   desc:"Common leafy vegetable."},
       {name:"Onion",price:{gp:0,sp:0,cp:7}, stock:20, rarity:"Common",   desc:"Pungent cooking staple."},
@@ -1822,7 +1822,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Cheese, Eggs & Dairy": {
-    icon:"🧀",theme:"theme-dairy",description:"Aged cheeses, fresh eggs and dairy products.",sellMultiplier:0.4,isOpen:true,
+    icon:"🧀",theme:"theme-dairy",description:"Aged cheeses, fresh eggs and dairy products.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Cow Milk",price:{gp:0,sp:0,cp:18}, stock:20, rarity:"Common",   desc:"Fresh morning milk jug."},
       {name:"Goat Milk",price:{gp:0,sp:0,cp:7}, stock:15, rarity:"Common",   desc:"Rich tangy goat milk."},
@@ -1865,7 +1865,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Grains & Flours": {
-    icon:"🌾",theme:"theme-grains",description:"Grains, flours and cereals for cooking.",sellMultiplier:0.4,isOpen:true,
+    icon:"🌾",theme:"theme-grains",description:"Grains, flours and cereals for cooking.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Barley",price:{gp:0,sp:0,cp:18}, stock:20, rarity:"Common",   desc:"Staple grain for beer and bread."},
       {name:"Rye",price:{gp:0,sp:0,cp:17}, stock:18, rarity:"Common",   desc:"Dark grain for bread."},
@@ -1908,7 +1908,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Honey & Sweets": {
-    icon:"🍯",theme:"theme-honey",description:"Artisan honey, jams and confections.",sellMultiplier:0.4,isOpen:true,
+    icon:"🍯",theme:"theme-honey",description:"Artisan honey, jams and confections.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Honeycomb",price:{gp:0,sp:0,cp:14}, stock:12, rarity:"Common",   desc:"Fresh wax comb with honey."},
       {name:"Raw Honey",price:{gp:0,sp:0,cp:19}, stock:12, rarity:"Common",   desc:"Unfiltered wildflower honey."},
@@ -1951,7 +1951,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Pottery": {
-    icon:"🏺",theme:"theme-pottery",description:"Ceramics, pottery and clay utensils.",sellMultiplier:0.4,isOpen:true,
+    icon:"🏺",theme:"theme-pottery",description:"Ceramics, pottery and clay utensils.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Clay Bowl",price:{gp:0,sp:0,cp:10}, stock:15, rarity:"Common",   desc:"Simple clay eating bowl."},
       {name:"Clay Plate",price:{gp:0,sp:0,cp:8}, stock:15, rarity:"Common",   desc:"Flat clay plate."},
@@ -1994,7 +1994,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Candles, Oils & Lanterns": {
-    icon:"🕯️",theme:"theme-candles",description:"Lights, oils and illumination equipment.",sellMultiplier:0.4,isOpen:true,
+    icon:"🕯️",theme:"theme-candles",description:"Lights, oils and illumination equipment.",sellMultiplier:0.4,isOpen:true,treasury:40000,
     items:[
       {name:"Rushlight",price:{gp:0,sp:0,cp:15}, stock:30, rarity:"Common",   desc:"Cheap rush-stem dipped in fat."},
       {name:"Tallow Candle",price:{gp:0,sp:0,cp:16}, stock:25, rarity:"Common",   desc:"Cheap animal fat candle."},
@@ -2037,7 +2037,7 @@ const DEFAULT_SHOPS = {
     ]
   },
   "Sales | Livestock": {
-    icon:"🐄",theme:"theme-livestock",description:"Farm animals, mounts and beasts of burden.",sellMultiplier:0.5,isOpen:true,
+    icon:"🐄",theme:"theme-livestock",description:"Farm animals, mounts and beasts of burden.",sellMultiplier:0.5,isOpen:true,treasury:40000,
     items:[
       {name:"Chicken",price:{gp:0,sp:0,cp:14}, stock:15, rarity:"Common",   desc:"Egg-laying hen."},
       {name:"Rooster",price:{gp:0,sp:0,cp:2}, stock:8,  rarity:"Common",   desc:"Breeding rooster."},
@@ -2083,7 +2083,7 @@ const DEFAULT_SHOPS = {
   //  GM ONLY — World & Quest Items (hidden from players)
   // ══════════════════════════════════════════════════════
   "Sales | World & Quest Items": {
-    icon:"🗝️",theme:"theme-weapons",description:"GM-only stash: quest rewards, world loot, and items to hand out to players.",sellMultiplier:0.5,isOpen:true,gmOnly:true,
+    icon:"🗝️",theme:"theme-weapons",description:"GM-only stash: quest rewards, world loot, and items to hand out to players.",sellMultiplier:0.5,isOpen:true,treasury:40000,gmOnly:true,
     items:[]
   }
 };
@@ -2173,6 +2173,7 @@ function snapshotToShops(data) {
       sellMultiplier: s.sellMultiplier || 0.5,
       isOpen: s.isOpen !== false,
       gmOnly: s.gmOnly !== undefined ? s.gmOnly : (def.gmOnly || false),
+      treasury: s.treasury !== undefined ? s.treasury : (def.treasury !== undefined ? def.treasury : 40000),
       items: s.items
         ? Object.values(s.items).map(i => ({
             name:   i.name   || "",
@@ -2569,9 +2570,11 @@ function renderShop() {
     : '';
   const gmRestockBtn = gmMode ? '<button class="gm-restock-btn" onclick="restockAll()">↺ Restock All</button>' : '';
   const closedBadge = !shop.isOpen ? '<span class="shop-badge closed-badge">🔒 Closed</span>' : '';
+  const treasuryCp = shop.treasury !== undefined ? shop.treasury : 40000;
   document.getElementById("shop-meta").innerHTML =
     closedBadge +
     '<span class="shop-badge highlight">↩ Buyback ' + Math.round(shop.sellMultiplier*100) + '%</span>' +
+    '<span class="shop-badge" title="Gold the merchant has on hand to buy back items">💰 Treasury: ' + fmtCp(treasuryCp) + '</span>' +
     '<span class="shop-badge">' + shop.items.length + ' items</span>' +
     gmToggleBtn + gmRestockBtn;
 
@@ -2860,6 +2863,7 @@ function exportToRoll20() {
     var shop = SHOPS[name];
     exportData[name] = {
       sellMultiplier: shop.sellMultiplier || 0.5,
+      treasury: shop.treasury !== undefined ? shop.treasury : 40000,
       items: (shop.items || []).map(function(item) {
         return { name: item.name, desc: item.desc || "", price: item.price, stock: item.stock };
       })
@@ -2897,7 +2901,7 @@ function resetToDefaults() {
     Object.fromEntries(Object.entries(SHOPS).map(([name, shop]) => [name, {
       icon: shop.icon, theme: shop.theme, description: shop.description,
       sellMultiplier: shop.sellMultiplier, isOpen: shop.isOpen, items: shop.items,
-      gmOnly: shop.gmOnly || false
+      gmOnly: shop.gmOnly || false, treasury: shop.treasury !== undefined ? shop.treasury : 40000
     }]))
   ).then(function() {
     suppressFirebaseUpdate = false;
@@ -2981,9 +2985,11 @@ function restockAll() {
     const def = defaults.items[idx];
     if (def) item.stock = def.stock;
   });
+  SHOPS[activeShop].treasury = defaults.treasury !== undefined ? defaults.treasury : 40000;
   fbSaveShopItems(activeShop);
+  db.ref("shops/" + activeShop + "/treasury").set(SHOPS[activeShop].treasury).catch(console.error);
   renderShop();
-  showToast("↺ All items restocked!", "gm");
+  showToast("↺ All items restocked and treasury refilled!", "gm");
 }
 
 function exportDiscord() {
