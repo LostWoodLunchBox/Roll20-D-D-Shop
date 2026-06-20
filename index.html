@@ -405,7 +405,7 @@
     .shop-name-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
     .treasury-medallion {
       position: relative; display: flex; flex-direction: column; align-items: center;
-      padding: 10px 24px 9px; border-radius: 10px; min-width: 180px;
+      padding: 10px 18px 9px; border-radius: 10px;
       background: radial-gradient(circle at 50% -10%, rgba(255,215,0,0.12), transparent 65%), rgba(0,0,0,0.4);
       border: 1px solid var(--accent); box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
     }
@@ -420,10 +420,23 @@
       font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
       color: var(--accent2); opacity: 0.75; margin-top: 3px;
     }
-    .treasury-amount {
-      font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;
-      white-space: nowrap; margin-top: 3px;
+    .treasury-amount { display: flex; gap: 6px; margin-top: 6px; }
+    .treasury-coin {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 4px 8px 5px; border-radius: 6px; min-width: 36px;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
     }
+    .treasury-coin-icon { width: 9px; height: 9px; border-radius: 50%; }
+    .treasury-coin.pp .treasury-coin-icon { background: #a0a8f0; box-shadow: 0 0 5px rgba(160,168,240,0.8); }
+    .treasury-coin.gp .treasury-coin-icon { background: #ffd700; box-shadow: 0 0 5px rgba(255,215,0,0.8); }
+    .treasury-coin.sp .treasury-coin-icon { background: #c0c0c0; box-shadow: 0 0 5px rgba(192,192,192,0.7); }
+    .treasury-coin.cp .treasury-coin-icon { background: #cd7f32; box-shadow: 0 0 5px rgba(205,127,50,0.7); }
+    .treasury-coin-value { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; line-height: 1; }
+    .treasury-coin.pp .treasury-coin-value { color: #c0c8ff; }
+    .treasury-coin.gp .treasury-coin-value { color: #ffd700; }
+    .treasury-coin.sp .treasury-coin-value { color: #d8d8d8; }
+    .treasury-coin.cp .treasury-coin-value { color: #e09050; }
+    .treasury-coin-label { font-size: 7px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.55; }
     .shop-subtitle {
       font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 3px;
       text-transform: uppercase; color: var(--accent); opacity: 0.7; margin-top: 2px;
@@ -2120,6 +2133,16 @@ function fmtCpHTML(cp) {
   if (c.cp) parts.push('<span style="color:#cd7f32;">' + c.cp + ' CP</span>');
   return parts.join(' <span style="color:rgba(255,255,255,0.4);">+</span> ');
 }
+function fmtCpCoinCells(cp) {
+  const c = cp > 0 ? cpToCoins(cp) : { pp:0, gp:0, sp:0, cp:0 };
+  return ["pp","gp","sp","cp"].map(k =>
+    '<div class="treasury-coin ' + k + '">' +
+      '<span class="treasury-coin-icon"></span>' +
+      '<span class="treasury-coin-value">' + c[k] + '</span>' +
+      '<span class="treasury-coin-label">' + k.toUpperCase() + '</span>' +
+    '</div>'
+  ).join('');
+}
 
 // ═══════════════════════════════════════════════════════════════
 // FIREBASE
@@ -2540,7 +2563,7 @@ function renderShop() {
   const gmRestockBtn = gmMode ? '<button class="gm-restock-btn" onclick="restockAll()">↺ Restock All</button>' : '';
   const closedBadge = !shop.isOpen ? '<span class="shop-badge closed-badge">🔒 Closed</span>' : '';
   const treasuryCp = shop.treasury !== undefined ? shop.treasury : 40000;
-  document.getElementById("shop-treasury-display").innerHTML = fmtCpHTML(treasuryCp);
+  document.getElementById("shop-treasury-display").innerHTML = fmtCpCoinCells(treasuryCp);
   document.getElementById("shop-meta").innerHTML =
     closedBadge +
     '<span class="shop-badge highlight">↩ Buyback ' + Math.round(shop.sellMultiplier*100) + '%</span>' +
