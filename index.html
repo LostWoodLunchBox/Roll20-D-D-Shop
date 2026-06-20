@@ -1216,7 +1216,9 @@ const DEFAULT_SHOPS = {
       {name:"Spear",price:{gp:0,sp:0,cp:18},  stock:6,  rarity:"Common",   desc:"1d6 piercing. Thrown (20/60 ft), Versatile (1d8)."},
       {name:"Masterwork Dagger",price:{gp:1,sp:5,cp:0}, stock:2, rarity:"Uncommon", desc:"1d4 piercing. Finesse, Light, Thrown (20/60 ft). Masterwork (non-magical): +1 to attack rolls."},
       {name:"Masterwork Mace",price:{gp:1,sp:6,cp:0}, stock:2, rarity:"Uncommon", desc:"1d6 bludgeoning. Masterwork (non-magical): +1 to attack rolls."},
-      {name:"Masterwork Quarterstaff",price:{gp:1,sp:3,cp:0}, stock:1, rarity:"Uncommon", desc:"1d6 bludgeoning. Versatile (1d8). Masterwork (non-magical): +1 to attack rolls."}
+      {name:"Masterwork Quarterstaff",price:{gp:1,sp:3,cp:0}, stock:1, rarity:"Uncommon", desc:"1d6 bludgeoning. Versatile (1d8). Masterwork (non-magical): +1 to attack rolls."},
+      {name:"Dawnstaff of the Vigil",price:{gp:22,sp:0,cp:0}, stock:1, rarity:"Rare", desc:"1d6 bludgeoning. Versatile (1d8). Carried by Solterasun's Frères de la Veille. Once per day, sheds 20 ft of sunlight for 1 minute and deals +1d4 radiant damage to a creature of the Brume."},
+      {name:"Lantern-Silver Dagger",price:{gp:24,sp:0,cp:0}, stock:1, rarity:"Rare", desc:"1d4 piercing. Finesse, Light, Thrown (20/60 ft). Forged from lantern-silver salvaged from a Brisargent contract dispute. Deals +1d6 radiant damage against Dévoyés du Sang, Mordus de Brume, or Ombres Marchantes."}
     ]
   },
   "Sales | Martial Weapons": {
@@ -1243,7 +1245,9 @@ const DEFAULT_SHOPS = {
       {name:"Masterwork Longsword",price:{gp:2,sp:8,cp:0}, stock:2, rarity:"Uncommon", desc:"1d8 slashing. Versatile (1d10). Masterwork (non-magical): +1 to attack rolls."},
       {name:"Masterwork Battleaxe",price:{gp:2,sp:7,cp:0}, stock:1, rarity:"Uncommon", desc:"1d8 slashing. Versatile (1d10). Masterwork (non-magical): +1 to attack rolls."},
       {name:"Masterwork Warhammer",price:{gp:2,sp:7,cp:0}, stock:2, rarity:"Uncommon", desc:"1d8 bludgeoning. Versatile (1d10). Masterwork (non-magical): +1 to attack rolls."},
-      {name:"Masterwork Scimitar",price:{gp:3,sp:6,cp:0}, stock:1, rarity:"Uncommon", desc:"1d6 slashing. Finesse, Light. Masterwork (non-magical): +1 to attack rolls."}
+      {name:"Masterwork Scimitar",price:{gp:3,sp:6,cp:0}, stock:1, rarity:"Uncommon", desc:"1d6 slashing. Finesse, Light. Masterwork (non-magical): +1 to attack rolls."},
+      {name:"Brisargent Lantern-Blade",price:{gp:30,sp:0,cp:0}, stock:1, rarity:"Rare", desc:"1d8 slashing. Versatile (1d10). A longsword with a small gas lantern built into the guard. Bonus action: ignite it (1 oil flask) to shed 15 ft of bright light for 1 hour; while lit, attacks against you from creatures hidden in mist or darkness have disadvantage."},
+      {name:"Halberd of the Vigil Brothers",price:{gp:32,sp:0,cp:0}, stock:1, rarity:"Rare", desc:"1d10 slashing. Heavy, Reach, Two-Handed. Wielded by Solterasun's soldier-monks. Once per long rest, invoke the Pact of Dawn: the head blazes with light and the next hit against an undead or Brume-born creature deals +2d6 radiant damage."}
     ]
   },
   "Sales | Archery & Ranged": {
@@ -1338,7 +1342,9 @@ const DEFAULT_SHOPS = {
       {name:"Druidic Focus (Sprig)",price:{gp:0,sp:0,cp:7}, stock:4, rarity:"Common", desc:"Mistletoe or holly sprig. Druid focus."},
       {name:"Druidic Focus (Staff)",price:{gp:0,sp:0,cp:6}, stock:2, rarity:"Common", desc:"1d6 bludgeoning. Druid focus. Versatile (1d8)."},
       {name:"Druidic Focus (Totem)",price:{gp:0,sp:0,cp:18}, stock:3, rarity:"Common", desc:"Animal-shaped totem. Druid focus."},
-      {name:"Druidic Focus (Wand)",price:{gp:0,sp:0,cp:13}, stock:2, rarity:"Common", desc:"Yew wand. Druid focus."}
+      {name:"Druidic Focus (Wand)",price:{gp:0,sp:0,cp:13}, stock:2, rarity:"Common", desc:"Yew wand. Druid focus."},
+      {name:"Sceptre of Solterasun",price:{gp:35,sp:0,cp:0}, stock:1, rarity:"Rare", desc:"Divine focus, sun-disc sceptre carried by senior clergy of the Pact of Dawn. Once per day, cast a radiant cantrip-level effect (GM's call) without expending a spell slot. While held, the wielder cannot be Frightened by undead."},
+      {name:"Wand of the Barred Name",price:{gp:33,sp:0,cp:0}, stock:1, rarity:"Rare", desc:"Arcane focus smuggled out of a Brisargent grimoire vault, etched with a name someone took care to scratch out. Once per long rest, cast Darkness centered on yourself at no cost — but the wielder must succeed a DC 13 Wisdom save or feel a fragment of something else's hunger (disadvantage on their next death saving throw, GM's call)."}
     ]
   },
   "Sales | Heavy Armors": {
@@ -1378,6 +1384,8 @@ const DEFAULT_SHOPS = {
       {name:"Studded Leather",price:{gp:0,sp:11,cp:0}, stock:3,  rarity:"Uncommon",desc:"AC 12+Dex. 13 lb."},
       {name:"Masterwork Padded Armor",price:{gp:3,sp:6,cp:0}, stock:1, rarity:"Uncommon", desc:"AC 11+Dex. Masterwork (non-magical): removes the Stealth disadvantage. 8 lb."},
       {name:"Masterwork Leather Armor",price:{gp:3,sp:8,cp:0}, stock:1, rarity:"Uncommon", desc:"AC 11+Dex. Masterwork (non-magical): superior craftsmanship, no stat change. 10 lb."},
+      {name:"Cloak of the Mist Wolves",price:{gp:28,sp:0,cp:0}, stock:1, rarity:"Rare", desc:"AC 11+Dex. Worn by the Loups de la Brume, the smugglers who move unseen along the Quais. Advantage on Stealth checks while in fog, mist, or after dark. 9 lb."},
+      {name:"Garb of the Veiled Hand",price:{gp:26,sp:0,cp:0}, stock:1, rarity:"Rare", desc:"AC 12+Dex. Stitched by the secretive network that moves through Mistvale's sealed tunnels. Advantage on checks to pick locks or slip through narrow or hidden passages without leaving a trace. 10 lb."},
       {name:"Common Clothes",price:{gp:0,sp:0,cp:12}, stock:10, rarity:"Common", desc:"Ordinary outfit. 3 lb."},
       {name:"Traveler's Clothes",price:{gp:0,sp:0,cp:18}, stock:6,  rarity:"Common", desc:"Practical for adventuring. 4 lb."},
       {name:"Fine Clothes",price:{gp:0,sp:0,cp:15}, stock:3,  rarity:"Common", desc:"Elegant noble attire. 6 lb."},
