@@ -2092,6 +2092,16 @@ function fmtCp(cp) {
   const c = cpToCoins(cp);
   return [c.pp?c.pp+" PP":"", c.gp?c.gp+" GP":"", c.sp?c.sp+" SP":"", c.cp?c.cp+" CP":""].filter(Boolean).join(" + ");
 }
+function fmtCpHTML(cp) {
+  if (cp <= 0) return '<span style="color:#e09050;">0 CP</span>';
+  const c = cpToCoins(cp);
+  const parts = [];
+  if (c.pp) parts.push('<span style="color:#a0a8f0;">' + c.pp + ' PP</span>');
+  if (c.gp) parts.push('<span style="color:#ffd700;">' + c.gp + ' GP</span>');
+  if (c.sp) parts.push('<span style="color:#c0c0c0;">' + c.sp + ' SP</span>');
+  if (c.cp) parts.push('<span style="color:#cd7f32;">' + c.cp + ' CP</span>');
+  return parts.join(' <span style="color:rgba(255,255,255,0.4);">+</span> ');
+}
 
 // ═══════════════════════════════════════════════════════════════
 // FIREBASE
@@ -2512,7 +2522,7 @@ function renderShop() {
   const gmRestockBtn = gmMode ? '<button class="gm-restock-btn" onclick="restockAll()">↺ Restock All</button>' : '';
   const closedBadge = !shop.isOpen ? '<span class="shop-badge closed-badge">🔒 Closed</span>' : '';
   const treasuryCp = shop.treasury !== undefined ? shop.treasury : 40000;
-  document.getElementById("shop-treasury-display").textContent = fmtCp(treasuryCp);
+  document.getElementById("shop-treasury-display").innerHTML = fmtCpHTML(treasuryCp);
   document.getElementById("shop-meta").innerHTML =
     closedBadge +
     '<span class="shop-badge highlight">↩ Buyback ' + Math.round(shop.sellMultiplier*100) + '%</span>' +
