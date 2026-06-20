@@ -402,13 +402,28 @@
       font-weight: 700; letter-spacing: 1px;
       text-shadow: 0 0 30px rgba(255,255,255,0.1);
     }
-    .shop-name-row { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-    .shop-treasury-display {
-      font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;
-      color: #ffd700; text-shadow: 0 0 16px rgba(255,215,0,0.4);
-      white-space: nowrap;
+    .shop-name-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .treasury-medallion {
+      position: relative; display: flex; flex-direction: column; align-items: center;
+      padding: 10px 24px 9px; border-radius: 10px; min-width: 180px;
+      background: radial-gradient(circle at 50% -10%, rgba(255,215,0,0.12), transparent 65%), rgba(0,0,0,0.4);
+      border: 1px solid var(--accent); box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
     }
-    .shop-treasury-display::before { content: "💰 "; font-size: 0.8em; }
+    .treasury-medallion::before {
+      content: "🪙"; position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      font-size: 14px; width: 26px; height: 26px; line-height: 26px; text-align: center;
+      background: linear-gradient(160deg, var(--header-from), var(--header-to));
+      border: 1px solid var(--accent); border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .treasury-label {
+      font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent2); opacity: 0.75; margin-top: 3px;
+    }
+    .treasury-amount {
+      font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;
+      white-space: nowrap; margin-top: 3px;
+    }
     .shop-subtitle {
       font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 3px;
       text-transform: uppercase; color: var(--accent); opacity: 0.7; margin-top: 2px;
@@ -997,7 +1012,10 @@
               <div class="shop-subtitle" id="shop-subtitle"></div>
               <div class="shop-name-row">
                 <div class="shop-name" id="shop-name"></div>
-                <div class="shop-treasury-display" id="shop-treasury-display" title="Gold the merchant has on hand to buy back items"></div>
+                <div class="treasury-medallion" title="Gold the merchant has on hand to buy back items">
+                  <div class="treasury-label">Merchant's Treasury</div>
+                  <div class="treasury-amount" id="shop-treasury-display"></div>
+                </div>
               </div>
               <div class="shop-desc" id="shop-desc"></div>
               <div class="shop-meta-badges" id="shop-meta"></div>
