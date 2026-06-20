@@ -2178,6 +2178,10 @@ function fbUpdateStock(shopName, idx, newStock) {
   db.ref("shops/" + shopName + "/items/" + idx + "/stock").set(newStock).catch(console.error);
 }
 
+function fbSaveTreasury(shopName) {
+  db.ref("shops/" + shopName + "/treasury").set(SHOPS[shopName].treasury).catch(console.error);
+}
+
 function fbSaveShopItems(shopName) {
   suppressFirebaseUpdate = true;
   db.ref("shops/" + shopName + "/items").set(SHOPS[shopName].items)
@@ -2394,9 +2398,26 @@ function updateSellTotal() {
 function confirmSell() {
   if (!pendingSell) return;
   const qty = parseInt(document.getElementById("sell-qty").value) || 1;
+  const shop = SHOPS[activeShop];
+  const item = pendingSell.item;
+  const idx  = pendingSell.idx;
+  const sellCp = Math.floor(priceInCp(item.price) * shop.sellMultiplier) * qty;
+  const treasury = shop.treasury !== undefined ? shop.treasury : 40000;
+
+  if (sellCp > treasury) {
+    showToast("⚠ This merchant doesn't have enough gold to buy that right now.", "error");
+    return;
+  }
+
+  shop.items[idx].stock += qty;
+  fbUpdateStock(activeShop, idx, shop.items[idx].stock);
+  shop.treasury = treasury - sellCp;
+  fbSaveTreasury(activeShop);
+
   const cmd = document.getElementById("sell-command").textContent;
   navigator.clipboard.writeText(cmd).catch(()=>{});
   closeSellModal();
+  renderShop();
   showToast("✓ Command copied — paste in Roll20 chat!");
 }
 
@@ -2584,6 +2605,8 @@ function confirmPurchase() {
   const totalCp = priceInCp(item.price) * qty;
   SHOPS[activeShop].items[idx].stock -= qty;
   fbUpdateStock(activeShop, idx, SHOPS[activeShop].items[idx].stock);
+  SHOPS[activeShop].treasury = (SHOPS[activeShop].treasury !== undefined ? SHOPS[activeShop].treasury : 40000) + totalCp;
+  fbSaveTreasury(activeShop);
   const cmd = "!shop-buy " + activeShop.replace(/\|/g, "%7C") + "~~" + item.name + "~~" + qty;
   navigator.clipboard.writeText(cmd).catch(()=>{});
   history.unshift({ name:item.name, qty, totalCp, shop:activeShop, cmd, time:new Date().toLocaleTimeString("fr-CA",{hour:"2-digit",minute:"2-digit"}) });
