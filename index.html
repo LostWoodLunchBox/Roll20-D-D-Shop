@@ -426,6 +426,13 @@
       font-weight: 700; letter-spacing: 1px;
       text-shadow: 0 0 30px rgba(255,255,255,0.1);
     }
+    .shop-name-row { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .shop-treasury-display {
+      font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
+      color: #ffd700; text-shadow: 0 0 12px rgba(255,215,0,0.3);
+      white-space: nowrap;
+    }
+    .shop-treasury-display::before { content: "💰 "; }
     .shop-subtitle {
       font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 3px;
       text-transform: uppercase; color: var(--accent); opacity: 0.7; margin-top: 2px;
@@ -1026,7 +1033,10 @@
             <div class="shop-emblem" id="shop-emblem"></div>
             <div class="shop-banner-text">
               <div class="shop-subtitle" id="shop-subtitle"></div>
-              <div class="shop-name" id="shop-name"></div>
+              <div class="shop-name-row">
+                <div class="shop-name" id="shop-name"></div>
+                <div class="shop-treasury-display" id="shop-treasury-display" title="Gold the merchant has on hand to buy back items"></div>
+              </div>
               <div class="shop-desc" id="shop-desc"></div>
               <div class="shop-meta-badges" id="shop-meta"></div>
             </div>
@@ -2571,10 +2581,10 @@ function renderShop() {
   const gmRestockBtn = gmMode ? '<button class="gm-restock-btn" onclick="restockAll()">↺ Restock All</button>' : '';
   const closedBadge = !shop.isOpen ? '<span class="shop-badge closed-badge">🔒 Closed</span>' : '';
   const treasuryCp = shop.treasury !== undefined ? shop.treasury : 40000;
+  document.getElementById("shop-treasury-display").textContent = fmtCp(treasuryCp);
   document.getElementById("shop-meta").innerHTML =
     closedBadge +
     '<span class="shop-badge highlight">↩ Buyback ' + Math.round(shop.sellMultiplier*100) + '%</span>' +
-    '<span class="shop-badge" title="Gold the merchant has on hand to buy back items">💰 Treasury: ' + fmtCp(treasuryCp) + '</span>' +
     '<span class="shop-badge">' + shop.items.length + ' items</span>' +
     gmToggleBtn + gmRestockBtn;
 
