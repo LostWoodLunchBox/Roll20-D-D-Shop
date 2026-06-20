@@ -1008,7 +1008,7 @@
       <button class="gm-badge" id="roll20-export-btn" onclick="exportToRoll20()" style="display:none;cursor:pointer;background:#c8a800;border:none;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;padding:2px 10px;border-radius:10px;font-weight:700;color:#1a1000;">⚔ Export to Roll20</button>
       <button class="gm-badge" id="reset-defaults-btn" onclick="resetToDefaults()" style="display:none;cursor:pointer;background:#8b0000;border:none;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;padding:2px 10px;border-radius:10px;font-weight:700;color:#fff;">↺ Reset to Defaults</button>
       <span class="firebase-status connecting" id="firebase-status">● Firebase...</span>
-      <div class="conversion-note">20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 10 GP = 1 PP</div>
+      <div class="conversion-note">20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 1000 GP = 1 PP</div>
     </div>
   </div>
 </header>
@@ -1080,7 +1080,7 @@
   <div class="modal">
     <h2>💰 Edit Wallet</h2>
     <p style="font-size:12px;opacity:0.7;margin-top:8px;margin-bottom:12px;">Entre les valeurs de ta fiche de personnage.</p>
-    <div class="conversion-info">📐 Base 20 &nbsp;|&nbsp; <strong>20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 10 GP = 1 PP</strong></div>
+    <div class="conversion-info">📐 Base 20 &nbsp;|&nbsp; <strong>20 CP = 1 SP &nbsp;|&nbsp; 20 SP = 1 GP &nbsp;|&nbsp; 1000 GP = 1 PP</strong></div>
     <div class="wallet-grid">
       <div class="wallet-field"><label style="color:#e8e8ff;">Platinum (PP)</label><input type="number" id="edit-pp" min="0" value="0"></div>
       <div class="wallet-field"><label style="color:#ffd700;">Gold (GP)</label><input type="number" id="edit-gp" min="0" value="0"></div>
@@ -1118,7 +1118,7 @@
     <input type="text" id="gm-item-name" placeholder="Ex: Épée longue">
     <label>Description</label>
     <textarea id="gm-item-desc" placeholder="Ex: 1d8 tranchant. Polyvalent."></textarea>
-    <label>Prix (Base 20 : 20 CP = 1 SP | 20 SP = 1 GP | 10 GP = 1 PP)</label>
+    <label>Prix (Base 20 : 20 CP = 1 SP | 20 SP = 1 GP | 1000 GP = 1 PP)</label>
     <div class="price-grid">
       <div class="price-field"><label style="color:#cd7f32;">Copper (CP)</label><input type="number" id="gm-price-cp" min="0" value="0"></div>
       <div class="price-field"><label style="color:#d0d0d0;">Silver (SP)</label><input type="number" id="gm-price-sp" min="0" value="0"></div>
@@ -2131,11 +2131,11 @@ function saveWallets() {
 // ═══════════════════════════════════════════════════════════════
 // CONVERSION BASE 20
 // ═══════════════════════════════════════════════════════════════
-function walletInCp() { const w = getWallet(activeShop); return w.pp*4000 + w.gp*400 + w.sp*20 + w.cp; }
+function walletInCp() { const w = getWallet(activeShop); return w.pp*400000 + w.gp*400 + w.sp*20 + w.cp; }
 function priceInCp(p) { return (p.gp||0)*400 + (p.sp||0)*20 + (p.cp||0); }
 function cpToCoins(total) {
   let r = Math.round(total);
-  const pp = Math.floor(r/4000); r%=4000;
+  const pp = Math.floor(r/400000); r%=400000;
   const gp = Math.floor(r/400);  r%=400;
   const sp = Math.floor(r/20);   r%=20;
   return { pp, gp, sp, cp:r };
