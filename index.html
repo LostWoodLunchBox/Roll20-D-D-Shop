@@ -817,16 +817,18 @@
     .fav-star:hover { color: #b8860b; transform: scale(1.15); }
     .fav-star.active { color: #ffb300; text-shadow: 0 0 6px rgba(255,179,0,0.6); }
 
-    /* ── DARK READING MODE ── */
-    body.dark-mode .item-card,
-    body.dark-mode .item-card:hover { background: #1c1c22 !important; }
-    body.dark-mode .item-card:hover { background: #26262e !important; }
-    body.dark-mode .item-name,
-    body.dark-mode .item-desc,
-    body.dark-mode .results-count,
-    body.dark-mode .price-free { color: #e8e6ea !important; }
+    /* ── DARK READING MODE ──
+       Overriding the theme's --card/--text variables cascades to every
+       element that uses them: item cards, modals, inputs, stock badges... */
+    body.dark-mode {
+      --card: #1c1c22;
+      --card-hover: #26262e;
+      --text: #e8e6ea;
+    }
     body.dark-mode .fav-star { color: rgba(255,255,255,0.25); }
-    body.dark-mode .stock-badge.normal { background: rgba(255,255,255,0.1); color: #e8e6ea; border-color: rgba(255,255,255,0.2); }
+    body.dark-mode .stock-badge.normal { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+    body.dark-mode .modal-warning.no-budget { color: rgba(255,255,255,0.45); }
+    body.dark-mode .modal-total { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
     .search-no-results {
       text-align: center; padding: 40px 20px; grid-column: 1/-1;
       font-family: 'Crimson Text', serif; font-size: 15px;
