@@ -109,7 +109,7 @@
       background: transparent; border: 1px solid var(--accent); color: var(--accent2);
       padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 10px;
       cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
-      opacity: 0.8;
+      opacity: 0.8; display: inline-flex; align-items: center; gap: 5px;
     }
     .history-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: var(--accent2); opacity: 1; }
 
@@ -117,6 +117,7 @@
       background: transparent; border: 1px solid var(--accent); color: var(--accent2);
       padding: 5px 10px; border-radius: 6px; font-size: 13px;
       cursor: pointer; transition: all 0.2s; opacity: 0.8; line-height: 1;
+      display: inline-flex; align-items: center;
     }
     .dark-mode-btn:hover { background: rgba(255,255,255,0.08); opacity: 1; }
     body.dark-mode .dark-mode-btn { background: rgba(255,255,255,0.12); border-color: #fff; color: #fff; opacity: 1; }
@@ -231,6 +232,7 @@
       background: transparent; border: 1px solid rgba(255,215,0,0.35); color: rgba(255,215,0,0.6);
       padding: 5px 12px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 10px;
       cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 5px;
     }
     .gm-toggle-btn:hover { background: rgba(255,215,0,0.08); border-color: #ffd700; color: #ffd700; }
     body.gm-active .gm-toggle-btn { background: rgba(255,215,0,0.12); border-color: #ffd700; color: #ffd700; }
@@ -298,7 +300,8 @@
       display: flex; align-items: center; gap: 6px;
       opacity: 0.85;
     }
-    .sidebar-category .cat-icon { font-size: 13px; opacity: 0.9; flex-shrink: 0; }
+    .sidebar-category .cat-icon { display: flex; align-items: center; opacity: 0.9; flex-shrink: 0; }
+    .icon-svg { display: inline-block; vertical-align: middle; flex-shrink: 0; }
     .sidebar-divider {
       height: 1px; margin: 6px 8px;
       background: linear-gradient(90deg, transparent, var(--accent), transparent);
@@ -409,12 +412,13 @@
       background: radial-gradient(circle at 50% -10%, rgba(255,215,0,0.12), transparent 65%), rgba(0,0,0,0.4);
       border: 1px solid var(--accent); box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
     }
-    .treasury-medallion::before {
-      content: "🪙"; position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
-      font-size: 14px; width: 26px; height: 26px; line-height: 26px; text-align: center;
+    .treasury-badge-icon {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
       background: linear-gradient(160deg, var(--header-from), var(--header-to));
       border: 1px solid var(--accent); border-radius: 50%;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      color: #ffd700;
     }
     .treasury-label {
       font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
@@ -996,9 +1000,9 @@
           <input class="player-name-input" id="player-name-input" type="text" maxlength="24" placeholder="Character name…" onblur="savePlayerName()" onkeydown="if(event.key==='Enter')savePlayerName()">
         </div>
       </div>
-      <button class="history-btn" onclick="openHistoryModal()">📜 History</button>
-      <button class="dark-mode-btn" id="dark-mode-btn" onclick="toggleDarkMode()" title="Toggle dark reading mode">🌙</button>
-      <button class="gm-toggle-btn" onclick="handleGMButton()">🔒 GM</button>
+      <button class="history-btn" onclick="openHistoryModal()"><svg class="icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a2 2 0 012 2v1H8a2 2 0 00-2 2v9a2 2 0 01-4 0V6a2 2 0 014-2Z"/><path d="M8 9h8M8 12h8M8 15h5"/></svg> History</button>
+      <button class="dark-mode-btn" id="dark-mode-btn" onclick="toggleDarkMode()" title="Toggle dark reading mode"></button>
+      <button class="gm-toggle-btn" onclick="handleGMButton()"><svg class="icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg> GM</button>
     </div>
     <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;">
       <span class="gm-badge">⚜ GM Mode Active</span>
@@ -1026,6 +1030,7 @@
               <div class="shop-name-row">
                 <div class="shop-name" id="shop-name"></div>
                 <div class="treasury-medallion" title="Gold the merchant has on hand to buy back items">
+                  <div class="treasury-badge-icon"><svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/></svg></div>
                   <div class="treasury-label">Merchant's Treasury</div>
                   <div class="treasury-amount" id="shop-treasury-display"></div>
                 </div>
@@ -2072,6 +2077,28 @@ const DEFAULT_SHOPS = {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// ICÔNES SVG SUR MESURE (remplacent les emoji aux endroits clés)
+// ═══════════════════════════════════════════════════════════════
+const ICONS = {
+  combat:    '<path d="M4 4l16 16M20 4L4 20"/><path d="M4 4h3M4 4v3M20 4h-3M20 4v3M4 20h3M4 20v-3M20 20h-3M20 20v-3"/>',
+  magic:     '<path d="M12 2l1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="currentColor" stroke="none"/>',
+  armor:     '<path d="M12 3l7 3v6c0 5-3 7.5-7 9-4-1.5-7-4-7-9V6l7-3Z"/>',
+  equipment: '<path d="M7 9V7a5 5 0 0110 0v2"/><rect x="4" y="9" width="16" height="11" rx="2"/>',
+  market:    '<path d="M4 9l2-5h12l2 5"/><path d="M4 9h16v3H4z"/><path d="M6 12v6a2 2 0 002 2h8a2 2 0 002-2v-6"/>',
+  key:       '<circle cx="8" cy="8" r="4"/><path d="M11 11l9 9M16 14l3-3M18 16l2-2"/>',
+  scroll:    '<path d="M6 4h11a2 2 0 012 2v1H8a2 2 0 00-2 2v9a2 2 0 01-4 0V6a2 2 0 014-2Z"/><path d="M8 9h8M8 12h8M8 15h5"/>',
+  moon:      '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79Z"/>',
+  sun:       '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  lockClosed:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',
+  lockOpen:  '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 017-2.3"/>',
+  coin:      '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/>'
+};
+function svgIcon(name, size) {
+  size = size || 15;
+  return '<svg class="icon-svg" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + (ICONS[name] || "") + '</svg>';
+}
+
+// ═══════════════════════════════════════════════════════════════
 // COULEUR D'ACCENT PAR THÈME
 // ═══════════════════════════════════════════════════════════════
 const THEME_ACCENT = {
@@ -2370,14 +2397,18 @@ function toggleDarkMode() {
   const on = document.body.classList.toggle("dark-mode");
   localStorage.setItem("darkMode", on ? "1" : "0");
   const btn = document.getElementById("dark-mode-btn");
-  btn.textContent = on ? "☀" : "🌙";
+  btn.innerHTML = svgIcon(on ? "sun" : "moon", 14);
   btn.title = on ? "Toggle light reading mode" : "Toggle dark reading mode";
 }
-if (localStorage.getItem("darkMode") === "1") {
-  document.body.classList.add("dark-mode");
+{
   const btn = document.getElementById("dark-mode-btn");
-  btn.textContent = "☀";
-  btn.title = "Toggle light reading mode";
+  if (localStorage.getItem("darkMode") === "1") {
+    document.body.classList.add("dark-mode");
+    btn.innerHTML = svgIcon("sun", 14);
+    btn.title = "Toggle light reading mode";
+  } else {
+    btn.innerHTML = svgIcon("moon", 14);
+  }
 }
 
 /* ── KEYBOARD SHORTCUT: focus search with "/" or Ctrl/Cmd+K ── */
@@ -2502,15 +2533,15 @@ function renderTabs() {
   c.innerHTML = "";
 
   const categories = [
-    { label: "Combat",      icon: "⚔️",  prefix: ["Simple Weapons","Martial Weapons","Archery & Ranged"] },
-    { label: "Magic & Gear",icon: "✨",  prefix: ["Potions & Elixirs","Tomes & Scrolls","Wands & Staff"] },
-    { label: "Armor",       icon: "🛡️",  prefix: ["Heavy Armors","Medium Armors","Light Armors"] },
-    { label: "Equipment",   icon: "🎒",  prefix: ["Adventuring Gear","Tools & Kits","Tailor","Musical Instruments","Perfumes & Jewels"] },
-    { label: "Market",      icon: "🏪",  prefix: ["Herbs & Spices","Bakery","Butcher","Fishmonger","Fruits & Veggies","Cheese, Eggs & Dairy","Grains & Flours","Honey & Sweets","Pottery","Candles, Oils & Lanterns","Livestock"] }
+    { label: "Combat",      icon: svgIcon("combat"),    prefix: ["Simple Weapons","Martial Weapons","Archery & Ranged"] },
+    { label: "Magic & Gear",icon: svgIcon("magic"),     prefix: ["Potions & Elixirs","Tomes & Scrolls","Wands & Staff"] },
+    { label: "Armor",       icon: svgIcon("armor"),     prefix: ["Heavy Armors","Medium Armors","Light Armors"] },
+    { label: "Equipment",   icon: svgIcon("equipment"), prefix: ["Adventuring Gear","Tools & Kits","Tailor","Musical Instruments","Perfumes & Jewels"] },
+    { label: "Market",      icon: svgIcon("market"),    prefix: ["Herbs & Spices","Bakery","Butcher","Fishmonger","Fruits & Veggies","Cheese, Eggs & Dairy","Grains & Flours","Honey & Sweets","Pottery","Candles, Oils & Lanterns","Livestock"] }
   ];
 
   if (gmMode) {
-    categories.push({ label: "GM Only", icon: "🗝️", prefix: ["World & Quest Items"] });
+    categories.push({ label: "GM Only", icon: svgIcon("key"), prefix: ["World & Quest Items"] });
   }
 
   const allNames = Object.keys(SHOPS);
