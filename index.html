@@ -1003,6 +1003,82 @@
       .header-title { font-size: 16px; }
       .modal { padding: 20px 16px; }
     }
+    /* ── TAB RIGHT CLUSTER (count badge) ── */
+    .tab-right { margin-left: auto; display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+    .tab-right .tab-dot-closed,
+    .tab-right .tab-dot-stock  { margin-left: 0; }
+    .tab-count {
+      font-family: 'Cinzel', serif; font-size: 9px; line-height: 1.4;
+      background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.32); padding: 1px 6px; border-radius: 6px;
+    }
+
+    /* ── RARITY FILTER BAR ── */
+    .rarity-filter-bar {
+      display: flex; gap: 5px; align-items: center; flex-wrap: wrap;
+      padding: 7px 20px; background: rgba(0,0,0,0.16);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .rarity-filter-label {
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.28); text-transform: uppercase; flex-shrink: 0;
+    }
+    .rarity-filter-btn {
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.5px; font-weight: 700;
+      padding: 2px 9px; border-radius: 10px; cursor: pointer; transition: all 0.15s;
+      text-transform: uppercase; background: rgba(0,0,0,0.28); color: rgba(255,255,255,0.38);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .rarity-filter-btn:hover { color: rgba(255,255,255,0.65); border-color: rgba(255,255,255,0.22); }
+    .rarity-filter-btn.rf-Common    { background:#555e5a; color:#fff; border-color:#778; }
+    .rarity-filter-btn.rf-Uncommon  { background:#1a6e28; color:#fff; border-color:#2db840; }
+    .rarity-filter-btn.rf-Rare      { background:#0d4caa; color:#fff; border-color:#3a7fff; }
+    .rarity-filter-btn.rf-VeryRare  { background:#6a0ea8; color:#fff; border-color:#b040ff; }
+    .rarity-filter-btn.rf-Legendary { background:#8a4a00; color:#fff; border-color:#e08000; }
+
+    /* ── GLOBAL SEARCH MODAL ── */
+    .global-search-wrap { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .global-search-input {
+      width: 100%; padding: 10px 14px 10px 38px;
+      font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px;
+      background: rgba(255,255,255,0.06); color: #f0e8d8;
+      border: 1px solid rgba(255,255,255,0.18); border-radius: 8px;
+      outline: none; transition: border-color 0.2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(255,232,180,0.4)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: 14px center;
+    }
+    .global-search-input:focus { border-color: rgba(255,215,0,0.4); }
+    .global-search-input::placeholder { color: rgba(240,232,216,0.28); font-style: italic; }
+    .global-result-group-label {
+      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,215,0,0.42); padding: 12px 20px 4px; display: flex; align-items: center; gap: 8px;
+    }
+    .global-result-group-label::after { content:""; flex:1; height:1px; background:rgba(255,215,0,0.12); }
+    .global-result-row {
+      display: flex; align-items: center; gap: 14px; padding: 9px 20px;
+      cursor: pointer; transition: background 0.1s; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .global-result-row:hover { background: rgba(255,255,255,0.05); }
+    .global-result-name { font-family: 'Cinzel', serif; font-size: 12px; color: rgba(255,255,255,0.85); }
+    .global-result-name.out { color: rgba(255,255,255,0.28); }
+    .global-result-desc { font-size: 11px; color: rgba(255,255,255,0.32); font-style: italic; margin-top: 2px; }
+    .global-result-meta { text-align: right; flex-shrink: 0; }
+    .global-result-price { font-family: 'Cinzel', serif; font-size: 11px; color: #ffd700; }
+    .global-result-stock-ok  { font-size: 10px; color: rgba(100,220,100,0.6); margin-top: 2px; }
+    .global-result-stock-out { font-size: 10px; color: rgba(255,80,80,0.5);  margin-top: 2px; }
+    .global-no-result { text-align:center; padding:40px 20px; color:rgba(255,255,255,0.22); font-style:italic; font-family:'Crimson Text',serif; font-size:15px; }
+
+    /* ── TREASURY EDIT (GM) ── */
+    body.gm-active .treasury-medallion { cursor: pointer; }
+    body.gm-active .treasury-medallion:hover { border-color: #ffd700 !important; box-shadow: 0 0 14px rgba(255,215,0,0.22), 0 4px 16px rgba(0,0,0,0.5) !important; }
+
+    /* ── RESTOCK BY RARITY (GM) ── */
+    .rarity-restock-btn {
+      width: 100%; padding: 10px 14px; border-radius: 7px; cursor: pointer; transition: all 0.15s;
+      font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px; text-align: left;
+      background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.65); border: 1px solid rgba(255,255,255,0.1);
+    }
+    .rarity-restock-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.25); }
   </style>
 </head>
 <body class="theme-weapons">
@@ -1021,6 +1097,7 @@
         </div>
       </div>
       <button class="history-btn" onclick="openHistoryModal()">📜 History</button>
+      <button class="history-btn" onclick="openGlobalSearch()" title="Search all shops (Ctrl+G)">🔍 All Shops</button>
       <button class="dark-mode-btn" id="dark-mode-btn" onclick="toggleDarkMode()" title="Toggle dark reading mode">🌙</button>
       <button class="gm-toggle-btn" onclick="handleGMButton()">🔒 GM</button>
     </div>
@@ -1049,7 +1126,7 @@
               <div class="shop-subtitle" id="shop-subtitle"></div>
               <div class="shop-name-row">
                 <div class="shop-name" id="shop-name"></div>
-                <div class="treasury-medallion" title="Gold the merchant has on hand to buy back items">
+                <div class="treasury-medallion" onclick="if(typeof gmMode!=='undefined'&&gmMode)openTreasuryEdit()" title="Merchant's Treasury — GM: click to edit">
                   <div class="treasury-badge-icon">🪙</div>
                   <div class="treasury-label">Merchant's Treasury</div>
                   <div class="treasury-amount" id="shop-treasury-display"></div>
@@ -1073,6 +1150,14 @@
           </select>
           <button class="stock-filter-btn" id="fav-filter-btn" onclick="toggleFavFilter()" title="Show favorites only">★ Favorites</button>
           <button class="stock-filter-btn" id="stock-filter-btn" onclick="toggleStockFilter()">✓ In Stock</button>
+        </div>
+        <div class="rarity-filter-bar" id="rarity-filter-bar">
+          <span class="rarity-filter-label">Rarity :</span>
+          <button class="rarity-filter-btn" data-rarity="Common"    onclick="setRarityFilter('Common')">Common</button>
+          <button class="rarity-filter-btn" data-rarity="Uncommon"  onclick="setRarityFilter('Uncommon')">Uncommon</button>
+          <button class="rarity-filter-btn" data-rarity="Rare"      onclick="setRarityFilter('Rare')">Rare</button>
+          <button class="rarity-filter-btn" data-rarity="VeryRare"  onclick="setRarityFilter('VeryRare')">Very Rare</button>
+          <button class="rarity-filter-btn" data-rarity="Legendary" onclick="setRarityFilter('Legendary')">Legendary</button>
         </div>
         <div class="results-count" id="results-count"></div>
         <div class="items-grid" id="items-grid"></div>
@@ -1185,6 +1270,52 @@
         <button class="clear-history" onclick="clearHistory()">🗑 Clear</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- GLOBAL SEARCH MODAL -->
+<div class="history-modal-overlay" id="global-search-modal">
+  <div class="history-modal" style="max-width:680px;">
+    <div class="history-modal-header">
+      <div class="history-modal-title">🔍 All Shops<span>GLOBAL MARKET SEARCH</span></div>
+      <button class="history-modal-close" onclick="closeGlobalSearch()">✕</button>
+    </div>
+    <div class="global-search-wrap">
+      <input class="global-search-input" id="global-search-input" type="text" placeholder="Search items across all shops… (Ctrl+G)" oninput="doGlobalSearch()">
+    </div>
+    <div class="history-modal-body" id="global-search-results">
+      <div class="global-no-result">Start typing to search across all shops…</div>
+    </div>
+  </div>
+</div>
+
+<!-- TREASURY EDIT MODAL (GM) -->
+<div class="modal-overlay" id="treasury-edit-modal">
+  <div class="modal" style="max-width:320px;">
+    <h2>🪙 Edit Treasury</h2>
+    <label>Amount (in Gold Pieces)</label>
+    <input type="number" id="treasury-edit-gp" min="0" value="100" onkeydown="if(event.key==='Enter')saveTreasuryEdit()">
+    <div class="conversion-info">1 GP = 400 CP &nbsp;|&nbsp; 1000 GP = 1 PP</div>
+    <div class="modal-buttons">
+      <button class="btn-confirm" onclick="saveTreasuryEdit()">Save</button>
+      <button class="btn-cancel" onclick="closeTreasuryEdit()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESTOCK BY RARITY MODAL (GM) -->
+<div class="modal-overlay" id="restock-rarity-modal">
+  <div class="modal" style="max-width:320px;">
+    <h2>↺ Restock by Rarity</h2>
+    <p style="font-size:12px;color:var(--text);opacity:0.65;margin-bottom:16px;">Restore default stock for items of a specific rarity in this shop.</p>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;">
+      <button class="rarity-restock-btn" onclick="restockByRarity('Common')">⬜ Common</button>
+      <button class="rarity-restock-btn" onclick="restockByRarity('Uncommon')">🟩 Uncommon</button>
+      <button class="rarity-restock-btn" onclick="restockByRarity('Rare')">🟦 Rare</button>
+      <button class="rarity-restock-btn" onclick="restockByRarity('VeryRare')">🟪 Very Rare</button>
+      <button class="rarity-restock-btn" onclick="restockByRarity('Legendary')">🟧 Legendary</button>
+    </div>
+    <button class="btn-cancel" onclick="closeRestockRarityModal()" style="width:100%;text-align:center;">Cancel</button>
   </div>
 </div>
 
@@ -2233,7 +2364,10 @@ db.ref("shops").on("value", snapshot => {
     if (matched && !(SHOPS[matched].gmOnly && !gmMode)) activeShop = matched;
   }
   if (!activeShop || !SHOPS[activeShop] || (SHOPS[activeShop].gmOnly && !gmMode)) {
-    activeShop = Object.keys(SHOPS).find(n => !SHOPS[n].gmOnly) || Object.keys(SHOPS)[0];
+    const savedShop = localStorage.getItem("lastShop");
+    activeShop = (savedShop && SHOPS[savedShop] && !SHOPS[savedShop].gmOnly)
+      ? savedShop
+      : (Object.keys(SHOPS).find(n => !SHOPS[n].gmOnly) || Object.keys(SHOPS)[0]);
   }
   setTheme(activeShop);
   renderTabs();
@@ -2287,6 +2421,9 @@ function switchShop(name) {
   panel.classList.add("fading");
   setTimeout(() => {
     activeShop = name;
+    localStorage.setItem("lastShop", name);
+    activeRarityFilter = null;
+    document.querySelectorAll(".rarity-filter-btn").forEach(btn => { btn.className = "rarity-filter-btn"; });
     setTheme(name);
     try { window.history.replaceState({}, "", "?shop=" + encodeURIComponent(name.replace("Sales | ", ""))); } catch(e) {}
     renderTabs();
@@ -2342,6 +2479,7 @@ let showInStockOnly = false;
 let showFavOnly = false;
 let currentSort = "default";
 let favorites = new Set(JSON.parse(localStorage.getItem("shopFavorites") || "[]"));
+let activeRarityFilter = null;
 
 function toggleStockFilter() {
   showInStockOnly = !showInStockOnly;
@@ -2370,6 +2508,15 @@ function toggleFavorite(idx, btnEl) {
     btnEl.textContent = favorites.has(key) ? "★" : "☆";
   }
   if (showFavOnly) filterItems();
+}
+
+function setRarityFilter(r) {
+  activeRarityFilter = (activeRarityFilter === r) ? null : r;
+  document.querySelectorAll(".rarity-filter-btn").forEach(btn => {
+    const br = btn.dataset.rarity;
+    btn.className = "rarity-filter-btn" + (activeRarityFilter && br === activeRarityFilter ? " rf-" + br : "");
+  });
+  filterItems();
 }
 
 function setSortMode(mode) {
@@ -2414,6 +2561,9 @@ document.addEventListener("keydown", e => {
     const search = document.getElementById("shop-search");
     if (search) search.focus();
   }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "g") {
+    e.preventDefault(); openGlobalSearch();
+  }
 });
 
 function filterItems() {
@@ -2429,7 +2579,8 @@ function filterItems() {
     const matchQ  = !q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
     const matchS  = !showInStockOnly || inStock;
     const matchF  = !showFavOnly || isFav;
-    const show = matchQ && matchS && matchF;
+    const matchR  = !activeRarityFilter || (card.dataset.rarity || "Common").replace(/\s+/g,"") === activeRarityFilter;
+    const show = matchQ && matchS && matchF && matchR;
     card.style.display = show ? "" : "none";
     if (show) visible++;
   });
@@ -2441,8 +2592,10 @@ function filterItems() {
       noRes.className = "search-no-results";
       document.getElementById("items-grid").appendChild(noRes);
     }
-    noRes.textContent = showFavOnly ? "No favorites yet — click ☆ on an item." :
-                         (showInStockOnly && !q ? "All items are sold out." : 'No items match "' + q + '"');
+    noRes.textContent = showFavOnly ? "No favorites yet — click ☆ on an item."
+      : activeRarityFilter && !q && !showInStockOnly ? "No " + activeRarityFilter.replace("VeryRare","Very Rare") + " items in this shop."
+      : showInStockOnly && !q && !activeRarityFilter ? "All items are sold out."
+      : 'No items match the current filters.';
     noRes.style.display = "";
   } else if (noRes) {
     noRes.style.display = "none";
@@ -2564,7 +2717,8 @@ function renderTabs() {
       btn.style.setProperty("--tab-accent-bg-active",    "rgba("+r+","+g+","+b+",0.32)");
       btn.style.setProperty("--tab-accent-border-active","rgba("+r+","+g+","+b+",0.70)");
       btn.style.setProperty("--tab-accent-bg-hover",     "rgba("+r+","+g+","+b+",0.22)");
-      btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + lockIcon + name.replace("Sales | ", "") + closedDot + stockDot;
+      const inStockCount = shop.items.filter(i => i.stock > 0).length;
+      btn.innerHTML = '<span class="tab-icon">' + shop.icon + '</span>' + lockIcon + name.replace("Sales | ", "") + '<span class="tab-right">' + closedDot + stockDot + '<span class="tab-count">' + inStockCount + '</span></span>';
       btn.onclick = () => switchShop(name);
       c.appendChild(btn);
     });
@@ -2595,7 +2749,9 @@ function renderShop() {
         ? '<button class="shop-badge gm-toggle-open" onclick="toggleShopOpen()">🔒 Close Shop</button>'
         : '<button class="shop-badge gm-toggle-close" onclick="toggleShopOpen()">🔓 Open Shop</button>')
     : '';
-  const gmRestockBtn = gmMode ? '<button class="gm-restock-btn" onclick="restockAll()">↺ Restock All</button>' : '';
+  const gmRestockBtn = gmMode
+    ? '<button class="gm-restock-btn" onclick="restockAll()">↺ Restock All</button> <button class="gm-restock-btn" onclick="openRestockRarityModal()">↺ By Rarity</button>'
+    : '';
   const closedBadge = !shop.isOpen ? '<span class="shop-badge closed-badge">🔒 Closed</span>' : '';
   const treasuryCp = shop.treasury !== undefined ? shop.treasury : 40000;
   document.getElementById("shop-treasury-display").innerHTML = fmtCpCoinCells(treasuryCp);
@@ -3018,6 +3174,111 @@ function deleteGMItem() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// GLOBAL SEARCH
+// ═══════════════════════════════════════════════════════════════
+function escHtml(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function openGlobalSearch() {
+  document.getElementById("global-search-modal").classList.add("open");
+  const inp = document.getElementById("global-search-input");
+  inp.value = "";
+  setTimeout(() => inp.focus(), 80);
+  doGlobalSearch();
+}
+function closeGlobalSearch() {
+  document.getElementById("global-search-modal").classList.remove("open");
+}
+function doGlobalSearch() {
+  const q = (document.getElementById("global-search-input").value || "").toLowerCase().trim();
+  const res = document.getElementById("global-search-results");
+  if (!q) {
+    res.innerHTML = '<div class="global-no-result">Start typing to search across all shops…</div>';
+    return;
+  }
+  let html = "", totalFound = 0;
+  Object.keys(SHOPS).forEach(shopName => {
+    const shop = SHOPS[shopName];
+    if (shop.gmOnly && !gmMode) return;
+    const matches = shop.items.filter(i =>
+      i.name.toLowerCase().includes(q) || (i.desc || "").toLowerCase().includes(q)
+    );
+    if (!matches.length) return;
+    totalFound += matches.length;
+    html += '<div class="global-result-group-label">' + escHtml(shopName.replace("Sales | ","")) + '</div>';
+    matches.forEach(item => {
+      const inStock = item.stock > 0;
+      html +=
+        '<div class="global-result-row" data-shop="' + escHtml(shopName) + '">' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div class="global-result-name' + (inStock ? '' : ' out') + '">' + escHtml(item.name) + '</div>' +
+            '<div class="global-result-desc">' + escHtml((item.desc||"").substring(0,65) + ((item.desc||"").length>65?"…":"")) + '</div>' +
+          '</div>' +
+          '<div class="global-result-meta">' +
+            '<div class="global-result-price">' + fmtPrice(item.price) + '</div>' +
+            '<div class="' + (inStock ? 'global-result-stock-ok' : 'global-result-stock-out') + '">' + (inStock ? '× ' + item.stock : 'Out of stock') + '</div>' +
+          '</div>' +
+        '</div>';
+    });
+  });
+  if (!totalFound) html = '<div class="global-no-result">No items found for &ldquo;' + escHtml(q) + '&rdquo;</div>';
+  res.innerHTML = html;
+}
+function globalGoToShop(shopName) {
+  closeGlobalSearch();
+  if (shopName !== activeShop) switchShop(shopName);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TREASURY EDIT (GM)
+// ═══════════════════════════════════════════════════════════════
+function openTreasuryEdit() {
+  if (!gmMode) return;
+  const gp = Math.floor((SHOPS[activeShop].treasury || 0) / 400);
+  document.getElementById("treasury-edit-gp").value = gp;
+  document.getElementById("treasury-edit-modal").classList.add("open");
+  setTimeout(() => { const i = document.getElementById("treasury-edit-gp"); if(i){i.focus();i.select();} }, 80);
+}
+function closeTreasuryEdit() {
+  document.getElementById("treasury-edit-modal").classList.remove("open");
+}
+function saveTreasuryEdit() {
+  const gp = Math.max(0, parseInt(document.getElementById("treasury-edit-gp").value) || 0);
+  SHOPS[activeShop].treasury = gp * 400;
+  fbSaveTreasury(activeShop);
+  closeTreasuryEdit();
+  renderShop();
+  showToast("✓ Treasury set to " + gp + " GP", "gm");
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESTOCK BY RARITY (GM)
+// ═══════════════════════════════════════════════════════════════
+function openRestockRarityModal() {
+  if (!gmMode) return;
+  document.getElementById("restock-rarity-modal").classList.add("open");
+}
+function closeRestockRarityModal() {
+  document.getElementById("restock-rarity-modal").classList.remove("open");
+}
+function restockByRarity(rarity) {
+  if (!gmMode || !activeShop) return;
+  const defaults = DEFAULT_SHOPS[activeShop];
+  if (!defaults) { showToast("⚠ No defaults for this shop.", "error"); return; }
+  let count = 0;
+  SHOPS[activeShop].items.forEach((item, idx) => {
+    if ((item.rarity || "Common").replace(/\s+/g,"") === rarity) {
+      const def = defaults.items[idx];
+      if (def) { item.stock = def.stock; count++; }
+    }
+  });
+  fbSaveShopItems(activeShop);
+  closeRestockRarityModal();
+  renderShop();
+  showToast("↺ " + count + " " + rarity.replace("VeryRare","Very Rare") + " item(s) restocked!", "gm");
+}
+
+// ═══════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════
 loadPlayerName();
@@ -3026,17 +3287,26 @@ renderHistory();
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   closeModal(); closeGMLogin(); closeGMEditModal(); closeHistoryModal(); closeSellModal();
+  closeGlobalSearch(); closeTreasuryEdit(); closeRestockRarityModal();
 });
 
-["buy-modal","gm-login-modal","gm-edit-modal","history-modal","sell-modal"].forEach(id => {
+["buy-modal","gm-login-modal","gm-edit-modal","history-modal","sell-modal",
+ "global-search-modal","treasury-edit-modal","restock-rarity-modal"].forEach(id => {
   document.getElementById(id).addEventListener("click", e => {
     if (e.target !== document.getElementById(id)) return;
-    if (id === "buy-modal") closeModal();
-    else if (id === "gm-login-modal") closeGMLogin();
-    else if (id === "gm-edit-modal") closeGMEditModal();
-    else if (id === "history-modal") closeHistoryModal();
-    else if (id === "sell-modal") closeSellModal();
+    if      (id === "buy-modal")            closeModal();
+    else if (id === "gm-login-modal")       closeGMLogin();
+    else if (id === "gm-edit-modal")        closeGMEditModal();
+    else if (id === "history-modal")        closeHistoryModal();
+    else if (id === "sell-modal")           closeSellModal();
+    else if (id === "global-search-modal")  closeGlobalSearch();
+    else if (id === "treasury-edit-modal")  closeTreasuryEdit();
+    else if (id === "restock-rarity-modal") closeRestockRarityModal();
   });
+});
+document.getElementById("global-search-results").addEventListener("click", e => {
+  const row = e.target.closest(".global-result-row");
+  if (row && row.dataset.shop) globalGoToShop(row.dataset.shop);
 });
 
 if ("serviceWorker" in navigator) {
