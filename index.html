@@ -2223,7 +2223,13 @@ const DEFAULT_SHOPS = {
   // ══════════════════════════════════════════════════════
   "Sales | World & Quest Items": {
     icon:"🗝️",theme:"theme-weapons",description:"GM-only stash: quest rewards, world loot, and items to hand out to players.",sellMultiplier:0.5,isOpen:true,treasury:40000,gmOnly:true,
-    items:[]
+    items:[
+      {name:"Bow of Faerdhinen",        price:{gp:0,sp:0,cp:0}, stock:1, rarity:"Uncommon",  desc:"1d8 piercing. Range 150/600 ft. Requires attunement. +1 to attack and damage rolls. Attacks count as magical. Requires normal arrows."},
+      {name:"Charged Bow of Faerdhinen",price:{gp:0,sp:0,cp:0}, stock:1, rarity:"Rare",      desc:"1d8 force. Range 150/600 ft. Requires attunement. +2 to attack and damage rolls. 5 charges; bonus action: expend 1 charge to awaken for 1 min — creates crystal arrows, force damage, once per turn on hit +1d4 force. Crystal shards restore charges (DM discretion)."},
+      {name:"Corrupted Bow of Faerdhinen",price:{gp:0,sp:0,cp:0},stock:1,rarity:"Legendary", desc:"2d10 piercing + 1d6 force. Range 150/600 ft. Requires attunement. +2 to attack and damage rolls. No ammunition required. 1d6 force ignores resistance. Ignores half cover. Faerdhinen's Judgment (2/long rest): replace one attack with a 300 ft ranged attack — on hit 4d10+4d6 force+DEX; 10 ft explosion 2d6 force (DC 15 DEX, half on save); target becomes Crystal Fractured (next hit +2d6 force)."},
+      {name:"Phoenix-Forged Handwraps",   price:{gp:0,sp:0,cp:0},stock:1,rarity:"Rare",      desc:"Wondrous item. Requires attunement (Monk). +1 to attack and damage rolls with unarmed strikes. Unarmed strikes count as magical. Flames of Momentum: on Flurry of Blows, gain temp HP equal to WIS mod + proficiency bonus (min 1) and the first Flurry hit deals +1d6 fire damage (once per turn). Phoenix Rebirth (1/long rest): when reduced to 0 HP but not killed outright, drop to 1 HP instead, gain 2d8 + monk level temp HP, and each creature within 5 ft must make a DEX save vs ki save DC — fail: 2d6 fire damage; success: half."},
+      {name:"Necklace of Unstable Sorcery",price:{gp:0,sp:0,cp:0},stock:1,rarity:"Rare",      desc:"Wondrous item. Requires attunement (Sorcerer). As an action, spin the necklace and roll 1d20 on the Chaos Table. Once per turn; uses per long rest = proficiency bonus. Save DC and spell attack use your Sorcerer values. — 1: Arcane Backfire: 2d6 force to you (min 1 HP), 1d6 force to creatures within 5 ft. 2: Sudden Teleportation: 30 ft random teleport; next spell attack with advantage. 3: Burning Blood: 1d6 fire to you; next spell deals +2d6 fire to one target. 4: Arcane Echo: Next 1st/2nd-level spell echoes at half (no slot). 5: Gravity Collapse: 60 ft point, 10 ft radius, 2d6 force + pull 10 ft (STR save). 6: Wild Metamagic: 1d4 — Empowered / Distant / Subtle / Careful (free). 7: Mirror Fracture: Mirror Image 1 min, no concentration. 8: Arcane Drain: Lose 1 SP (or 1d6 psychic); regain 2 SP next turn. 9: Elemental Roulette: 1d4 element, +1d6 elemental on one target per spell per turn, 1 min. 10: Magical Exchange: Swap positions with creature within 60 ft (CHA save to resist). 11: Spellstorm: 3 ranged spell attacks within 60 ft, 2d6 force each. 12: Time Slip: Gain 1 bonus action (class feature / Metamagic / Dash / Disengage / potion / magic item). 13: Arcane Mutation (1d4, 1 min): 1-Wings 30 ft fly / 2-Third Eye adv. Perception no surprise / 3-Arcane Claws 1d8 force CHA / 4-Phase Body move through objects (end in object = nearest space + 1d6 force). 14: Spell Hunger: Creature within 30 ft makes concentration check vs DC; failure ends concentration, you regain 1 SP. 15: Chaos Shield: +2 AC 1 min; missed attacks trigger 1d6 — on 6 attacker takes 1d6 force. 16: Unstable Fireball: 60 ft, 10 ft radius, 4d6 fire (DEX save half); roll 1d6, on 1 you take 2d6 fire. 17: Spell Theft: Copy last spell (<=3rd level) cast by creature within 60 ft; cast it once before your next turn (CHA, costs slot; material 10+ gp still required). 18: Sorcerous Overload: Next spell maximizes 1 damage die; take 1d6 psychic per spell level after (cantrips: no backlash). 19: Perfect Chaos: Roll twice, ignore 19-20, both effects resolve. 20: Arcane Apotheosis (1 min): +1 spell attack/DC, regain 1 SP per 1st+-level spell cast, spells ignore resistance to fire/cold/lightning/acid/force. Once per long rest; if rolled again treat as 11."}
+    ]
   }
 };
 
@@ -2358,6 +2364,13 @@ db.ref("shops").on("value", snapshot => {
   }
   setFirebaseStatus("connected", "Connected");
   SHOPS = snapshotToShops(data);
+  // Auto-migrate: if a shop has 0 items in Firebase but DEFAULT_SHOPS has items, push them up
+  Object.entries(DEFAULT_SHOPS).forEach(([name, defShop]) => {
+    if (SHOPS[name] && SHOPS[name].items.length === 0 && defShop.items.length > 0) {
+      SHOPS[name].items = JSON.parse(JSON.stringify(defShop.items));
+      db.ref("shops/" + name + "/items").set(SHOPS[name].items).catch(console.error);
+    }
+  });
   const urlParam = new URLSearchParams(window.location.search).get("shop");
   if (urlParam && !activeShop) {
     const matched = Object.keys(SHOPS).find(n => n.replace("Sales | ","") === urlParam || n === urlParam);
@@ -2934,6 +2947,17 @@ function showToast(msg, type) {
 // MODE MJ — Authentification Google
 // ═══════════════════════════════════════════════════════════════
 
+// Récupère le résultat d'un signInWithRedirect au retour sur la page
+auth.getRedirectResult().catch(err => {
+  console.error("Redirect auth error:", err);
+  openGMLogin();
+  const errEl = document.getElementById("gm-error");
+  if (errEl) {
+    errEl.textContent = "❌ " + (err.code || err.message || "Login error");
+    errEl.style.display = "block";
+  }
+});
+
 // Surveille l'état de connexion Firebase en permanence
 auth.onAuthStateChanged(user => {
   if (user) {
@@ -2984,15 +3008,12 @@ function closeGMLogin() { document.getElementById("gm-login-modal").classList.re
 
 function signInWithGoogle() {
   document.getElementById("gm-error").style.display = "none";
-  auth.signInWithPopup(googleProvider)
-    .then(result => {
-      // onAuthStateChanged prend le relais automatiquement
-      console.log("UID MJ:", result.user.uid);
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById("gm-error").style.display = "block";
-    });
+  auth.signInWithRedirect(googleProvider).catch(err => {
+    console.error(err);
+    const errEl = document.getElementById("gm-error");
+    errEl.textContent = "❌ " + (err.code || err.message || "Login error");
+    errEl.style.display = "block";
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════
