@@ -2365,12 +2365,19 @@ db.ref("shops").on("value", snapshot => {
   setFirebaseStatus("connected", "Connected");
   SHOPS = snapshotToShops(data);
   // Auto-migrate: if a shop has 0 items in Firebase but DEFAULT_SHOPS has items, push them up
+  const migrationWrites = [];
   Object.entries(DEFAULT_SHOPS).forEach(([name, defShop]) => {
     if (SHOPS[name] && SHOPS[name].items.length === 0 && defShop.items.length > 0) {
       SHOPS[name].items = JSON.parse(JSON.stringify(defShop.items));
-      db.ref("shops/" + name + "/items").set(SHOPS[name].items).catch(console.error);
+      migrationWrites.push(db.ref("shops/" + name + "/items").set(SHOPS[name].items));
     }
   });
+  if (migrationWrites.length > 0) {
+    suppressFirebaseUpdate = true;
+    Promise.all(migrationWrites)
+      .catch(console.error)
+      .finally(() => { suppressFirebaseUpdate = false; });
+  }
   const urlParam = new URLSearchParams(window.location.search).get("shop");
   if (urlParam && !activeShop) {
     const matched = Object.keys(SHOPS).find(n => n.replace("Sales | ","") === urlParam || n === urlParam);
