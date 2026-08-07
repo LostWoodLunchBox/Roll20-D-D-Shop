@@ -1099,7 +1099,7 @@
       <button class="history-btn" onclick="openHistoryModal()">📜 History</button>
       <button class="history-btn" onclick="openGlobalSearch()" title="Search all shops (Ctrl+G)">🔍 All Shops</button>
       <button class="dark-mode-btn" id="dark-mode-btn" onclick="toggleDarkMode()" title="Toggle dark reading mode">🌙</button>
-      <button class="gm-toggle-btn" onclick="handleGMButton()">🔒 GM</button>
+      <span class="gm-badge" style="display:inline-block;">⚜ GM</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;">
       <span class="gm-badge">⚜ GM Mode Active</span>
@@ -1187,21 +1187,6 @@
   </div>
 </div>
 
-<!-- GM LOGIN MODAL -->
-<div class="modal-overlay" id="gm-login-modal">
-  <div class="modal gm-modal">
-    <h2>⚜ Mode Maître de Jeu</h2>
-    <p style="font-size:12px;color:#ffe082;opacity:0.8;margin:10px 0 20px;">Connectez-vous avec votre compte Google pour accéder aux outils d'édition des magasins.</p>
-    <button class="google-signin-btn" onclick="signInWithGoogle()">
-      <svg width="18" height="18" viewBox="0 0 48 48" style="margin-right:10px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-      Se connecter avec Google
-    </button>
-    <div class="gm-error" id="gm-error">❌ Login cancelled or error.</div>
-    <div style="margin-top:12px;">
-      <button class="btn-cancel" onclick="closeGMLogin()">Cancel</button>
-    </div>
-  </div>
-</div>
 
 <!-- GM EDIT ITEM MODAL -->
 <div class="modal-overlay" id="gm-edit-modal">
@@ -1343,9 +1328,6 @@ const db = firebase.database();
 // Remplacez par votre propre UID après la première connexion
 // (l'UID s'affiche dans la console du navigateur au login)
 // ═══════════════════════════════════════════════════════════════
-const GM_UID = "9duxkg9qPIWzcB24dS5McVqSadE2";
-const auth = firebase.auth();
-const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 // ═══════════════════════════════════════════════════════════════
 // DONNÉES PAR DÉFAUT (pour initialiser Firebase au premier lancement)
@@ -2264,7 +2246,7 @@ let suppressFirebaseUpdate = false; // empêche le listener d'écraser nos propr
 let history     = JSON.parse(localStorage.getItem("shopHistory3") || "[]");
 let activeShop  = "";
 let pendingItem = null;
-let gmMode      = false;
+let gmMode      = true;
 let gmEditingShop = null;
 let gmEditingIdx  = null;
 
@@ -2955,86 +2937,8 @@ function showToast(msg, type) {
   setTimeout(() => t.classList.remove("show"), 3000);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// MODE MJ — Authentification Google
-// ═══════════════════════════════════════════════════════════════
-
-// Récupère le résultat d'un signInWithRedirect au retour sur la page
-// (silencieux si aucun redirect n'était en cours)
-auth.getRedirectResult().then(result => {
-  if (result && result.user) console.log("UID MJ (redirect):", result.user.uid);
-}).catch(err => {
-  console.error("Redirect auth error:", err);
-  if (sessionStorage.getItem("gmRedirectPending")) {
-    sessionStorage.removeItem("gmRedirectPending");
-    openGMLogin();
-    const errEl = document.getElementById("gm-error");
-    if (errEl) {
-      errEl.textContent = "❌ " + (err.code || err.message || "Login error");
-      errEl.style.display = "block";
-    }
-  }
-});
-
-// Surveille l'état de connexion Firebase en permanence
-auth.onAuthStateChanged(user => {
-  if (user) {
-    // Affiche l'UID dans la console pour la première config
-    console.log("✅ Connecté en tant que MJ — UID:", user.uid);
-    gmMode = true;
-    setTheme(activeShop);
-    renderTabs();
-    renderShop();
-    closeGMLogin();
-    showToast("⚜ Welcome " + (user.displayName || "GM") + "!", "gm");
-  } else {
-    if (gmMode) {
-      gmMode = false;
-      if (SHOPS[activeShop] && SHOPS[activeShop].gmOnly) {
-        activeShop = Object.keys(SHOPS).find(n => !SHOPS[n].gmOnly) || activeShop;
-      }
-      setTheme(activeShop);
-      renderTabs();
-      renderShop();
-    }
-  }
-});
-
-function handleGMButton() {
-  if (gmMode) {
-    auth.signOut().then(() => {
-      gmMode = false;
-      if (SHOPS[activeShop] && SHOPS[activeShop].gmOnly) {
-        activeShop = Object.keys(SHOPS).find(n => !SHOPS[n].gmOnly) || activeShop;
-      }
-      setTheme(activeShop);
-      renderTabs();
-      renderShop();
-      showToast("🔒 GM Mode disabled");
-    });
-  } else {
-    openGMLogin();
-  }
-}
-
-function openGMLogin() {
-  document.getElementById("gm-error").style.display = "none";
-  document.getElementById("gm-login-modal").classList.add("open");
-}
-
-function closeGMLogin() { document.getElementById("gm-login-modal").classList.remove("open"); }
-
-function signInWithGoogle() {
-  document.getElementById("gm-error").style.display = "none";
-  sessionStorage.setItem("gmRedirectPending", "1");
-  auth.signInWithRedirect(googleProvider).catch(err => {
-    sessionStorage.removeItem("gmRedirectPending");
-    console.error(err);
-    const errEl = document.getElementById("gm-error");
-    errEl.textContent = "❌ " + (err.code || err.message || "Login error");
-    errEl.style.display = "block";
-  });
-}
+// GM mode toujours actif — pas d'authentification requise
+document.body.classList.add("gm-active");
 
 // ═══════════════════════════════════════════════════════════════
 // GM : ÉDITEUR D'ITEMS
