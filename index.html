@@ -2948,13 +2948,19 @@ function showToast(msg, type) {
 // ═══════════════════════════════════════════════════════════════
 
 // Récupère le résultat d'un signInWithRedirect au retour sur la page
-auth.getRedirectResult().catch(err => {
+// (silencieux si aucun redirect n'était en cours)
+auth.getRedirectResult().then(result => {
+  if (result && result.user) console.log("UID MJ (redirect):", result.user.uid);
+}).catch(err => {
   console.error("Redirect auth error:", err);
-  openGMLogin();
-  const errEl = document.getElementById("gm-error");
-  if (errEl) {
-    errEl.textContent = "❌ " + (err.code || err.message || "Login error");
-    errEl.style.display = "block";
+  if (sessionStorage.getItem("gmRedirectPending")) {
+    sessionStorage.removeItem("gmRedirectPending");
+    openGMLogin();
+    const errEl = document.getElementById("gm-error");
+    if (errEl) {
+      errEl.textContent = "❌ " + (err.code || err.message || "Login error");
+      errEl.style.display = "block";
+    }
   }
 });
 
@@ -3008,7 +3014,9 @@ function closeGMLogin() { document.getElementById("gm-login-modal").classList.re
 
 function signInWithGoogle() {
   document.getElementById("gm-error").style.display = "none";
+  sessionStorage.setItem("gmRedirectPending", "1");
   auth.signInWithRedirect(googleProvider).catch(err => {
+    sessionStorage.removeItem("gmRedirectPending");
     console.error(err);
     const errEl = document.getElementById("gm-error");
     errEl.textContent = "❌ " + (err.code || err.message || "Login error");
